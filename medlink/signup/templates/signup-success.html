@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}MedLink | Signup{% endblock %}
+{% block content %}
+
+<body>
+  <div class="container" style="margin-top:100px">
+    <p>
+      Thank you for your email confirmation.
+      You will be redirected to login in a couple seconds...
+    </p>
+  </div>
+  <script type="text/javascript">
+    function Redirect() {
+      window.location.href = "../../../../../login";
+    }
+    setTimeout('Redirect()', 3000);
+  </script>
+</body>
+
+{% endblock %}
