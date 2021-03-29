@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import is_safe_url, urlsafe_base64_encode, urlsafe_base64_decode
-from .forms import SignUpForm
+from .forms import worker_SignUpForm, hospital_SignUpForm
 from .tok import account_activation_token
 
 User = get_user_model()
@@ -15,7 +15,7 @@ User = get_user_model()
 def worker_signup(request):
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = SignUpForm(request.POST)
+        form = worker_SignUpForm(request.POST)
 
         # check whether it's valid:
         if form.is_valid():
@@ -45,14 +45,14 @@ def worker_signup(request):
 
     # if a GET (or any other method) we'll create a blank form
     else:
-      form = SignUpForm()
+      form = worker_SignUpForm()
     
     return render(request, "signup.html", {"signup_form": form})
 
 def hospital_signup(request):
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = SignUpForm(request.POST)
+        form = hospital_SignUpForm(request.POST)
 
         # check whether it's valid:
         if form.is_valid():
@@ -82,7 +82,7 @@ def hospital_signup(request):
 
     # if a GET (or any other method) we'll create a blank form
     else:
-      form = SignUpForm()
+      form = hospital_SignUpForm()
     
     return render(request, "signup.html", {"signup_form": form})
 

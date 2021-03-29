@@ -10,10 +10,11 @@ class UserManager(BaseUserManager):
   class Meta:
     app_label = 'signup'
 
-  def create_user(self, email, first_name=None, last_name=None, phone=None, field=None, password=None):
+  def create_user(self, email, first_name=None, last_name=None, phone=None, field=None, password=None, hospital_name=None, location=None, worker=False, hospital=False):
     """
     Creates and saves a User with the given email and password.
     """
+    '''
     if not email:
         raise ValueError('Users must have an email address')
     if not first_name or last_name:
@@ -22,46 +23,56 @@ class UserManager(BaseUserManager):
         raise ValueError('Users must have a valid phone number')
     if not field:
         raise ValueError('Users must have a speciality')
-
+    '''
     user = self.model(
         email=self.normalize_email(email),
         first_name=first_name,
         last_name=first_name,
         phone=phone,
         field=field,
+        location=location,
+        hospital_name=hospital_name,
+        worker=worker,
+        hospital=hospital,
     )
 
     user.set_password(password)
     user.save(using=self._db)
     return user
 
-def create_staffuser(self, email, first_name, last_name, phone, field, password):
+def create_staffuser(self, email, first_name=None, last_name=None, phone=None, field=None, password=None, hospital_name=None, location=None, worker=False, hospital=False):
     """
     Creates and saves a staff user with the given email and password.
     """
     user = self.create_user(
-        email=email,
-        password=password,
+        email=self.normalize_email(email),
         first_name=first_name,
-        last_name=last_name,
+        last_name=first_name,
         phone=phone,
         field=field,
+        location=location,
+        hospital_name=hospital_name,
+        worker=worker,
+        hospital=hospital,
     )
     user.staff = True
     user.save(using=self._db)
     return user
 
-def create_superuser(self, email, first_name, last_name, phone, field, password):
+def create_superuser(self, email, first_name=None, last_name=None, phone=None, field=None, password=None, hospital_name=None, location=None, worker=False, hospital=False):
     """
     Creates and saves a superuser with the given email and password.
     """
     user = self.create_user(
-        email=email,
-        password=password,
+        email=self.normalize_email(email),
         first_name=first_name,
-        last_name=last_name,
+        last_name=first_name,
         phone=phone,
         field=field,
+        location=location,
+        hospital_name=hospital_name,
+        worker=worker,
+        hospital=hospital,
     )
     user.staff = True
     user.admin = True
@@ -74,18 +85,22 @@ class User(AbstractBaseUser):
     class Meta:
         app_label = 'signup'
 
-    email       = models.EmailField(verbose_name='Email address', max_length=255, unique=True)#, validators=[validate_email])
-    first_name  = models.CharField(verbose_name='First Name', max_length=255, blank=False, null=False, default='')
-    last_name   = models.CharField(verbose_name='Last Name', max_length=255, blank=False, null=False, default='')
-    phone       = models.CharField(verbose_name='Phone Number', max_length=255, blank=False, unique=False, default='')
-    field       = models.CharField(verbose_name='Field/Specialty', max_length=255, blank=False, null=False, default='')
-    active      = models.BooleanField(default=False) # Cannot log in
-    staff       = models.BooleanField(default=False) # a admin user; non super-user
-    admin       = models.BooleanField(default=False) # a superuser
+    email           = models.EmailField(verbose_name='Email address', max_length=255, unique=True)#, validators=[validate_email])
+    first_name      = models.CharField(verbose_name='First Name', max_length=255, blank=True, null=True, default='')
+    last_name       = models.CharField(verbose_name='Last Name', max_length=255, blank=True, null=True, default='')
+    phone           = models.CharField(verbose_name='Phone Number', max_length=255, blank=True, unique=True, default='')
+    field           = models.CharField(verbose_name='Field/Specialty', max_length=255, blank=True, null=True, default='')
+    hospital_name   = models.CharField(verbose_name='Hospital Name', max_length=255, blank=True, null=True, default='')
+    location        = models.CharField(verbose_name='Location', max_length=255, blank=True, null=True, default='')
+    active          = models.BooleanField(default=False) # Cannot log in
+    staff           = models.BooleanField(default=False) # a admin user; non super-user
+    admin           = models.BooleanField(default=False) # a superuser
+    worker          = models.BooleanField(default=False) # a medical worker
+    hospital        = models.BooleanField(default=False) # a hosptial
     
     USERNAME_FIELD = 'email'
 
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'phone', 'field'] 
+    #REQUIRED_FIELDS = ['first_name', 'last_name', 'phone', 'field'] 
     # Email & Password are required by default.
 
     objects = UserManager()
@@ -125,3 +140,13 @@ class User(AbstractBaseUser):
     def is_active(self):
         "Is the user active?"
         return self.active
+
+    @property
+    def is_hospital(self):
+        "Is the user a hospital?"
+        return self.hospital
+
+    @property
+    def is_worker(self):
+        "Is the user a medical worker?"
+        return self.worker
