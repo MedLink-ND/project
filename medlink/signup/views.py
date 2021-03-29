@@ -12,7 +12,44 @@ from .tok import account_activation_token
 User = get_user_model()
 
 # Create your views here.
-def signup(request):
+def worker_signup(request):
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = SignUpForm(request.POST)
+
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            user = form.save()
+            user.save()
+            
+            current_site = get_current_site(request)
+
+            mail_subject = 'Welcome to MedLink!'
+            message = render_to_string('email-confirmation.html', {
+                'user':     user,
+                'domain':   current_site.domain,
+                'uid':      urlsafe_base64_encode(force_bytes(user.pk)),
+                'token':    account_activation_token.make_token(user),
+            })
+            to_email = form.cleaned_data.get('email')
+            email = EmailMessage(
+                mail_subject, message, to=[to_email], from_email="MedLink <jz.project.testing@gmail.com>"
+            )
+            email.content_subtype = "html"
+            email.send()
+
+            return redirect('confirmation/')
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+      form = SignUpForm()
+    
+    return render(request, "signup.html", {"signup_form": form})
+
+def hospital_signup(request):
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = SignUpForm(request.POST)
