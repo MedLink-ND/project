@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure---o7!4vwj=8mzw5i*_ly-7*!1xlykdzkyw*y3xlkd)vaepdb!z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['db.cse.nd.edu']
 
 
 # Application definition
@@ -83,8 +83,14 @@ WSGI_APPLICATION = 'medlink.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        #'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'jzhang17',
+        'USER': 'jzhang17',
+        'PASSWORD': 'pw',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        #'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
