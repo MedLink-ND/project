@@ -6,8 +6,11 @@ from django.template.loader import render_to_string
 
 
 def index(request):
-    try:
-        return render(request, "index.html")
-    except Exception as e:
-        print(e)
-        print("error")
+
+    #try:
+    #    return render(request, "index.html")
+    #except Exception as e:
+    #    print(e)
+    #    print("error")
+
+    return render(request, 'index.html')
