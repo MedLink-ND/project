@@ -97,6 +97,8 @@ class User(AbstractBaseUser):
     admin           = models.BooleanField(default=False) # a superuser
     worker          = models.BooleanField(default=False) # a medical worker
     hospital        = models.BooleanField(default=False) # a hosptial
+    profile_created = models.BooleanField(default=False)
+
     
     USERNAME_FIELD = 'email'
 
