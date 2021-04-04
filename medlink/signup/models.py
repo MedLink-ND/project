@@ -79,6 +79,7 @@ class User(AbstractBaseUser):
     last_name   = models.CharField(verbose_name='Last Name', max_length=255, blank=False, null=False, default='')
     phone       = models.CharField(verbose_name='Phone Number', max_length=255, blank=False, unique=False, default='')
     field       = models.CharField(verbose_name='Field/Specialty', max_length=255, blank=False, null=False, default='')
+    profile_created = models.BooleanField(default=False)
     active      = models.BooleanField(default=False) # Cannot log in
     staff       = models.BooleanField(default=False) # a admin user; non super-user
     admin       = models.BooleanField(default=False) # a superuser

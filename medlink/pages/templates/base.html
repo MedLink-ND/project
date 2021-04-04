@@ -63,8 +63,9 @@
                     <li><a href="#">About</a></li>
                     {% comment %} <li><a href="development.html">Development Plan</a></li> {% endcomment %}
                     <li><a href="#">Contact</a></li>
-
+                    {% block logout %}
                     <li><a href="{% url 'login' %}" class="getstarted">Login / Register</a></li>
+                    {% endblock %}
 
                 </ul>
                 <i class="bi bi-list mobile-nav-toggle"></i>
