@@ -24,3 +24,13 @@ class JobCreationForm(forms.Form):
     job_location_city = forms.CharField(
         label='Where is the hospital?', 
     )
+
+class JobSearchForm(forms.Form):
+
+    def __init__(self, * args, **kwargs):
+        super(JobSearchForm, self).__init__(*args, **kwargs)
+
+    location_contains = forms.CharField(
+        label="Where would you like to search for a job?",
+        required = False
+    )
