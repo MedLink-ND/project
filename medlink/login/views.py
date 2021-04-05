@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login as auth_login, get_user_mode
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, HttpResponseRedirect
 from .forms import LoginForm, HospitalProfileForm
+from .models import HospitalProfile
 
 # Create your views here.
 def login(request):
@@ -61,13 +62,13 @@ def hospital_profile_creation(request):
                 hospital_location_state=hospital_location_state,
                 hospital_location_zipcode=hospital_location_zipcode,
                 looking_for_worker=looking_for_worker,
-                base_rofile=user,
+                base_profile=user,
             )
 
             hospital_info.save()
             user.profile_created = True
             
-            return render(request, 'hospital_profile_creation.html', {'form': form})
+            return redirect('../../home/')
 
     # if a GET (or any other method) we'll create a blank form
     else:
