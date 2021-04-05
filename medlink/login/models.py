@@ -15,7 +15,7 @@ class HospitalProfile(models.Model):
     hospital_location_city = models.CharField(max_length=255, null=True)
     hospital_location_state = models.CharField(max_length=255, null=True)
     hospital_location_zipcode = models.CharField(max_length=255, null=True)
-    base_rofile = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    base_profile = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     looking_for_worker = models.BooleanField(default=True)
 
     def __str__(self):

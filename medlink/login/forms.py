@@ -9,8 +9,8 @@ class LoginForm(forms.Form):
 
 
 RECRUITING_STATUS = [
-    ('Not looking for medical workers at this moment', 'Not looking for medical workers at this moment'),
-    ('Currently seeking medical workers', 'Currently seeking medical workers'),
+    (False, 'Not looking for medical workers at this moment'),
+    (True, 'Currently seeking medical workers'),
 ]
 
 class HospitalProfileForm(forms.Form):
@@ -34,7 +34,7 @@ class HospitalProfileForm(forms.Form):
     hospital_position = forms.CharField(
         label='What is your position?', 
     )
-    hospital_recruiting_status = forms.CharField(
+    looking_for_worker = forms.CharField(
         label='Are you currently looking for medical workers?', 
         widget=forms.Select(choices=RECRUITING_STATUS)
     )
