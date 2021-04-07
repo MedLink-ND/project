@@ -37,6 +37,7 @@ class ProfileUpdateHospitalForm(forms.Form):
     )
     hospital_name = forms.CharField(
         label='Hospital Name',
+    )
 
 class JobSearchForm(forms.Form):
 
