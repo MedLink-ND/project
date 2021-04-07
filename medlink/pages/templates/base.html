@@ -62,11 +62,12 @@
     <header id="header" class="fixed-top d-flex align-items-center">
         <div class="container d-flex align-items-center">
 
-            <h1 class="logo me-auto"><a href="{% url 'home' %}"></a>MedLink</a></h1>
+            <h1 class="logo me-auto"><a href="{% url 'home' %}">MedLink</a></h1>
 
             <nav id="navbar" class="navbar"> <!-- removed navbar-mobile-->
                 <ul>
                     <li><a href="{% url 'home' %}" class="active">Home</a></li>
+                    <li><a href="{% url 'job_query' %}" >Jobs</a></li>
                     <li><a href="#">About</a></li>
                     {% comment %} <li><a href="development.html">Development Plan</a></li> {% endcomment %}
                     <li><a href="#">Contact</a></li>
