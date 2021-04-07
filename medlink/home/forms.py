@@ -37,4 +37,13 @@ class ProfileUpdateHospitalForm(forms.Form):
     )
     hospital_name = forms.CharField(
         label='Hospital Name',
+
+class JobSearchForm(forms.Form):
+
+    def __init__(self, * args, **kwargs):
+        super(JobSearchForm, self).__init__(*args, **kwargs)
+
+    location_contains = forms.CharField(
+        label="Where would you like to search for a job?",
+        required = False
     )

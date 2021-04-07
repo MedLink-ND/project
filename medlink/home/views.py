@@ -3,7 +3,7 @@ from django.contrib.auth import logout
 from django.core.exceptions import MultipleObjectsReturned
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, HttpResponseRedirect
-from .forms import JobCreationForm, ProfileUpdateHospitalForm
+from .forms import JobCreationForm, JobSearchForm, ProfileUpdateHospitalForm
 from .models import JobInfo
 
 User = get_user_model()
@@ -78,5 +78,29 @@ def profile_update(request):
 
     return render(request, 'profile_update.html', {'form': form})
 
+
 def log_out(request):
     logout(request)
+
+
+def job_query(request):
+    qs = JobInfo.objects.all()
+    context = {}
+    if request.method == 'GET':
+        form = JobSearchForm(request.GET)
+        context['form'] = form
+        if form.is_valid():
+            cd = form.cleaned_data
+            location_contains_query = cd['location_contains']
+
+            if location_contains_query != '' and location_contains_query is not None:
+                qs = qs.filter(job_location_hospital__icontains=location_contains_query)
+
+            
+    else:
+        form = JobSearchForm()
+
+    context['queryset']= qs
+    #context['form'] = form
+
+    return render(request, "job_query.html", context)

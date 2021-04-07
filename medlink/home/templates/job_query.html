@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}MedLink | Filter{% endblock %}
+
+
+{% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Welcome</title>
+    <link href="https://fonts.googleapis.com/css?family=Karla:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+
+  <main class="d-flex align-items-center min-vh-100 py-3 py-md-0" style="margin-top:20px">
+
+    <div class="container blog">
+        <div class="row">
+            <div class="col-lg-8 entries"></div>
+            <div class="card login-card">
+                <div class="card-body">
+                    <p class="login-card-description">Find a Job</p>
+                    <form method="GET">
+                        {% csrf_token %}
+                        {{ form.non_field_errors }}
+                        {% for field in form %}
+                        <div class="form-group">
+                            {{ field.errors }}
+                            {{ field.label_tag }} {{ field }}
+                            {% if field.help_text %}
+                            <p class="help">{{ field.help_text|safe }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        <input name="jobs" id="jobs" class="btn btn-block login-btn mb-4" name = "location_contains" type="submit" value="Post">
+                    </form>
+                </div>
+            </div>
+
+            <article class="entry">
+                <ul>
+                    {% for job in queryset %}
+                    <li>
+                        {{ job.job_name }}
+                        <span>Location: {{ job.job_location_hospital }}</span>
+                        {% comment %}
+                        <span>
+                        {% for cat in journal.categories.all %}
+                            {{ cat }}
+                        {% endfor %}
+                        </span>
+                        <span>Publish date: {{ journal.publish_date }}</span>
+                        <span>View count: {{ journal.views }}</span>
+                        <span>Reviewed: {{ journal.reviewed }}</span>
+                        {% endcomment %}
+                    </li>
+                    <hr />
+                    {% endfor %}
+            
+                </ul>
+            </article>
+            </div>
+        </div>
+    </div>
+
+    
+
+  </main>
+{% endblock %}
+
+{% block scripts %}
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+{% endblock %}
