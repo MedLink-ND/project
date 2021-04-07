@@ -25,6 +25,19 @@ class JobCreationForm(forms.Form):
         label='Where is the hospital?', 
     )
 
+class ProfileUpdateHospitalForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(ProfileUpdateHospitalForm, self).__init__(*args, **kwargs)
+
+    first_name = forms.CharField(
+        label="First Name", 
+    )
+    last_name = forms.CharField(
+        label='Last Name', 
+    )
+    hospital_name = forms.CharField(
+        label='Hospital Name',
+
 class JobSearchForm(forms.Form):
 
     def __init__(self, * args, **kwargs):
