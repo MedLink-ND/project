@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login as auth_login, get_user_model
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, HttpResponseRedirect
-from .forms import JobCreationForm
+from .forms import JobCreationForm, JobSearchForm
 from .models import JobInfo
 
 # Create your views here.
@@ -33,3 +33,26 @@ def home(request):
         form = JobCreationForm()
 
     return render(request, 'home.html', {'form': form})
+
+
+def job_query(request):
+    qs = JobInfo.objects.all()
+    context = {}
+    if request.method == 'GET':
+        form = JobSearchForm(request.GET)
+        context['form'] = form
+        if form.is_valid():
+            cd = form.cleaned_data
+            location_contains_query = cd['location_contains']
+
+            if location_contains_query != '' and location_contains_query is not None:
+                qs = qs.filter(job_location_hospital__icontains=location_contains_query)
+
+            
+    else:
+        form = JobSearchForm()
+
+    context['queryset']= qs
+    #context['form'] = form
+
+    return render(request, "job_query.html", context)
