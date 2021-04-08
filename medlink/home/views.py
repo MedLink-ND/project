@@ -3,7 +3,7 @@ from django.contrib.auth import logout
 from django.core.exceptions import MultipleObjectsReturned
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, HttpResponseRedirect
-from .forms import JobCreationForm, JobSearchForm, ProfileUpdateHospitalForm
+from .forms import JobCreationForm, JobSearchForm, ProfileUpdateHospitalForm, JobUpdateForm
 from .models import JobInfo
 
 User = get_user_model()
@@ -19,14 +19,11 @@ def home_hospital(request):
     try:
         for existingJob in JobInfo.objects.filter(base_profile_id=currUserID):
             allJobs.append(existingJob)
-
         print('Job found')
     except JobInfo.DoesNotExist:
         print("user is ok, no existing job")
     except MultipleObjectsReturned:
         return redirect('failure/')
-
-    print(allJobs)
 
     return render(request, 'home_hospital.html', {'existingJob': allJobs})
 
@@ -104,3 +101,34 @@ def job_query(request):
     #context['form'] = form
 
     return render(request, "job_query.html", context)
+
+def hospital_delete_job(request, job_id):
+    job = JobInfo.objects.filter(id=job_id)
+    job.delete()
+
+    return redirect("../../")
+
+def hospital_update_job(request, job_id):
+    job = JobInfo.objects.filter(id=job_id)
+    if request.method == 'POST':
+        form = JobUpdateForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            job_name = cd['job_name']
+            job_level = cd['job_level']
+            job_description = cd['job_description']
+            job_location_hospital = cd['job_location_hospital']
+            job_location_city = cd['job_location_city']
+
+        job.update(
+            job_name=job_name,
+            job_level=job_level,
+            job_description=job_description,
+            job_location_hospital=job_location_hospital,
+            job_location_city=job_location_city,
+        )
+    
+    else:
+        form = JobUpdateForm()
+    
+    return render(request, 'job_update.html', {'form': form})
