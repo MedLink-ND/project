@@ -48,3 +48,24 @@ class JobSearchForm(forms.Form):
         label="Where would you like to search for a job?",
         required = False
     )
+
+class JobUpdateForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        super(JobUpdateForm, self).__init__(*args, **kwargs)
+
+    job_name = forms.CharField(
+        label="What is the name of the job?", 
+    )
+    job_level = forms.CharField(
+        label='What is its level?', 
+    )
+    job_description = forms.CharField(
+        label='Describe in a few sentences what this job is and what you are looking for?', 
+    )
+    job_location_hospital = forms.CharField(
+        label='Which hospital is this job associated with?', 
+    )
+    job_location_city = forms.CharField(
+        label='Where is the hospital?', 
+    )
