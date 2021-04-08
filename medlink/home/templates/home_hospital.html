@@ -31,25 +31,26 @@
         <div class="row no-gutters">
             <div class="card-body">
                 <p class="login-card-description">Welcome to MedLink Recruiting Portal!</p>
-                <p>Here are all of your posted jobs. Post a new job <a href="post_job/">here</a>.</p>
-                <form method="POST">
-                    {% csrf_token %}
-                    <h5>All jobs</h5>
-                    {% if existingJob is None %}
-                    <p>You haven't posted any jobs.</p>
-                    {% else %}
-                        {% for job in existingJob %}
-                            <h6 class="card-title m-0">Job Name: {{ job.job_name }}</h6>
-                            <h6 class="card-title m-0">Job Level: {{ job.job_level }}</h6>
-                            <h6 class="card-title m-0">Job Description: {{ job.job_description }}</h6>
-                            <h6 class="card-title m-0">Job Location: {{ job.job_location_hospital }}</h6>
-                            <h6 class="card-title m-0">Number of people applied: </h6>
-                            <br>
-                        {% endfor %}
-                    {% endif %}
-                </form>
+                <p>Here are all of your posted jobs. Post a new job <a href="post_job/"><b>here</b></a>.</p>
+                {% csrf_token %}
+                <h5>All jobs</h5>
+                {% if existingJob is None %}
+                <p>You haven't posted any jobs.</p>
+                {% else %}
+                    {% for job in existingJob %}
+                        <h6 class="card-title m-0">Job Name: {{ job.job_name }}</h6>
+                        <h6 class="card-title m-0">Job Level: {{ job.job_level }}</h6>
+                        <h6 class="card-title m-0">Job Description: {{ job.job_description }}</h6>
+                        <h6 class="card-title m-0">Job Location: {{ job.job_location_hospital }}</h6>
+                        <h6 class="card-title m-0">Number of people applied: </h6>
+                        <a href="delete/{{ job.id }}"><b>Delete</b></a>
+                        <a href="update/{{ job.id }}"><b>Modify</b></a>
+                        <br>
+                        <br>
+                    {% endfor %}
+                {% endif %}
             </div>
-          </div>
+        </div>
       </div>
     </div>
 </main>
