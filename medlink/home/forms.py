@@ -1,6 +1,11 @@
 from django import forms
 from django.contrib.auth import get_user_model
 
+# for date picker
+from django.forms import ModelForm
+from .models import Date
+
+
 User = get_user_model()
 
 class JobCreationForm(forms.Form):
@@ -59,10 +64,6 @@ class JobSearchForm(forms.Form):
         label='Search in job description?', 
         required = False
     )
-
-    ##### DATE RANGES AND TIMES ########
-    
-
 
 class JobUpdateForm(forms.Form):
 
