@@ -41,29 +41,68 @@
                     </form>
                 </div>
             </div>
-
-            <article class="entry">
-                <ul>
-                    {% for job in queryset %}
-                    <li>
-                        {{ job.job_name }}
-                        <span>Location: {{ job.job_location_hospital }}</span>
-                        {% comment %}
-                        <span>
-                        {% for cat in journal.categories.all %}
-                            {{ cat }}
-                        {% endfor %}
-                        </span>
-                        <span>Publish date: {{ journal.publish_date }}</span>
-                        <span>View count: {{ journal.views }}</span>
-                        <span>Reviewed: {{ journal.reviewed }}</span>
-                        {% endcomment %}
-                    </li>
-                    <hr />
-                    {% endfor %}
             
-                </ul>
+            <article class="entry">
+                    {% for job in queryset %}
+                    
+                        <div class="row mt-5">
+                            <div class="col-lg-4">
+                                <h2 class="entry-title">{{ job.job_name }}</h2>
+                              
+                                <div class="info">
+                                    <div class="address">
+                                        <!--<i class="bi bi-geo-alt"></i>-->
+                                        <p>{{ job.job_location_hospital }}</p>
+                                        <p>{{ journal.job_address }}</p>
+                                    </div>
+
+                                <div class="email">
+                                    <!--<i class="bi bi-envelope"></i>-->
+                                    <p>Job Information:</p>
+                                    <p>Level: {{ job.job_level }}</p>
+                                    <p></p>
+                                </div>
+                    
+                                <div class="entry-content">
+                                    <p>
+                                        Description: {{ journal.job_description }}
+                                    </p>
+                                </div>
+
+                                {% comment %} <!-- ADD MORE WHEN DATA AVAILABLE-->
+                                  <div class="entry-meta">
+                                    <ul>
+                                      <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html">John Doe</a></li>
+                                      <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-single.html"><time datetime="2020-01-01">Jan 1, 2020</time></a></li>
+                                      <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html">12 Comments</a></li>
+                                    </ul>
+                                  </div>
+                                  <div class="read-more">
+                                    <a href="blog-single.html">Read More</a>
+                                  </div>
+                                {% endcomment %}
+
+
+                                {% comment %}
+                                <div class="email">
+                                  <i class="bi bi-envelope"></i>
+                                  <h4>Email:</h4>
+                                  <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="365f58505976534e575b465a531855595b">[email&#160;protected]</a></p>
+                                </div>
+                                <div class="phone">
+                                  <i class="bi bi-phone"></i>
+                                  <h4>Call:</h4>
+                                  <p>+1 5589 55488 55s</p>
+                                </div>
+                                {% endcomment %}
+                  
+                              </div>
+                  
+                            </div>                
+                    <hr/>
+                    {% endfor %} 
             </article>
+            
             </div>
         </div>
     </div>

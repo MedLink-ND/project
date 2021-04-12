@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'pages',
     'login',
     'signup',
+    'home',
     'verify_email',
 ]
 

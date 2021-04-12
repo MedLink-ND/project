@@ -1,6 +1,11 @@
 from django import forms
 from django.contrib.auth import get_user_model
 
+# for date picker
+from django.forms import ModelForm
+from .models import Date
+
+
 User = get_user_model()
 
 class JobCreationForm(forms.Form):
@@ -25,12 +30,58 @@ class JobCreationForm(forms.Form):
         label='Where is the hospital?', 
     )
 
+class ProfileUpdateHospitalForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(ProfileUpdateHospitalForm, self).__init__(*args, **kwargs)
+
+    first_name = forms.CharField(
+        label="First Name", 
+    )
+    last_name = forms.CharField(
+        label='Last Name', 
+    )
+    hospital_name = forms.CharField(
+        label='Hospital Name',
+    )
+
 class JobSearchForm(forms.Form):
 
     def __init__(self, * args, **kwargs):
         super(JobSearchForm, self).__init__(*args, **kwargs)
 
+    ##### BASIC SEARCH QUERIES ########
     location_contains = forms.CharField(
-        label="Where would you like to search for a job?",
+        label="Where do you want to search for a job?",
         required = False
+    )
+
+    level_contains = forms.CharField(
+        label='What job level?', 
+        required = False
+    )
+
+    description_contains = forms.CharField(
+        label='Search in job description?', 
+        required = False
+    )
+
+class JobUpdateForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        super(JobUpdateForm, self).__init__(*args, **kwargs)
+
+    job_name = forms.CharField(
+        label="What is the name of the job?", 
+    )
+    job_level = forms.CharField(
+        label='What is its level?', 
+    )
+    job_description = forms.CharField(
+        label='Describe in a few sentences what this job is and what you are looking for?', 
+    )
+    job_location_hospital = forms.CharField(
+        label='Which hospital is this job associated with?', 
+    )
+    job_location_city = forms.CharField(
+        label='Where is the hospital?', 
     )

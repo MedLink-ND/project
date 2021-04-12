@@ -24,4 +24,3 @@ class JobInfo(models.Model):
     #     + 'City: ' + self.hospital_location_city + '\t' \
     #     + 'State: ' + self.hospital_location_state + '\t' \
     #     + 'Area Code: ' + self.hospital_location_zipcode + '\t' \
-    #     + 'Looking for worker: ' + str(self.looking_for_worker)
