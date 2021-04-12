@@ -1,9 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 
-# for date picker
-from django.forms import ModelForm
-from .models import Date
+
 
 
 User = get_user_model()
