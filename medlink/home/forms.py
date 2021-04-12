@@ -44,10 +44,25 @@ class JobSearchForm(forms.Form):
     def __init__(self, * args, **kwargs):
         super(JobSearchForm, self).__init__(*args, **kwargs)
 
+    ##### BASIC SEARCH QUERIES ########
     location_contains = forms.CharField(
-        label="Where would you like to search for a job?",
+        label="Where do you want to search for a job?",
         required = False
     )
+
+    level_contains = forms.CharField(
+        label='What job level?', 
+        required = False
+    )
+
+    description_contains = forms.CharField(
+        label='Search in job description?', 
+        required = False
+    )
+
+    ##### DATE RANGES AND TIMES ########
+    
+
 
 class JobUpdateForm(forms.Form):
 
