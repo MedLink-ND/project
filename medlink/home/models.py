@@ -11,13 +11,9 @@ class JobInfo(models.Model):
         app_label = 'home'
 
     job_name = models.CharField(max_length=255, null=True)
-    job_level = models.CharField(max_length=255, null=True)
-    job_category = models.CharField(max_length=255, null=True)
-    job_duration = models.CharField(max_length=255, null=True)
-    job_start_month = models.CharField(max_length=255, null=True)
-    job_start_year = models.CharField(max_length=255, null=True)
-    job_end_month = models.CharField(max_length=255, null=True)
-    job_end_year = models.CharField(max_length=255, null=True)
+    job_type = models.CharField(max_length=255, null=True)
+    job_start_time = models.DateTimeField(null=True)
+    job_end_time = models.DateTimeField(null=True)
     job_hour_start = models.CharField(max_length=255, null=True)
     job_hour_end = models.CharField(max_length=255, null=True)    
     job_description = models.CharField(max_length=255, null=True)

@@ -36,14 +36,12 @@ def hospital_post_job(request):
             if form.is_valid():
                 cd = form.cleaned_data
                 job_name = cd['job_name']
-                job_level = cd['job_level']
                 job_description = cd['job_description']
                 job_location_hospital = cd['job_location_hospital']
                 job_location_city = cd['job_location_city']
 
                 job_info = JobInfo(
                     job_name=job_name,
-                    job_level=job_level,
                     job_description=job_description,
                     job_location_hospital=job_location_hospital,
                     job_location_city=job_location_city,

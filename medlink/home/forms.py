@@ -1,47 +1,24 @@
 from django import forms
 from django.contrib.auth import get_user_model
+import datetime
+from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker
 
 User = get_user_model()
 
-CATEGORIES = (
-    ('a', 'A'),
-    ('b', 'B'),
-    ('c', 'C'),
-    ('d', 'D'),
-    ('e', 'E'),
-    ('f', 'F'),
-)
-
 DURATION = (
     ('full-time', 'Full Time'),
-    ('locum-tenes', 'Locum Tenens'),
     ('part-time', 'Part Time'),
+    ('locum', 'Short Term Locum'),
 )
-
-MONTHS = (
-    (1, 'January'),
-    (2, 'Febuary'),
-    (3, 'March'),
-    (4, 'April'),
-    (5, 'May'),
-    (6, 'June'),
-    (7, 'July'),
-    (8, 'August'),
-    (9, 'September'),
-    (10, 'October'),
-    (11, 'November'),
-    (12, 'December'),
+HOSPITAL = (
+    ('outpatient', 'Outpatient'),
+    ('inpatient', 'Inpatient'),
+    ('outpatient+inpatient', 'Both outpatient/inpatient')
 )
-
-YEARS = (
-    (2021, '2021'),
-    (2022, '2022'),
-    (2023, '2023'),
-    (2024, '2024'),
-    (2025, '2025'),
-    (2026, '2026'),
+ONCALL = (
+    ('oncall', 'On Call'),
+    ('nocall', 'No Call'),
 )
-
 TIME = (
     (1, '1 AM'),
     (2, '2 AM'),
@@ -68,7 +45,10 @@ TIME = (
     (23, '11 PM'),
     (24, '12 AM'),
 )
-
+EXPERIENCE = (
+    ('gt2', 'Greater than 2 years'),
+    ('new grad', 'New Grad (fewer than 2 years)')
+)
 class JobCreationForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
@@ -77,32 +57,54 @@ class JobCreationForm(forms.Form):
     job_name = forms.CharField(
         label="What is the name of the job?", 
     )
-    job_level = forms.CharField(
-        label='What is its level?', 
-    )
-    job_category = forms.CharField(
-        label='What is the category of this job?',
-        widget=forms.Select(choices=CATEGORIES),
-    )
-    job_duration = forms.CharField(
-        label='What is the duration of this job?',
+    job_type = forms.CharField(
+        label='What is the type of this job?',
         widget=forms.Select(choices=DURATION),
     )
-    job_start_month = forms.CharField(
-        label='When does this job start?',
-        widget=forms.Select(choices=MONTHS),
+    job_location = forms.CharField(
+        label='Where is the job? (Enter zipcode of hospital)', 
     )
-    job_start_year = forms.CharField(
-        label='When does this job start?',
-        widget=forms.Select(choices=YEARS),
+    hospital_type = forms.CharField(
+        label="What is the type of the hospital?",
+        widget=forms.Select(choices=HOSPITAL),
     )
-    job_end_month = forms.CharField(
-        label='When does this job end?',
-        widget=forms.Select(choices=MONTHS),
+    job_on_call = forms.CharField(
+        label="Does this job require on call?",
+        widget=forms.RadioSelect(choices=ONCALL),
     )
-    job_end_year = forms.CharField(
-        label='When does this job end?',
-        widget=forms.Select(choices=YEARS),
+    job_start_time = forms.DateTimeField(
+        input_formats=["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M", "%b %d, %Y, %H:%M %p"],
+        label='What is the start date of this job?', 
+        widget=DateTimePicker(
+            options={
+                'format': 'MMM DD, YYYY',
+                'useCurrent': True,
+                'stepping': 10,
+                'ignoreReadonly': True,
+                'sideBySide': True,
+           },
+            attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True,
+            },
+        ),
+    )
+    job_end_time = forms.DateTimeField(
+        input_formats=["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M", "%b %d, %Y, %H:%M %p"],
+        label='What is the end date of this job?', 
+        widget=DateTimePicker(
+            options={
+                'format': 'MMM DD, YYYY',
+                'useCurrent': True,
+                'stepping': 10,
+                'ignoreReadonly': True,
+                'sideBySide': True,
+           },
+            attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True,
+            },
+        ),
     )
     job_hour_start = forms.CharField(
         label='What time does the job begin in a day?',
@@ -112,15 +114,17 @@ class JobCreationForm(forms.Form):
         label='What time does the job end in a day?',
         widget=forms.Select(choices=TIME),
     )
+    job_experience = forms.CharField(
+        label='What is the experience level required for this job?',
+        widget=forms.Select(choices=EXPERIENCE),
+    )
     job_description = forms.CharField(
         label='Describe in a few sentences what this job is and what you are looking for?', 
     )
     job_location_hospital = forms.CharField(
         label='Which hospital is this job associated with?', 
     )
-    job_location_city = forms.CharField(
-        label='Where is the hospital?', 
-    )
+
 
 class ProfileUpdateHospitalForm(forms.Form):
     def __init__(self, *args, **kwargs):
