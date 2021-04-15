@@ -87,10 +87,18 @@ def job_query(request):
         if form.is_valid():
             cd = form.cleaned_data
             location_contains_query = cd['location_contains']
+            level_contains_query = cd['level_contains']
+            description_contains_query = cd['description_contains']
 
             if location_contains_query != '' and location_contains_query is not None:
                 qs = qs.filter(job_location_hospital__icontains=location_contains_query)
+                qs = qs.filter(job_location_city__icontains=location_contains_query)
 
+            if level_contains_query != '' and level_contains_query is not None:
+                qs = qs.filter(job_level__icontains=level_contains_query)
+
+            if description_contains_query != '' and description_contains_query is not None:
+                qs = qs.filter(job_description__icontains=description_contains_query)
             
     else:
         form = JobSearchForm()
