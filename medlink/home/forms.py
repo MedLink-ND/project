@@ -3,9 +3,6 @@ from django.contrib.auth import get_user_model
 import datetime
 from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker
 
-
-
-
 User = get_user_model()
 
 DURATION = (
@@ -52,6 +49,14 @@ EXPERIENCE = (
     ('gt2', 'Greater than 2 years'),
     ('new grad', 'New Grad (fewer than 2 years)')
 )
+SUPERVISION = (
+    ('no', 'No supervision'),
+    ('yes', 'Supervised by anesthesiologist'),
+)
+PAYMENT = (
+    ('w2', 'W2'),
+    ('1099', '1099/No Benefits')
+)
 class JobCreationForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
@@ -64,8 +69,11 @@ class JobCreationForm(forms.Form):
         label='What is the type of this job?',
         widget=forms.Select(choices=DURATION),
     )
-    job_location = forms.CharField(
+    job_location_zipcode = forms.IntegerField(
         label='Where is the job? (Enter zipcode of hospital)', 
+    )
+    job_location_hospital = forms.CharField(
+        label='Which hospital is this job associated with?', 
     )
     hospital_type = forms.CharField(
         label="What is the type of the hospital?",
@@ -76,7 +84,7 @@ class JobCreationForm(forms.Form):
         widget=forms.RadioSelect(choices=ONCALL),
     )
     job_start_time = forms.DateTimeField(
-        input_formats=["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M", "%b %d, %Y, %H:%M %p"],
+        input_formats=["%Y-%m-%dT%H:%M", "%Y-%m-%d", "%b %d, %Y, %H:%M %p"],
         label='What is the start date of this job?', 
         widget=DateTimePicker(
             options={
@@ -93,7 +101,7 @@ class JobCreationForm(forms.Form):
         ),
     )
     job_end_time = forms.DateTimeField(
-        input_formats=["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M", "%b %d, %Y, %H:%M %p"],
+        input_formats=["%Y-%m-%dT%H:%M", "%Y-%m-%d", "%b %d, %Y, %H:%M %p"],
         label='What is the end date of this job?', 
         widget=DateTimePicker(
             options={
@@ -109,23 +117,29 @@ class JobCreationForm(forms.Form):
             },
         ),
     )
-    job_hour_start = forms.CharField(
-        label='What time does the job begin in a day?',
-        widget=forms.Select(choices=TIME),
+    locum_shift_day = forms.CharField(
+        label='For locum: How many days in a week?'
     )
-    job_hour_end = forms.CharField(
-        label='What time does the job end in a day?',
-        widget=forms.Select(choices=TIME),
+    locum_shift_hour = forms.CharField(
+        label='For locum: How many hours in a day?'
     )
     job_experience = forms.CharField(
         label='What is the experience level required for this job?',
         widget=forms.Select(choices=EXPERIENCE),
     )
-    job_description = forms.CharField(
-        label='Describe in a few sentences what this job is and what you are looking for?', 
+    job_supervision = forms.CharField(
+        label='Does this job require supervision from an anesthesiologist',
+        widget=forms.Select(choices=SUPERVISION),
     )
-    job_location_hospital = forms.CharField(
-        label='Which hospital is this job associated with?', 
+    job_payment = forms.CharField(
+        label='What is the payment type for this job?',
+        widget=forms.Select(choices=PAYMENT),
+    )
+    job_vacation = forms.CharField(
+        label='What are the vacation benefits of this job?', 
+    )
+    education_money = forms.CharField(
+        label='Are there any education credits with this job?', 
     )
 
 
