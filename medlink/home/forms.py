@@ -84,16 +84,12 @@ class JobCreationForm(forms.Form):
         widget=forms.RadioSelect(choices=ONCALL),
     )
     job_start_time = forms.DateTimeField(
-        input_formats=["%Y-%m-%dT%H:%M", "%Y-%m-%d", "%b %d, %Y, %H:%M %p"],
         label='What is the start date of this job?', 
-        widget=DateTimePicker(
+        widget=DatePicker(
             options={
-                'format': 'MMM DD, YYYY',
-                'useCurrent': True,
-                'stepping': 10,
-                'ignoreReadonly': True,
-                'sideBySide': True,
-           },
+                'minDate': '2021-01-01',
+                'maxDate': '2030-01-01',
+            },
             attrs={
                 'append': 'fa fa-calendar',
                 'icon_toggle': True,
@@ -101,16 +97,12 @@ class JobCreationForm(forms.Form):
         ),
     )
     job_end_time = forms.DateTimeField(
-        input_formats=["%Y-%m-%dT%H:%M", "%Y-%m-%d", "%b %d, %Y, %H:%M %p"],
         label='What is the end date of this job?', 
-        widget=DateTimePicker(
+        widget=DatePicker(
             options={
-                'format': 'MMM DD, YYYY',
-                'useCurrent': True,
-                'stepping': 10,
-                'ignoreReadonly': True,
-                'sideBySide': True,
-           },
+                'minDate': '2021-01-01',
+                'maxDate': '2030-01-01',
+            },
             attrs={
                 'append': 'fa fa-calendar',
                 'icon_toggle': True,

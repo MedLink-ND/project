@@ -49,25 +49,6 @@
         <div class="row no-gutters">
             <div class="card-body">
                 <p class="login-card-description">Post a new job!</p>
-                <!-- <p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
-                <form action="" method="post">{% csrf_token %}
-                <table>
-                {{ wizard.management_form }}
-                {% if wizard.form.forms %}
-                    {{ wizard.form.management_form }}
-                    {% for form in wizard.form.forms %}
-                        {{ form }}
-                    {% endfor %}
-                {% else %}
-                    {{ wizard.form }}
-                {% endif %}
-                </table>
-                {% if wizard.steps.prev %}
-                <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% trans "first step" %}</button>
-                <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% trans "prev step" %}</button>
-                {% endif %}
-                <input type="submit" value="{% trans 'submit' %}"/>
-                </form> -->
                 <form method="POST">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
@@ -82,7 +63,6 @@
                     {% endfor %}
                 <input name="postjob" id="postjob" class="btn btn-dark btn-sm" type="submit" value="Post">
                 <button class="btn btn-dark btn-sm"><a href="../" style="color: white">Return to home</a></button>
-
                 </form>
             </div>
           </div>
