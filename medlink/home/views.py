@@ -36,17 +36,37 @@ def hospital_post_job(request):
             if form.is_valid():
                 cd = form.cleaned_data
                 job_name = cd['job_name']
-                job_level = cd['job_level']
-                job_description = cd['job_description']
+                job_type = cd['job_type']
+                job_location_zipcode = cd['job_location_zipcode']
                 job_location_hospital = cd['job_location_hospital']
-                job_location_city = cd['job_location_city']
+                hospital_type = cd['hospital_type']
+                job_on_call = cd['job_on_call']
+                job_start_time = cd['job_start_time']
+                job_end_time = cd['job_end_time']
+                locum_shift_day = cd['locum_shift_day']
+                locum_shift_hour = cd['locum_shift_hour']
+                job_experience = cd['job_experience']
+                job_supervision = cd['job_supervision']
+                job_payment = cd['job_payment']
+                job_vacation = cd['job_vacation']
+                education_money = cd['education_money']
 
                 job_info = JobInfo(
                     job_name=job_name,
-                    job_level=job_level,
-                    job_description=job_description,
+                    job_type=job_type,
+                    job_location_zipcode=job_location_zipcode,
                     job_location_hospital=job_location_hospital,
-                    job_location_city=job_location_city,
+                    hospital_type=hospital_type,
+                    job_on_call=job_on_call,
+                    job_start_time=job_start_time,
+                    job_end_time=job_end_time,
+                    locum_shift_day=locum_shift_day,
+                    locum_shift_hour=locum_shift_hour,
+                    job_experience=job_experience,
+                    job_supervision=job_supervision,
+                    job_payment=job_payment,
+                    job_vacation=job_vacation,
+                    education_money=education_money,
                     base_profile=user,
                 )
 

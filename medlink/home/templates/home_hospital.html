@@ -39,9 +39,16 @@
                 {% else %}
                     {% for job in existingJob %}
                         <h6 class="card-title m-0">Job Name: {{ job.job_name }}</h6>
-                        <h6 class="card-title m-0">Job Level: {{ job.job_level }}</h6>
-                        <h6 class="card-title m-0">Job Description: {{ job.job_description }}</h6>
-                        <h6 class="card-title m-0">Job Location: {{ job.job_location_hospital }}</h6>
+                        <h6 class="card-title m-0">Job Type: {{ job.job_type }}, {{ job_on_call }}</h6>
+                        <h6 class="card-title m-0">Job Location: {{ job.job_location_hospital }}, {{ job.job_location_zipcode }}</h6>
+                        <h6 class="card-title m-0">Hospital Type Type: {{ job.hospital_type }}</h6>
+                        <h6 class="card-title m-0">Job Start Date: {{ job.job_start_time }}</h6>
+                        <h6 class="card-title m-0">Job End Date: {{ job.job_end_time }}</h6>
+                        <h6 class="card-title m-0">Locum Shift: {{ job.locum_shift_day }}, {{ locum_shift_hour }}</h6>
+                        <h6 class="card-title m-0">Job Experience Requirement: {{ job.job_experience }}</h6>
+                        <h6 class="card-title m-0">Job Supervision: {{ job.job_supervision }}</h6>
+                        <h6 class="card-title m-0">Job Payment: {{ job.job_payment }}</h6>
+                        <h6 class="card-title m-0">Job Benefits: {{ job.job_payment }}, {{ job_vacation }}, {{ education_money }}</h6>
                         <h6 class="card-title m-0">Number of people applied: </h6>
                         <a href="delete/{{ job.id }}"><b>Delete</b></a>
                         <a href="update/{{ job.id }}"><b>Modify</b></a>
