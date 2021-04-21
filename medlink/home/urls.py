@@ -14,4 +14,5 @@ urlpatterns = [
     path(r'hospital/profile_update/', views.profile_update, name='profile_update'),    
     path(r'logout/', views.log_out, name='logout'),    
     path(r'job_query/', views.job_query, name='job_query'),
+    url(r'job_query/application/(?P<job_id>\d+)/$', views.application),
 ]

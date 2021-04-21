@@ -34,3 +34,14 @@ class JobInfo(models.Model):
     #     + 'City: ' + self.hospital_location_city + '\t' \
     #     + 'State: ' + self.hospital_location_state + '\t' \
     #     + 'Area Code: ' + self.hospital_location_zipcode + '\t' \
+
+class JobApplicants(models.Model):
+    
+    class Meta:
+        app_label: 'home'
+
+    job_id = models.ForeignKey(JobInfo, on_delete=models.SET_NULL, null=True)
+    user_id = models.CharField(max_length=255, null=True)
+    #application_date = models.DateTimeField(null=True)
+
+    

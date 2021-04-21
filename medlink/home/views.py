@@ -4,7 +4,8 @@ from django.core.exceptions import MultipleObjectsReturned
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, HttpResponseRedirect
 from .forms import JobCreationForm, JobSearchForm, ProfileUpdateHospitalForm, JobUpdateForm
-from .models import JobInfo
+from .models import JobInfo, JobApplicants
+import datetime
 
 User = get_user_model()
 
@@ -108,20 +109,60 @@ def job_query(request):
         context['form'] = form
         if form.is_valid():
             cd = form.cleaned_data
-            location_contains_query = cd['location_contains']
-            level_contains_query = cd['level_contains']
+            #location_contains_query = cd['location_contains']
+            zip_contains_query = cd['zip_contains']
+            #level_contains_query = cd['level_contains']
             description_contains_query = cd['description_contains']
+            ### new queries
+            type_contains_query = cd['type_contains']
+            hospital_contains_query = cd['hospital_contains']
+            hospital_type_contains_query = cd['hospital_type_contains']
+            on_call_contains_query = cd['on_call_contains']
+            experience_contains_query = cd['experience_contains']
+            supervision_contains_query = cd['supervision_contains']
+            payment_contains_query = cd['payment_contains']
+            vacation_contains_query = cd['vacation_contains']
+            education_money_contains_query = cd['education_money_contains']
 
-            if location_contains_query != '' and location_contains_query is not None:
-                qs = qs.filter(job_location_hospital__icontains=location_contains_query)
-                qs = qs.filter(job_location_city__icontains=location_contains_query)
+            ### by location
+            if zip_contains_query != '' and zip_contains_query is not None:
+                #qs = qs.filter(job_location_hospital__icontains=location_contains_query)
+                qs = qs.filter(job_location_zipcode__icontains=zip_contains_query)
 
-            if level_contains_query != '' and level_contains_query is not None:
-                qs = qs.filter(job_level__icontains=level_contains_query)
+            #if level_contains_query != '' and level_contains_query is not None:
+            #    qs = qs.filter(job_level__icontains=level_contains_query)
 
             if description_contains_query != '' and description_contains_query is not None:
                 qs = qs.filter(job_description__icontains=description_contains_query)
+
+            ### new queries
+            if type_contains_query != '' and type_contains_query is not None:
+                qs = qs.filter(job_type__icontains=type_contains_query)
+
+            if hospital_contains_query != '' and hospital_contains_query is not None:
+                qs = qs.filter(job_hospital__icontains=hospital_contains_query)
+
+            if hospital_type_contains_query != '' and hospital_type_contains_query is not None:
+                qs = qs.filter(hospital_type__icontains=hospital_type_contains_query)
+
+            if on_call_contains_query != '' and on_call_contains_query is not None:
+                qs = qs.filter(job_on_call__icontains=on_call_contains_query)
+
+            if experience_contains_query != '' and experience_contains_query is not None:
+                qs = qs.filter(job_experience__icontains=experience_contains_query)
             
+            if supervision_contains_query != '' and supervision_contains_query is not None:
+                qs = qs.filter(job_supervision__icontains=supervision_contains_query)
+
+            if payment_contains_query != '' and payment_contains_query is not None:
+                qs = qs.filter(job_payment__icontains=payment_contains_query)
+
+            if vacation_contains_query != '' and vacation_contains_query is not None:
+                qs = qs.filter(job_vacation__icontains=vacation_contains_query)
+
+            if education_money_contains_query != '' and education_money_contains_query is not None:
+                qs = qs.filter(education_money__icontains=education_money_contains_query)
+
     else:
         form = JobSearchForm()
 
@@ -160,3 +201,38 @@ def hospital_update_job(request, job_id):
         form = JobUpdateForm()
     
     return render(request, 'job_update.html', {'form': form})
+
+
+def application(request, job_id):
+    job = JobInfo.objects.filter(id=job_id)[0]
+    user = get_user_model()
+    currUser = user.objects.filter(email=request.user.email)
+    currUserID = getattr(currUser[0], 'id')
+
+    #application_info = JobApplicants(
+    #    job_id = job,
+    #    user_id = currUserID,
+        #application_date = datetime.date()
+    #)
+
+    JobApplicants.objects.create(user_id=currUserID, job_id=job)
+
+
+    #application_info.save()
+    #job = JobInfo.objects.filter(id=job_id)
+
+    #if request.method == 'POST':
+        #form = ApplicationCreationForm(request.POST)
+        
+        
+        
+        #form = ProfileUpdateForm(request.POST)
+        # ADD LATER TODO: see profile
+        # if form.is_valid():
+
+    ### Connect worker to job
+    # job.update(job_applicant = user)
+    
+    ### when click applies url with job id again and user id and send email
+
+    return render(request, 'application.html')

@@ -53,19 +53,19 @@
                                     <div class="address">
                                         <!--<i class="bi bi-geo-alt"></i>-->
                                         <p>{{ job.job_location_hospital }}</p>
-                                        <p>{{ journal.job_address }}</p>
+                                        <p>{{ job.job_address }}</p>
                                     </div>
 
                                 <div class="email">
                                     <!--<i class="bi bi-envelope"></i>-->
                                     <p>Job Information:</p>
-                                    <p>Level: {{ job.job_level }}</p>
+                                    <p>Level: </p>
                                     <p></p>
                                 </div>
                     
                                 <div class="entry-content">
                                     <p>
-                                        Description: {{ journal.job_description }}
+                                        Description: {{ job.job_description }}
                                     </p>
                                 </div>
 
@@ -100,7 +100,14 @@
                   
                             </div>                
                     <hr/>
+
+                    <!-- APPLY FOR JOB -->
+                    
+                    <button type="button" ><a href="application/{{ job.id }}">Apply</a> </button>
+                    
                     {% endfor %} 
+
+
             </article>
             
             </div>
