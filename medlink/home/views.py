@@ -100,7 +100,6 @@ def profile_update(request):
 def log_out(request):
     logout(request)
 
-
 def job_query(request):
     qs = JobInfo.objects.all()
     context = {}
@@ -109,10 +108,7 @@ def job_query(request):
         context['form'] = form
         if form.is_valid():
             cd = form.cleaned_data
-            #location_contains_query = cd['location_contains']
             zip_contains_query = cd['zip_contains']
-            #level_contains_query = cd['level_contains']
-            description_contains_query = cd['description_contains']
             ### new queries
             type_contains_query = cd['type_contains']
             hospital_contains_query = cd['hospital_contains']
@@ -123,24 +119,36 @@ def job_query(request):
             payment_contains_query = cd['payment_contains']
             vacation_contains_query = cd['vacation_contains']
             education_money_contains_query = cd['education_money_contains']
+            shift_day_contains_query = cd['locum_shift_day_contains']
+            shift_hour_contains_query = cd['locum_shift_hour_contains']
+            
+            ### TODO: maybe give more options for how to search by date
+            ### Example: instead of yes and no maybe an option is range, option with no end date, 
+            ###  option where you give an end date and it automatically puts start date as current date
+            ###  maybe it should always filter with the start date as the current date
+            # check if searching by range
+            if cd['by_date'] :
+                start_time_contains_query = cd['start_time_contains']
+                end_time_contains_query = cd['end_time_contains']
+
+                ### Query by dates
+                if cd['by_date'] and start_time_contains_query != '' and start_time_contains_query is not None and end_time_contains_query != '' and end_time_contains_query is not None:
+                    qs = JobInfo.objects.filter(job_start_time__lte = start_time_contains_query, job_end_time__gte = end_time_contains_query)
+            else:
+                qs = JobInfo.objects.all()
+
 
             ### by location
+            ### TODO: maybe combine location and zip
             if zip_contains_query != '' and zip_contains_query is not None:
-                #qs = qs.filter(job_location_hospital__icontains=location_contains_query)
                 qs = qs.filter(job_location_zipcode__icontains=zip_contains_query)
-
-            #if level_contains_query != '' and level_contains_query is not None:
-            #    qs = qs.filter(job_level__icontains=level_contains_query)
-
-            if description_contains_query != '' and description_contains_query is not None:
-                qs = qs.filter(job_description__icontains=description_contains_query)
 
             ### new queries
             if type_contains_query != '' and type_contains_query is not None:
                 qs = qs.filter(job_type__icontains=type_contains_query)
 
             if hospital_contains_query != '' and hospital_contains_query is not None:
-                qs = qs.filter(job_hospital__icontains=hospital_contains_query)
+                qs = qs.filter(job_location_hospital__icontains=hospital_contains_query)
 
             if hospital_type_contains_query != '' and hospital_type_contains_query is not None:
                 qs = qs.filter(hospital_type__icontains=hospital_type_contains_query)
@@ -163,11 +171,16 @@ def job_query(request):
             if education_money_contains_query != '' and education_money_contains_query is not None:
                 qs = qs.filter(education_money__icontains=education_money_contains_query)
 
+            if shift_hour_contains_query != '' and shift_hour_contains_query is not None:
+                qs = qs.filter(locum_shift_hour__icontains=shift_hour_contains_query)
+            
+            if shift_day_contains_query != '' and shift_day_contains_query is not None:
+                qs = qs.filter(locum_shift_day__icontains=shift_day_contains_query)
+
     else:
         form = JobSearchForm()
 
     context['queryset']= qs
-    #context['form'] = form
 
     return render(request, "job_query.html", context)
 
@@ -203,36 +216,17 @@ def hospital_update_job(request, job_id):
     return render(request, 'job_update.html', {'form': form})
 
 
+
 def application(request, job_id):
     job = JobInfo.objects.filter(id=job_id)[0]
     user = get_user_model()
     currUser = user.objects.filter(email=request.user.email)
     currUserID = getattr(currUser[0], 'id')
 
-    #application_info = JobApplicants(
-    #    job_id = job,
-    #    user_id = currUserID,
-        #application_date = datetime.date()
-    #)
-
     JobApplicants.objects.create(user_id=currUserID, job_id=job)
-
-
-    #application_info.save()
-    #job = JobInfo.objects.filter(id=job_id)
-
-    #if request.method == 'POST':
-        #form = ApplicationCreationForm(request.POST)
-        
-        
-        
-        #form = ProfileUpdateForm(request.POST)
-        # ADD LATER TODO: see profile
-        # if form.is_valid():
-
-    ### Connect worker to job
-    # job.update(job_applicant = user)
     
     ### when click applies url with job id again and user id and send email
 
     return render(request, 'application.html')
+
+### TODO: Submit application when profile updated

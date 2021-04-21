@@ -65,6 +65,13 @@ PAYMENT = (
     ('w2', 'W2'),
     ('1099', '1099/No Benefits'),
 )
+
+YES_NO = (
+    ('True', 'Yes'),
+    ('', 'No'),
+)
+
+
 class JobCreationForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
@@ -158,67 +165,18 @@ class ProfileUpdateHospitalForm(forms.Form):
     )
 
 
-class SearchByDate(forms.Form):
-    start_time_contains = forms.DateTimeField(
-        label='What is the start date?', 
-        widget=DatePicker(
-            options={
-                'minDate': '2021-01-01',
-                'maxDate': '2030-01-01',
-            },
-            attrs={
-                'append': 'fa fa-calendar',
-                'icon_toggle': True,
-            },
-        ),
-    )
-    end_time_contains = forms.DateTimeField(
-        label='What is the end date?', 
-        widget=DatePicker(
-            options={
-                'minDate': '2021-01-01',
-                'maxDate': '2030-01-01',
-            },
-            attrs={
-                'append': 'fa fa-calendar',
-                'icon_toggle': True,
-            },
-        ),
-    )
-    locum_shift_day = forms.CharField(
-        label='For locum: How many days in a week?'
-    )
-    locum_shift_hour = forms.CharField(
-        label='For locum: How many hours in a day?'
-    )
-
 class JobSearchForm(forms.Form):
 
     def __init__(self, * args, **kwargs):
         super(JobSearchForm, self).__init__(*args, **kwargs)
 
     ##### BASIC SEARCH QUERIES ########
-    #location_contains = forms.CharField(
-    #    label="What city or town do you want to search for a job?",
-    #    required = False
-    #)
-
+    ### TODO: maybe add zip and city together in query
     zip_contains = forms.CharField(
         label="What zipcode do you want to search for a job?",
         required = False
     )
 
-    #level_contains = forms.CharField(
-    #    label='What job level?', 
-    #    required = False
-    #)
-
-    description_contains = forms.CharField(
-        label='Search in job description?', 
-        required = False
-    )
-
-    #########
     type_contains = forms.CharField(
         label='What type of job?',
         widget=forms.Select(choices=DURATION),
@@ -229,9 +187,7 @@ class JobSearchForm(forms.Form):
         locum_shift_day = forms.CharField(
             label='For locum: How many days in a week?'
         )
-    ##job_location_zipcode = forms.IntegerField(
-    ##    label='Job loca? (Enter zipcode of hospital)', 
-    ##)
+
     hospital_contains = forms.CharField(
         label='Hospital name?', 
         required = False
@@ -271,13 +227,53 @@ class JobSearchForm(forms.Form):
         required = False
     )
 
+    ### Query by dates
+    by_date = forms.CharField(
+        label='Search within date range?',
+        widget=forms.RadioSelect(choices=YES_NO),
+        required = False
+    )
 
+    start_time_contains = forms.DateTimeField(
+        label='Start date:', 
+        widget=DatePicker(
+            options={
+                'minDate': '2021-01-01',
+                'maxDate': '2030-01-01',
+            },
+            attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True,
+            },
+        ),
+        required = False
+    )
 
+    end_time_contains = forms.DateTimeField(
+        label='End Date:', 
+        widget=DatePicker(
+            options={
+                'minDate': '2021-01-01',
+                'maxDate': '2030-01-01',
+            },
+            attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True,
+            },
+        ),
+        required = False
+    )
 
-
-
-
-    ##########
+    ### TODO: figure out weither it makes sense for them to be numbers
+    ### TODO: also figure out weither it makes sense for >= type comparisons
+    locum_shift_day_contains = forms.CharField(
+        label='For locum: How many days in a week?',
+        required = False
+    )
+    locum_shift_hour_contains = forms.CharField(
+        label='For locum: How many hours in a day?',
+        required = False
+    )
 
 class JobUpdateForm(forms.Form):
 

@@ -13,6 +13,24 @@
     <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
+
+     <!-- Bootstrap 4 -->
+     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    
+     <!-- Font Awesome -->
+     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+ 
+     <!-- Moment.js -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js" integrity="sha256-VBLiveTKyUZMEzJd6z2mhfxIqz3ZATCuVMawPZGzIfA=" crossorigin="anonymous"></script>
+ 
+     <!-- Tempus Dominus Bootstrap 4 -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" integrity="sha256-XPTBwC3SBoWHSmKasAk01c08M6sIA5gF5+sRxqak2Qs=" crossorigin="anonymous">
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js" integrity="sha256-z0oKYg6xiLq3yJGsp/LsY9XykbweQlHl42jHv2XTBz4=" crossorigin="anonymous"></script>
+     {{ wizard.form.media }}
+
 {% endblock %}
 
 {% block content %}
@@ -20,7 +38,7 @@
   <main class="d-flex align-items-center min-vh-100 py-3 py-md-0" style="margin-top:20px">
 
     <div class="container blog">
-        <div class="row">
+        <div class="row no-gutters">
             <div class="col-lg-8 entries"></div>
             <div class="card login-card">
                 <div class="card-body">
@@ -49,6 +67,19 @@
                             <div class="col-lg-4">
                                 <h2 class="entry-title">{{ job.job_name }}</h2>
                               
+                                <h6 class="card-title m-0">Job Name: {{ job.job_name }}</h6>
+                                <h6 class="card-title m-0">Job Type: {{ job.job_type }}, {{ job_on_call }}</h6>
+                                <h6 class="card-title m-0">Job Location: {{ job.job_location_hospital }}, {{ job.job_location_zipcode }}</h6>
+                                <h6 class="card-title m-0">Hospital Type Type: {{ job.hospital_type }}</h6>
+                                <h6 class="card-title m-0">Job Start Date: {{ job.job_start_time }}</h6>
+                                <h6 class="card-title m-0">Job End Date: {{ job.job_end_time }}</h6>
+                                <h6 class="card-title m-0">Locum Shift: {{ job.locum_shift_day }} day, {{ locum_shift_hour }} hours</h6>
+                                <h6 class="card-title m-0">Job Experience Requirement: {{ job.job_experience }}</h6>
+                                <h6 class="card-title m-0">Job Supervision: {{ job.job_supervision }}</h6>
+                                <h6 class="card-title m-0">Job Payment: {{ job.job_payment }}</h6>
+                                <h6 class="card-title m-0">Job Benefits: {{ job.job_payment }}, {{ job_vacation }}, {{ education_money }}</h6>
+
+                                {% comment %}
                                 <div class="info">
                                     <div class="address">
                                         <!--<i class="bi bi-geo-alt"></i>-->
@@ -69,7 +100,7 @@
                                     </p>
                                 </div>
 
-                                {% comment %} <!-- ADD MORE WHEN DATA AVAILABLE-->
+                                 <!-- ADD MORE WHEN DATA AVAILABLE-->
                                   <div class="entry-meta">
                                     <ul>
                                       <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html">John Doe</a></li>
@@ -80,10 +111,10 @@
                                   <div class="read-more">
                                     <a href="blog-single.html">Read More</a>
                                   </div>
-                                {% endcomment %}
+                               
 
 
-                                {% comment %}
+                                
                                 <div class="email">
                                   <i class="bi bi-envelope"></i>
                                   <h4>Email:</h4>
