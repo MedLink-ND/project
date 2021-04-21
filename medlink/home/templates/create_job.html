@@ -28,7 +28,6 @@
     <!-- Tempus Dominus Bootstrap 4 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" integrity="sha256-XPTBwC3SBoWHSmKasAk01c08M6sIA5gF5+sRxqak2Qs=" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js" integrity="sha256-z0oKYg6xiLq3yJGsp/LsY9XykbweQlHl42jHv2XTBz4=" crossorigin="anonymous"></script>
-    {{ wizard.form.media }}
 
 {% endblock %}
 
@@ -53,13 +52,23 @@
                     {% csrf_token %}
                     {{ form.non_field_errors }}
                     {% for field in form %}
-                    <div class="form-group">
-                        {{ field.errors }}
-                        {{ field.label_tag }} {{ field }}
-                        {% if field.help_text %}
-                        <p class="help">{{ field.help_text|safe }}</p>
+                        {% if field.name == "locum_shift_day" or field.name == "locum_shift_hour" %}
+                            <div class="form-group" style="display:none" id="{{ field.name }}">
+                                {{ field.errors }}
+                                {{ field.label_tag }} {{ field }}
+                                {% if field.help_text %}
+                                <p class="help">{{ field.help_text|safe }}</p>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="form-group">
+                                {{ field.errors }}
+                                {{ field.label_tag }} {{ field }}
+                                {% if field.help_text %}
+                                <p class="help">{{ field.help_text|safe }}</p>
+                                {% endif %}
+                            </div>
                         {% endif %}
-                    </div>
                     {% endfor %}
                 <input name="postjob" id="postjob" class="btn btn-dark btn-sm" type="submit" value="Post">
                 <button class="btn btn-dark btn-sm"><a href="../" style="color: white">Return to home</a></button>
@@ -70,5 +79,21 @@
     </div>
 </main>
 
-
+<script>
+$(document).ready(function(){
+    $("#id_job_type").change(function(){
+        console.log('changed');
+        $(this).find("option:selected").each(function(){
+            var optionValue = $(this).attr("value");
+            console.log(optionValue);
+            if(optionValue == "Locum"){
+                $("#locum_shift_day").show();
+                $("#locum_shift_hour").show();                
+            } else {
+                $("#locum_shift_day").hide();
+                $("#locum_shift_hour").hide();              }
+        });
+    }).change();
+});
+</script>
 {% endblock %}

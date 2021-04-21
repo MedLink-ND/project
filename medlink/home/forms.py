@@ -109,7 +109,7 @@ class JobCreationForm(forms.Form):
         ),
     )
     job_end_time = forms.DateTimeField(
-        label='What is the end date of this job?', 
+        label='What is the end date of this job? (If there is no end date, leave this empty)', 
         widget=DatePicker(
             options={
                 'minDate': '2021-01-01',
@@ -120,12 +120,15 @@ class JobCreationForm(forms.Form):
                 'icon_toggle': True,
             },
         ),
+        required=False,
     )
     locum_shift_day = forms.CharField(
-        label='For locum: How many days in a week?'
+        label='For locum: How many days in a week?',
+        required=False,
     )
     locum_shift_hour = forms.CharField(
-        label='For locum: How many hours in a day?'
+        label='For locum: How many hours in a day?',
+        required=False,
     )
     job_experience = forms.CharField(
         label='What is the experience level required for this job?',
