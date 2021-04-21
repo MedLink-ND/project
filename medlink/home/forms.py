@@ -6,18 +6,25 @@ from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker
 User = get_user_model()
 
 DURATION = (
-    ('full-time', 'Full Time'),
-    ('part-time', 'Part Time'),
-    ('locum', 'Short Term Locum'),
+    (None, ''),
+    ('Full Time', 'Full Time'),
+    ('Part Time', 'Part Time'),
+    ('Locum', 'Short Term Locum'),
+    ('NA', 'NA')
+
 )
 HOSPITAL = (
-    ('outpatient', 'Outpatient'),
-    ('inpatient', 'Inpatient'),
-    ('outpatient+inpatient', 'Both outpatient/inpatient')
+    (None, ''),
+    ('Outpatient', 'Outpatient'),
+    ('Inpatient', 'Inpatient'),
+    ('Both outpatient / inpatient', 'Both outpatient/inpatient'),
+    ('NA', 'NA')
 )
 ONCALL = (
-    ('oncall', 'On Call'),
-    ('nocall', 'No Call'),
+    (None, ''),
+    ('On call', 'On Call'),
+    ('No call', 'No Call'),
+    ('NA', 'NA')
 )
 TIME = (
     (1, '1 AM'),
@@ -46,16 +53,21 @@ TIME = (
     (24, '12 AM'),
 )
 EXPERIENCE = (
-    ('gt2', 'Greater than 2 years'),
-    ('new grad', 'New Grad (fewer than 2 years)')
+    (None, ''),
+    ('Greater than 2 years', 'Greater than 2 years'),
+    ('New Grad / Fewer than 2 years', 'New Grad (fewer than 2 years)'),
+    ('NA', 'NA')
 )
 SUPERVISION = (
-    ('no', 'No supervision'),
-    ('yes', 'Supervised by anesthesiologist'),
+    (None, ''),
+    ('No supervision', 'No supervision'),
+    ('Supervised by anesthesiologist', 'Supervised by anesthesiologist'),
 )
 PAYMENT = (
-    ('w2', 'W2'),
-    ('1099', '1099/No Benefits')
+    (None, ''),
+    ('W2', 'W2'),
+    ('1099 / No Benefits', '1099/No Benefits'),
+    ('NA', 'NA')
 )
 class JobCreationForm(forms.Form):
 
@@ -81,7 +93,7 @@ class JobCreationForm(forms.Form):
     )
     job_on_call = forms.CharField(
         label="Does this job require on call?",
-        widget=forms.RadioSelect(choices=ONCALL),
+        widget=forms.Select(choices=ONCALL),
     )
     job_start_time = forms.DateTimeField(
         label='What is the start date of this job?', 
@@ -177,16 +189,87 @@ class JobUpdateForm(forms.Form):
 
     job_name = forms.CharField(
         label="What is the name of the job?", 
+        required=False
     )
-    job_level = forms.CharField(
-        label='What is its level?', 
+    job_type = forms.CharField(
+        label='What is the type of this job?',
+        widget=forms.Select(choices=DURATION),
+        required=False
     )
-    job_description = forms.CharField(
-        label='Describe in a few sentences what this job is and what you are looking for?', 
+    job_location_zipcode = forms.IntegerField(
+        label='Where is the job? (Enter zipcode of hospital)', 
+        required=False
     )
     job_location_hospital = forms.CharField(
         label='Which hospital is this job associated with?', 
+        required=False
     )
-    job_location_city = forms.CharField(
-        label='Where is the hospital?', 
+    hospital_type = forms.CharField(
+        label="What is the type of the hospital?",
+        widget=forms.Select(choices=HOSPITAL),
+        required=False
+    )
+    job_on_call = forms.CharField(
+        label="Does this job require on call?",
+        widget=forms.Select(choices=ONCALL),
+        required=False
+    )
+    job_start_time = forms.DateTimeField(
+        label='What is the start date of this job?', 
+        widget=DatePicker(
+            options={
+                'minDate': '2021-01-01',
+                'maxDate': '2030-01-01',
+            },
+            attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True,
+            },
+        ),
+        required=False
+    )
+    job_end_time = forms.DateTimeField(
+        label='What is the end date of this job?', 
+        widget=DatePicker(
+            options={
+                'minDate': '2021-01-01',
+                'maxDate': '2030-01-01',
+            },
+            attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True,
+            },
+        ),
+        required=False
+    )
+    locum_shift_day = forms.CharField(
+        label='For locum: How many days in a week?',
+        required=False
+    )
+    locum_shift_hour = forms.CharField(
+        label='For locum: How many hours in a day?',
+        required=False
+    )
+    job_experience = forms.CharField(
+        label='What is the experience level required for this job?',
+        widget=forms.Select(choices=EXPERIENCE),
+        required=False
+    )
+    job_supervision = forms.CharField(
+        label='Does this job require supervision from an anesthesiologist',
+        widget=forms.Select(choices=SUPERVISION),
+        required=False
+    )
+    job_payment = forms.CharField(
+        label='What is the payment type for this job?',
+        widget=forms.Select(choices=PAYMENT),
+        required=False
+    )
+    job_vacation = forms.CharField(
+        label='What are the vacation benefits of this job?', 
+        required=False
+    )
+    education_money = forms.CharField(
+        label='Are there any education credits with this job?', 
+        required=False
     )

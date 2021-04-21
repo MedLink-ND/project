@@ -137,26 +137,35 @@ def hospital_delete_job(request, job_id):
     return redirect("../../")
 
 def hospital_update_job(request, job_id):
-    job = JobInfo.objects.filter(id=job_id)
+    job = JobInfo.objects.get(id=job_id)
     if request.method == 'POST':
         form = JobUpdateForm(request.POST)
+        new_fields = []
         if form.is_valid():
             cd = form.cleaned_data
-            job_name = cd['job_name']
-            job_level = cd['job_level']
-            job_description = cd['job_description']
-            job_location_hospital = cd['job_location_hospital']
-            job_location_city = cd['job_location_city']
+            for field in cd:
+                if cd[field]:
+                    new_fields.append(field)
 
-        job.update(
-            job_name=job_name,
-            job_level=job_level,
-            job_description=job_description,
-            job_location_hospital=job_location_hospital,
-            job_location_city=job_location_city,
-        )
+            job.job_name = cd['job_name']
+            job.job_type = cd['job_type']
+            job.job_location_zipcode = cd['job_location_zipcode']
+            job.job_location_hospital = cd['job_location_hospital']
+            job.hospital_type = cd['hospital_type']
+            job.job_on_call = cd['job_on_call']
+            job.job_start_time = cd['job_start_time']
+            job.job_end_time = cd['job_end_time']
+            job.locum_shift_day = cd['locum_shift_day']
+            job.locum_shift_hour = cd['locum_shift_hour']
+            job.job_experience = cd['job_experience']
+            job.job_supervision = cd['job_supervision']
+            job.job_payment = cd['job_payment']
+            job.job_vacation = cd['job_vacation']
+            job.education_money = cd['education_money']
+
+        job.save(update_fields=new_fields)
     
     else:
         form = JobUpdateForm()
     
-    return render(request, 'job_update.html', {'form': form})
+    return render(request, 'job_update.html', {'form': form, 'job': job})
