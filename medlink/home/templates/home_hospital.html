@@ -71,10 +71,14 @@
                         <td>{{ job.job_start_time }}</td>
                         <td>{{ job.job_end_time }}</td>
                         <td>{{ job.job_supervision }}</td>
-                        <td>{{ job.locum_shift_day }} days / week, {{ job.locum_shift_hour }} hours / day</td>
+                        {% if job.job_type == "Locum" %}
+                            <td>{{ job.locum_shift_day }} days / week, {{ job.locum_shift_hour }} hours / day</td>
+                        {% else %}
+                            <td>None</td>
+                        {% endif %}
                         <td>{{ job.job_experience }}</td>
                         <td>{{ job.job_payment }}</td>
-                        <td>{{ job.job_vacation }}, {{ job.education_money }}</td>
+                        <td>Vacation: {{ job.job_vacation }}, Education: {{ job.education_money }}</td>
                         <td>0</td>
                         <td><a href="delete/{{ job.id }}"><b>Delete</b></a>
                             <a href="update/{{ job.id }}"><b>Modify</b></a>
