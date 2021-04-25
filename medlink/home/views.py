@@ -1,14 +1,130 @@
 from django.contrib.auth import authenticate, login as auth_login, get_user_model
 from django.contrib.auth import logout
 from django.core.exceptions import MultipleObjectsReturned
-from django.shortcuts import redirect, render
 from django.http import HttpResponse, HttpResponseRedirect
-from .forms import JobCreationForm, JobSearchForm, ProfileUpdateHospitalForm, JobUpdateForm
-from .models import JobInfo
+from django.shortcuts import redirect, render
+
+from .forms import JobCreationForm, JobPreferenceForm, JobSearchForm, JobUpdateForm, ProfileUpdateHospitalForm
+from .models import JobInfo, JobPreference
+
+import googlemaps
+import requests
+import responses
+
+import pprint
+
+gmaps = googlemaps.Client(key='AIzaSyAZ2ZbOptR7Xx5OIsL_33tZ_30n9cD0f7c')
+
 
 User = get_user_model()
 
-# Create your views here.
+def home_user(request):
+    user = request.user
+
+    user_preference = None
+    user_preference = JobPreference.objects.filter(base_profile=user.id)
+    if user_preference:
+        user_preference = user_preference[0]
+    print(user_preference)
+
+    all_jobs = JobInfo.objects.all()
+    context = {}
+    
+    user_job_type = user_preference.job_type
+    user_location_lat = user_preference.home_location_lat
+    user_location_lng = user_preference.home_location_lng
+
+    job_rec = None
+    job_rec = all_jobs.filter(job_type=user_job_type)
+    
+    if len(job_rec) > 0:
+        context['job_rec'] = job_rec
+        for job in job_rec:
+            job_zip = job.job_location_zipcode
+            geo_res = gmap_to_zip(gmaps.geocode(job_zip))
+            lat, lng = geo_res['lat'], geo_res['lng']
+            if lat == -1 and lng == -1:
+                continue
+            else:
+                origin = (user_location_lat, user_location_lng)
+                destination = (lat, lng)
+                distance = distance_bt_locations(origin, destination)
+                ### TODO
+
+    return render(request, 'home_user.html', context)
+
+def user_job_details(request, job_id):
+    job = JobInfo.objects.get(id=job_id)
+    return render(request, 'job_details.html', {'job': job})
+
+def user_job_preference(request):
+    user = request.user
+    print(user.email)
+    currUser = User.objects.filter(email=request.user.email)
+    currUserID = getattr(currUser[0], 'id')
+    preference_has_set = None
+    existing_preference = JobPreference.objects.filter(base_profile=currUserID)
+    preference_has_set = len(existing_preference) > 0
+
+    if request.method == 'POST':
+        print('Vaid post')
+        form = JobPreferenceForm(request.POST)
+        if not user.is_hospital:
+            if form.is_valid():
+                cd = form.cleaned_data
+                new_fields = []
+                for field in cd:
+                    if cd[field]:
+                        new_fields.append(field)
+
+                job_type = cd['job_type']
+                home_location_zipcode = cd['home_location_zipcode']
+                job_location_radius = cd['job_location_radius']
+                hospital_type = cd['hospital_type']
+                job_on_call = cd['job_on_call']
+                job_start_time = cd['job_start_time']
+                job_end_time = cd['job_end_time']
+                locum_shift_day = cd['locum_shift_day']
+                locum_shift_hour = cd['locum_shift_hour']
+                job_experience = cd['job_experience']
+                job_payment = cd['job_payment']
+
+                geo_res = gmap_to_zip(gmaps.geocode(home_location_zipcode))
+                lat, lng = geo_res['lat'], geo_res['lng']
+
+                job_preference = JobPreference(
+                    job_type=job_type,
+                    home_location_zipcode=home_location_zipcode,
+                    home_location_lat=lat,
+                    home_location_lng=lng,
+                    job_location_radius=job_location_radius,
+                    hospital_type=hospital_type,
+                    job_on_call=job_on_call,
+                    job_start_time=job_start_time,
+                    job_end_time=job_end_time,
+                    locum_shift_day=locum_shift_day,
+                    locum_shift_hour=locum_shift_hour,
+                    job_experience=job_experience,
+                    job_payment=job_payment,
+                    base_profile=user.id,
+                )
+
+                if preference_has_set:
+                    job_preference.save(update_fields=new_fields)
+                    print('Update job preference')
+                else:
+                    print('Save job preference')
+                    job_preference.save()
+
+    else:
+        form = JobPreferenceForm()
+        print('not post')
+
+    if preference_has_set:
+        return render(request, 'job_preference.html', {'form': form, 'preference_has_set': preference_has_set, 'existing_preference': existing_preference[0]})
+    else:
+        return render(request, 'job_preference.html', {'form': form, 'preference_has_set': preference_has_set})
+
 def home_hospital(request):
     user = get_user_model()
     currUser = user.objects.filter(email=request.user.email)
@@ -31,7 +147,6 @@ def hospital_post_job(request):
     if request.method == 'POST':
         form = JobCreationForm(request.POST)
         user = request.user
-        # print(user.is_hospital)
         if user.is_hospital:
             if form.is_valid():
                 cd = form.cleaned_data
@@ -96,9 +211,9 @@ def profile_update(request):
     return render(request, 'profile_update.html', {'form': form})
 
 
-def log_out(request):
+def logout_request(request):
     logout(request)
-
+    return redirect('/')
 
 def job_query(request):
     qs = JobInfo.objects.all()
@@ -169,3 +284,22 @@ def hospital_update_job(request, job_id):
         form = JobUpdateForm()
     
     return render(request, 'job_update.html', {'form': form, 'job': job})
+
+def gmap_to_zip(gmap_res):
+    try:
+        geometry = gmap_res[0]['geometry']
+    except:
+        return {'lat': -1, 'lng': -1}
+    
+    return geometry['location']
+
+def distance_bt_locations(origin, destination):
+    origins = origin
+    destinations = destination
+    matrix = gmaps.distance_matrix(origins, destinations)
+    rows = matrix['rows'][0]
+    elements = rows['elements'][0]
+    distance = elements['distance']['value']
+    return distance
+
+    #return responses.calls[0].request.url
