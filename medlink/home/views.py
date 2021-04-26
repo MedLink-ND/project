@@ -1,12 +1,10 @@
+import datetime
+from .models import JobInfo, JobApplicants
+from .forms import JobCreationForm, JobSearchForm, ProfileUpdateHospitalForm, JobUpdateForm
 from django.contrib.auth import authenticate, login as auth_login, get_user_model
 from django.contrib.auth import logout
 from django.core.exceptions import MultipleObjectsReturned
 from django.http import HttpResponse, HttpResponseRedirect
-<<<<<<< HEAD
-from .forms import JobCreationForm, JobSearchForm, ProfileUpdateHospitalForm, JobUpdateForm
-from .models import JobInfo, JobApplicants
-import datetime
-=======
 from django.shortcuts import redirect, render
 
 from .forms import JobCreationForm, JobPreferenceForm, JobPreferenceUpdateForm, JobSearchForm, JobUpdateForm, ProfileUpdateHospitalForm
@@ -20,9 +18,9 @@ import pprint
 
 gmaps = googlemaps.Client(key='AIzaSyAZ2ZbOptR7Xx5OIsL_33tZ_30n9cD0f7c')
 
->>>>>>> 213eaa81e94e4e390881e18b929e66f53d125bc2
 
 User = get_user_model()
+
 
 def home_user(request):
     user = request.user
@@ -35,7 +33,7 @@ def home_user(request):
 
     all_jobs = JobInfo.objects.all()
     context = {}
-    
+
     if not user_preference:
         context['job_rec'] = None
     else:
@@ -48,14 +46,14 @@ def home_user(request):
         user_location_lng = user_preference.home_location_lng
 
         job_rec = None
-        
+
         if user_job_type == 'No preference':
             job_rec = all_jobs
         else:
             job_rec = all_jobs.filter(job_type=user_job_type)
-        
+
         job_rec_distance_filtered = []
-        
+
         if len(job_rec) > 0:
             for job in job_rec:
                 job_zip = job.job_location_zipcode
@@ -77,16 +75,19 @@ def home_user(request):
 
     return render(request, 'home_user.html', context)
 
+
 def user_job_details(request, job_id):
     job = JobInfo.objects.get(id=job_id)
     return render(request, 'job_details.html', {'job': job})
+
 
 def user_job_preference(request):
     user = request.user
     currUser = User.objects.filter(email=request.user.email)
     currUserID = getattr(currUser[0], 'id')
     preference_has_set = None
-    existing_preference = JobPreference.objects.filter(base_profile=currUserID)[0]
+    existing_preference = JobPreference.objects.filter(
+        base_profile=currUserID)[0]
     preference_has_set = (existing_preference != None)
     print(preference_has_set)
 
@@ -120,7 +121,8 @@ def user_job_preference(request):
 
                 if home_location_zipcode:
                     try:
-                        geo_res = gmap_to_zip(gmaps.geocode(home_location_zipcode))
+                        geo_res = gmap_to_zip(
+                            gmaps.geocode(home_location_zipcode))
                         lat, lng = geo_res['lat'], geo_res['lng']
                     except:
                         lat, lng = 0, 0
@@ -133,7 +135,7 @@ def user_job_preference(request):
                     existing_preference.home_location_zipcode = home_location_zipcode
                     existing_preference.job_location_radius = job_location_radius
                     existing_preference.home_location_lat = lat
-                    existing_preference.home_location_lng = lng                
+                    existing_preference.home_location_lng = lng
                     existing_preference.hospital_type = hospital_type
                     existing_preference.job_start_time = job_start_time
                     existing_preference.job_end_time = job_end_time
@@ -168,7 +170,6 @@ def user_job_preference(request):
                     job_preference.save()
                     return render(request, 'job_preference.html', {'form': form, 'preference_has_set': preference_has_set})
 
-
     else:
         if preference_has_set:
             form = JobPreferenceUpdateForm()
@@ -180,6 +181,7 @@ def user_job_preference(request):
         return render(request, 'job_preference.html', {'form': form, 'preference_has_set': preference_has_set, 'existing_preference': existing_preference})
     else:
         return render(request, 'job_preference.html', {'form': form, 'preference_has_set': preference_has_set})
+
 
 def home_hospital(request):
     user = get_user_model()
@@ -198,6 +200,7 @@ def home_hospital(request):
         return redirect('failure/')
 
     return render(request, 'home_hospital.html', {'existingJob': allJobs})
+
 
 def hospital_post_job(request):
     if request.method == 'POST':
@@ -259,8 +262,9 @@ def profile_update(request):
             last_name = cd['last_name']
             hospital_name = cd['hospital_name']
 
-        curr_user.update(first_name=first_name, last_name=last_name, hospital_name=hospital_name)
-    
+        curr_user.update(first_name=first_name,
+                         last_name=last_name, hospital_name=hospital_name)
+
     else:
         form = ProfileUpdateHospitalForm()
 
@@ -269,10 +273,8 @@ def profile_update(request):
 
 def logout_request(request):
     logout(request)
-<<<<<<< HEAD
-=======
     return redirect('/')
->>>>>>> 213eaa81e94e4e390881e18b929e66f53d125bc2
+
 
 def job_query(request):
     qs = JobInfo.objects.all()
@@ -358,11 +360,13 @@ def job_query(request):
 
     return render(request, "job_query.html", context)
 
+
 def hospital_delete_job(request, job_id):
     job = JobInfo.objects.filter(id=job_id)
     job.delete()
 
     return redirect("../../")
+
 
 def hospital_update_job(request, job_id):
     job = JobInfo.objects.get(id=job_id)
@@ -392,38 +396,21 @@ def hospital_update_job(request, job_id):
             job.education_money = cd['education_money']
 
         job.save(update_fields=new_fields)
-    
+
     else:
         form = JobUpdateForm()
-    
-<<<<<<< HEAD
-    return render(request, 'job_update.html', {'form': form})
 
-
-
-def application(request, job_id):
-    job = JobInfo.objects.filter(id=job_id)[0]
-    user = get_user_model()
-    currUser = user.objects.filter(email=request.user.email)
-    currUserID = getattr(currUser[0], 'id')
-
-    JobApplicants.objects.create(user_id=currUserID, job_id=job)
-    
-    ### when click applies url with job id again and user id and send email
-
-    return render(request, 'application.html')
-
-### TODO: Submit application when profile updated
-=======
     return render(request, 'job_update.html', {'form': form, 'job': job})
+
 
 def gmap_to_zip(gmap_res):
     try:
         geometry = gmap_res[0]['geometry']
     except:
         return {'lat': -1, 'lng': -1}
-    
+
     return geometry['location']
+
 
 def distance_bt_locations(origin, destination):
     origins = origin
@@ -433,4 +420,36 @@ def distance_bt_locations(origin, destination):
     elements = rows['elements'][0]
     distance = elements['distance']['value']
     return distance / 1000
->>>>>>> 213eaa81e94e4e390881e18b929e66f53d125bc2
+    return render(request, 'job_update.html', {'form': form})
+
+
+def application(request, job_id):
+    job = JobInfo.objects.filter(id=job_id)[0]
+    user = get_user_model()
+    currUser = user.objects.filter(email=request.user.email)
+    currUserID = getattr(currUser[0], 'id')
+
+    # application_info = JobApplicants(
+    #    job_id = job,
+    #    user_id = currUserID,
+    #application_date = datetime.date()
+    # )
+
+    JobApplicants.objects.create(user_id=currUserID, job_id=job)
+
+    # application_info.save()
+    #job = JobInfo.objects.filter(id=job_id)
+
+    # if request.method == 'POST':
+    #form = ApplicationCreationForm(request.POST)
+
+    #form = ProfileUpdateForm(request.POST)
+    # ADD LATER TODO: see profile
+    # if form.is_valid():
+
+    # Connect worker to job
+    # job.update(job_applicant = user)
+
+    # when click applies url with job id again and user id and send email
+
+    return render(request, 'application.html')
