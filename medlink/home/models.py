@@ -39,8 +39,8 @@ class worker_info(models.Model):
     education = models.CharField(max_length=255, null=True)
     certifications = models.CharField(max_length=255, null=True)
     provider_type = models.CharField(max_length=255, null=True)
-    peer_references = models.CharField(null=True)
-    cpr_certifications = models.CharField(null=True)
+    peer_references = models.CharField(max_length=255, null=True)
+    cpr_certifications = models.CharField(max_length=255, null=True)
     base_profile = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
     # def __str__(self):
