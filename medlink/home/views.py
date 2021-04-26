@@ -4,7 +4,7 @@ from django.core.exceptions import MultipleObjectsReturned
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, HttpResponseRedirect
 from .forms import JobCreationForm, JobSearchForm, ProfileUpdateHospitalForm, JobUpdateForm, ProfileUpdateWorkerForm
-from .models import JobInfo, worker_info
+from .models import JobInfo, WorkerInfo
 
 User = get_user_model()
 

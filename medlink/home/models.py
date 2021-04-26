@@ -28,7 +28,7 @@ class JobInfo(models.Model):
     base_profile = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
 
-class worker_info(models.Model):
+class WorkerInfo(models.Model):
 
     class Meta:
         app_label = 'home'
