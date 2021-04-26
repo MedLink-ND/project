@@ -40,25 +40,25 @@
     <div class="container blog">
         <div class="row no-gutters">
             <div class="col-lg-8 entries"></div>
-            <div class="card login-card">
-                <div class="card-body">
-                    <p class="login-card-description">Find a Job</p>
-                    <form method="GET">
-                        {% csrf_token %}
-                        {{ form.non_field_errors }}
-                        {% for field in form %}
-                        <div class="form-group">
-                            {{ field.errors }}
-                            {{ field.label_tag }} {{ field }}
-                            {% if field.help_text %}
-                            <p class="help">{{ field.help_text|safe }}</p>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-                        <input name="jobs" id="jobs" class="btn btn-block login-btn mb-4" name = "location_contains" type="submit" value="Post">
-                    </form>
-                </div>
-            </div>
+              <div class="card login-card">
+                  <div class="card-body">
+                      <p class="login-card-description">Find a Job</p>
+                      <form method="GET">
+                          {% csrf_token %}
+                          {{ form.non_field_errors }}
+                          {% for field in form %}
+                          <div class="form-group">
+                              {{ field.errors }}
+                              {{ field.label_tag }} {{ field }}
+                              {% if field.help_text %}
+                              <p class="help">{{ field.help_text|safe }}</p>
+                              {% endif %}
+                          </div>
+                          {% endfor %}
+                          <input name="jobs" id="jobs" class="btn btn-block login-btn mb-4" name = "location_contains" type="submit" value="Post">
+                      </form>
+                  </div>
+              </div>
             
             <article class="entry">
                     {% for job in queryset %}
