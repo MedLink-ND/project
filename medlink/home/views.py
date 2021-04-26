@@ -30,41 +30,44 @@ def home_user(request):
     all_jobs = JobInfo.objects.all()
     context = {}
     
-    user_job_type = user_preference.job_type
-    if user_preference.job_location_radius == 'No preference':
-        user_job_radius = 10000000
+    if not user_preference:
+        context['job_rec'] = None
     else:
-        user_job_radius = int(user_preference.job_location_radius)
-    user_location_lat = user_preference.home_location_lat
-    user_location_lng = user_preference.home_location_lng
+        user_job_type = user_preference.job_type
+        if user_preference.job_location_radius == 'No preference':
+            user_job_radius = 10000000
+        else:
+            user_job_radius = int(user_preference.job_location_radius)
+        user_location_lat = user_preference.home_location_lat
+        user_location_lng = user_preference.home_location_lng
 
-    job_rec = None
-    
-    if user_job_type == 'No preference':
-        job_rec = all_jobs
-    else:
-        job_rec = all_jobs.filter(job_type=user_job_type)
-    
-    job_rec_distance_filtered = []
-    
-    if len(job_rec) > 0:
-        for job in job_rec:
-            job_zip = job.job_location_zipcode
-            geo_res = gmap_to_zip(gmaps.geocode(job_zip))
-            lat, lng = geo_res['lat'], geo_res['lng']
-            if lat == -1 and lng == -1:
-                continue
-            else:
-                origin = (user_location_lat, user_location_lng)
-                destination = (lat, lng)
-                distance = distance_bt_locations(origin, destination)
-                # ignore distances greater than user preferred distance
-                if distance <= user_job_radius:
-                    job_rec_distance_filtered.append(job)
+        job_rec = None
+        
+        if user_job_type == 'No preference':
+            job_rec = all_jobs
+        else:
+            job_rec = all_jobs.filter(job_type=user_job_type)
+        
+        job_rec_distance_filtered = []
+        
+        if len(job_rec) > 0:
+            for job in job_rec:
+                job_zip = job.job_location_zipcode
+                geo_res = gmap_to_zip(gmaps.geocode(job_zip))
+                lat, lng = geo_res['lat'], geo_res['lng']
+                if lat == -1 and lng == -1:
+                    continue
                 else:
-                    print(distance)
+                    origin = (user_location_lat, user_location_lng)
+                    destination = (lat, lng)
+                    distance = distance_bt_locations(origin, destination)
+                    # ignore distances greater than user preferred distance
+                    if distance <= user_job_radius:
+                        job_rec_distance_filtered.append(job)
+                    else:
+                        print(distance)
 
-        context['job_rec'] = job_rec_distance_filtered
+            context['job_rec'] = job_rec_distance_filtered
 
     return render(request, 'home_user.html', context)
 
