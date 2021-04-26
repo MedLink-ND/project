@@ -120,7 +120,7 @@ def worker_profile_update(request):
                     provider_type=provider_type,
                     peer_references=peer_references,
                     cpr_certifications=cpr_certifications,
-                    base_profile=curr_user,
+                    base_profile=user,
         )
         
         worker_info.save()
