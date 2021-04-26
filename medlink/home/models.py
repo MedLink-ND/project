@@ -54,7 +54,6 @@ class JobInfo(models.Model):
     education_money = models.CharField(max_length=255, null=True)
     base_profile = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
-<<<<<<< HEAD
     # def __str__(self):
     #     return 'Name: ' + self.base_rofile.first_name + '\t' \
     #     + 'Hospital: ' + self.hospital_name + '\t' \
@@ -73,7 +72,5 @@ class JobApplicants(models.Model):
     #application_date = models.DateTimeField(null=True)
 
     
-=======
-    def __str__(self):
-        return self.job_type
->>>>>>> 213eaa81e94e4e390881e18b929e66f53d125bc2
+    # def __str__(self):
+    #     return self.job_type

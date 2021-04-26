@@ -15,9 +15,6 @@ urlpatterns = [
     url(r'hospital/update/(?P<job_id>\d+)/$', views.hospital_update_job,),    
     path(r'hospital/profile_update/', views.profile_update, name='profile_update'),    
     path(r'job_query/', views.job_query, name='job_query'),
-<<<<<<< HEAD
     url(r'job_query/application/(?P<job_id>\d+)/$', views.application),
-=======
     path(r'logout', views.logout_request, name="logout")
->>>>>>> 213eaa81e94e4e390881e18b929e66f53d125bc2
 ]
