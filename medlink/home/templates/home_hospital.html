@@ -19,7 +19,7 @@
 <li class="dropdown"><a href="#"><span>Logged in as: {{ request.user.get_short_name }}</span> <i class="bi bi-chevron-down"></i></a>
     <ul>
         <li><a href="{% url 'profile_update' %}">Update profile</a></li>
-        <li><a href="{% url 'home' %}">Logout</a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
     </ul>
 </li>
 {% endblock %}
@@ -37,24 +37,57 @@
                 {% if existingJob is None %}
                 <p>You haven't posted any jobs.</p>
                 {% else %}
+                <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Job Name</th>
+                        <th scope="col">Job Type</th>
+                        <th scope="col">On call</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Hospital Name</th>
+                        <th scope="col">Hospital Type</th>
+                        <th scope="col">Start Date</th>
+                        <th scope="col">End Date</th>
+                        <th scope="col">Supervision</th>
+                        <th scope="col">Locum Shifts</th>
+                        <th scope="col">Experience Level</th>
+                        <th scope="col">Payment Type</th>
+                        <th scope="col">Benefits</th>
+                        <th scope="col"># of people applied</th>                        
+                        <th scope="col">Actions</th>
+                      </tr>
+                    </thead>
                     {% for job in existingJob %}
-                        <h6 class="card-title m-0">Job Name: {{ job.job_name }}</h6>
-                        <h6 class="card-title m-0">Job Type: {{ job.job_type }}, {{ job_on_call }}</h6>
-                        <h6 class="card-title m-0">Job Location: {{ job.job_location_hospital }}, {{ job.job_location_zipcode }}</h6>
-                        <h6 class="card-title m-0">Hospital Type Type: {{ job.hospital_type }}</h6>
-                        <h6 class="card-title m-0">Job Start Date: {{ job.job_start_time }}</h6>
-                        <h6 class="card-title m-0">Job End Date: {{ job.job_end_time }}</h6>
-                        <h6 class="card-title m-0">Locum Shift: {{ job.locum_shift_day }}, {{ locum_shift_hour }}</h6>
-                        <h6 class="card-title m-0">Job Experience Requirement: {{ job.job_experience }}</h6>
-                        <h6 class="card-title m-0">Job Supervision: {{ job.job_supervision }}</h6>
-                        <h6 class="card-title m-0">Job Payment: {{ job.job_payment }}</h6>
-                        <h6 class="card-title m-0">Job Benefits: {{ job.job_payment }}, {{ job_vacation }}, {{ education_money }}</h6>
-                        <h6 class="card-title m-0">Number of people applied: </h6>
-                        <a href="delete/{{ job.id }}"><b>Delete</b></a>
-                        <a href="update/{{ job.id }}"><b>Modify</b></a>
-                        <br>
-                        <br>
+                    <tbody>
+                        <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ job.job_name }}</td>
+                        <td>{{ job.job_type }}</td>
+                        <td>{{ job.job_on_call }}</td>
+                        <td>{{ job.job_location_zipcode }}</td>
+                        <td>{{ job.job_location_hospital }}</td>
+                        <td>{{ job.hospital_type }}</td>
+                        <td>{{ job.job_start_time }}</td>
+                        <td>{{ job.job_end_time }}</td>
+                        <td>{{ job.job_supervision }}</td>
+                        {% if job.job_type == "Locum" %}
+                            <td>{{ job.locum_shift_day }} days / week, {{ job.locum_shift_hour }} hours / day</td>
+                        {% else %}
+                            <td>None</td>
+                        {% endif %}
+                        <td>{{ job.job_experience }}</td>
+                        <td>{{ job.job_payment }}</td>
+                        <td>Vacation: {{ job.job_vacation }}, Education: {{ job.education_money }}</td>
+                        <td>0</td>
+                        <td><a href="delete/{{ job.id }}"><b>Delete</b></a>
+                            <a href="update/{{ job.id }}"><b>Modify</b></a>
+                            <a href="delete/{{ job.id }}"><b>View Profile</b></a>
+                        </td>
+                        </tr>
+                    </tbody>                    
                     {% endfor %}
+                </table>
                 {% endif %}
             </div>
         </div>

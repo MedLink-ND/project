@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}MedLink | Home{% endblock %}
+
+
+{% block head %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Home</title>
+<link href="https://fonts.googleapis.com/css?family=Karla:400,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block logout %}
+<li class="dropdown"><a href="#"><span>Logged in as: {{ request.user.get_short_name }}</span> <i
+            class="bi bi-chevron-down"></i></a>
+    <ul>
+        <li><a href="{% url 'profile_update' %}">Update profile</a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+</li>
+{% endblock %}
+
+{% block content %}
+<main class="d-flex align-items-center min-vh-100 py-3 py-md-0">
+    <div class="container">
+        <div class="card login-card">
+            <div class="row no-gutters">
+                <div class="card-body">
+                    <p class="login-card-description">Welcome to MedLink!</p>
+                    <p>Here are your job recommendation based on your preferences. Edit your preferences <a
+                            href="preference/"><b>here</b></a>.</p>
+                    {% csrf_token %}
+                    <h5>New Jobs Recommended for You</h5>
+                    {% if job_rec is None %}
+                    <p>There hasn't been any jobs available currently. Please check back later.</p>
+                    {% else %}
+                    <div class="container">
+                        <div class="row">
+                            {% for job in job_rec %}
+                            <!-- <div class="col-md-6 mt-4 mt-md-0">
+                                <div class="icon-box">
+                                  <i class="bi bi-card-checklist"></i>
+                                  <h4><a href="#">{{ job.job_name }}</a></h4>
+                                  <p>{{ job.job_type }}</p>
+                                  <p>{{ job.job_location_hospital }} | {{ job.job_location_zipcode }}</p>
+                                </div>
+                            </div> -->
+                            <div class="col" style="min-width: 300px;">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ job.job_name }}</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">{{ job.job_type }}</h6>
+                                        <p class="card-text">{{ job.job_location_hospital }} | {{ job.job_location_zipcode }}</p>
+                                        <a href="job_details/{{ job.id }}" class="card-link">View Details</a>
+                                        <a href="#" class="card-link">Mark as interested</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+{% endblock %}
