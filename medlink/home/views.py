@@ -111,14 +111,14 @@ def worker_profile_update(request):
         cpr_certifications = cd['cpr_certifications']
 
         worker_info = WorkerInfo(
-                    name=job_name,
-                    address=job_type,
-                    email=job_location_zipcode,
-                    education=job_location_hospital,
-                    certifications=hospital_type,
-                    provider_type=job_on_call,
-                    peer_references=job_start_time,
-                    cpr_certifications=job_end_time,
+                    name=name,
+                    address=address,
+                    email=email,
+                    education=education,
+                    certifications=certifications,
+                    provider_type=provider_type,
+                    peer_references=peer_references,
+                    cpr_certifications=cpr_certifications,
                     base_profile=user,
         )
         
