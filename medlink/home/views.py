@@ -96,8 +96,9 @@ def profile_update(request):
     return render(request, 'profile_update.html', {'form': form})
 
 def worker_profile_update(request):
-    curr_user = User.objects.filter(email=request.user.email)
+    #curr_user = User.objects.filter(email=request.user.email)
     if request.method == 'POST':
+        user = request.user
         form = ProfileUpdateWorkerForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
@@ -119,7 +120,7 @@ def worker_profile_update(request):
                     provider_type=provider_type,
                     peer_references=peer_references,
                     cpr_certifications=cpr_certifications,
-                    base_profile=user,
+                    base_profile=curr_user,
         )
         
         worker_info.save()
