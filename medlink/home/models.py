@@ -54,5 +54,26 @@ class JobInfo(models.Model):
     education_money = models.CharField(max_length=255, null=True)
     base_profile = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
+<<<<<<< HEAD
+    # def __str__(self):
+    #     return 'Name: ' + self.base_rofile.first_name + '\t' \
+    #     + 'Hospital: ' + self.hospital_name + '\t' \
+    #     + 'Position: ' + self.hospital_position + '\t' \
+    #     + 'City: ' + self.hospital_location_city + '\t' \
+    #     + 'State: ' + self.hospital_location_state + '\t' \
+    #     + 'Area Code: ' + self.hospital_location_zipcode + '\t' \
+
+class JobApplicants(models.Model):
+    
+    class Meta:
+        app_label: 'home'
+
+    job_id = models.ForeignKey(JobInfo, on_delete=models.SET_NULL, null=True)
+    user_id = models.CharField(max_length=255, null=True)
+    #application_date = models.DateTimeField(null=True)
+
+    
+=======
     def __str__(self):
         return self.job_type
+>>>>>>> 213eaa81e94e4e390881e18b929e66f53d125bc2

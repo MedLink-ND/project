@@ -1,3 +1,6 @@
+import datetime
+from .models import JobInfo, JobApplicants
+from .forms import JobCreationForm, JobSearchForm, ProfileUpdateHospitalForm, JobUpdateForm
 from django.contrib.auth import authenticate, login as auth_login, get_user_model
 from django.contrib.auth import logout
 from django.core.exceptions import MultipleObjectsReturned
@@ -18,6 +21,7 @@ gmaps = googlemaps.Client(key='AIzaSyAZ2ZbOptR7Xx5OIsL_33tZ_30n9cD0f7c')
 
 User = get_user_model()
 
+
 def home_user(request):
     user = request.user
 
@@ -29,7 +33,7 @@ def home_user(request):
 
     all_jobs = JobInfo.objects.all()
     context = {}
-    
+
     if not user_preference:
         context['job_rec'] = None
     else:
@@ -42,14 +46,14 @@ def home_user(request):
         user_location_lng = user_preference.home_location_lng
 
         job_rec = None
-        
+
         if user_job_type == 'No preference':
             job_rec = all_jobs
         else:
             job_rec = all_jobs.filter(job_type=user_job_type)
-        
+
         job_rec_distance_filtered = []
-        
+
         if len(job_rec) > 0:
             for job in job_rec:
                 job_zip = job.job_location_zipcode
@@ -71,16 +75,19 @@ def home_user(request):
 
     return render(request, 'home_user.html', context)
 
+
 def user_job_details(request, job_id):
     job = JobInfo.objects.get(id=job_id)
     return render(request, 'job_details.html', {'job': job})
+
 
 def user_job_preference(request):
     user = request.user
     currUser = User.objects.filter(email=request.user.email)
     currUserID = getattr(currUser[0], 'id')
     preference_has_set = None
-    existing_preference = JobPreference.objects.filter(base_profile=currUserID)[0]
+    existing_preference = JobPreference.objects.filter(
+        base_profile=currUserID)[0]
     preference_has_set = (existing_preference != None)
     print(preference_has_set)
 
@@ -114,7 +121,8 @@ def user_job_preference(request):
 
                 if home_location_zipcode:
                     try:
-                        geo_res = gmap_to_zip(gmaps.geocode(home_location_zipcode))
+                        geo_res = gmap_to_zip(
+                            gmaps.geocode(home_location_zipcode))
                         lat, lng = geo_res['lat'], geo_res['lng']
                     except:
                         lat, lng = 0, 0
@@ -127,7 +135,7 @@ def user_job_preference(request):
                     existing_preference.home_location_zipcode = home_location_zipcode
                     existing_preference.job_location_radius = job_location_radius
                     existing_preference.home_location_lat = lat
-                    existing_preference.home_location_lng = lng                
+                    existing_preference.home_location_lng = lng
                     existing_preference.hospital_type = hospital_type
                     existing_preference.job_start_time = job_start_time
                     existing_preference.job_end_time = job_end_time
@@ -162,7 +170,6 @@ def user_job_preference(request):
                     job_preference.save()
                     return render(request, 'job_preference.html', {'form': form, 'preference_has_set': preference_has_set})
 
-
     else:
         if preference_has_set:
             form = JobPreferenceUpdateForm()
@@ -174,6 +181,7 @@ def user_job_preference(request):
         return render(request, 'job_preference.html', {'form': form, 'preference_has_set': preference_has_set, 'existing_preference': existing_preference})
     else:
         return render(request, 'job_preference.html', {'form': form, 'preference_has_set': preference_has_set})
+
 
 def home_hospital(request):
     user = get_user_model()
@@ -192,6 +200,7 @@ def home_hospital(request):
         return redirect('failure/')
 
     return render(request, 'home_hospital.html', {'existingJob': allJobs})
+
 
 def hospital_post_job(request):
     if request.method == 'POST':
@@ -253,8 +262,9 @@ def profile_update(request):
             last_name = cd['last_name']
             hospital_name = cd['hospital_name']
 
-        curr_user.update(first_name=first_name, last_name=last_name, hospital_name=hospital_name)
-    
+        curr_user.update(first_name=first_name,
+                         last_name=last_name, hospital_name=hospital_name)
+
     else:
         form = ProfileUpdateHospitalForm()
 
@@ -265,6 +275,7 @@ def logout_request(request):
     logout(request)
     return redirect('/')
 
+
 def job_query(request):
     qs = JobInfo.objects.all()
     context = {}
@@ -273,33 +284,89 @@ def job_query(request):
         context['form'] = form
         if form.is_valid():
             cd = form.cleaned_data
-            location_contains_query = cd['location_contains']
-            level_contains_query = cd['level_contains']
-            description_contains_query = cd['description_contains']
-
-            if location_contains_query != '' and location_contains_query is not None:
-                qs = qs.filter(job_location_hospital__icontains=location_contains_query)
-                qs = qs.filter(job_location_city__icontains=location_contains_query)
-
-            if level_contains_query != '' and level_contains_query is not None:
-                qs = qs.filter(job_level__icontains=level_contains_query)
-
-            if description_contains_query != '' and description_contains_query is not None:
-                qs = qs.filter(job_description__icontains=description_contains_query)
+            zip_contains_query = cd['zip_contains']
+            ### new queries
+            type_contains_query = cd['type_contains']
+            hospital_contains_query = cd['hospital_contains']
+            hospital_type_contains_query = cd['hospital_type_contains']
+            on_call_contains_query = cd['on_call_contains']
+            experience_contains_query = cd['experience_contains']
+            supervision_contains_query = cd['supervision_contains']
+            payment_contains_query = cd['payment_contains']
+            vacation_contains_query = cd['vacation_contains']
+            education_money_contains_query = cd['education_money_contains']
+            shift_day_contains_query = cd['locum_shift_day_contains']
+            shift_hour_contains_query = cd['locum_shift_hour_contains']
             
+            ### TODO: maybe give more options for how to search by date
+            ### Example: instead of yes and no maybe an option is range, option with no end date, 
+            ###  option where you give an end date and it automatically puts start date as current date
+            ###  maybe it should always filter with the start date as the current date
+            # check if searching by range
+            if cd['by_date'] :
+                start_time_contains_query = cd['start_time_contains']
+                end_time_contains_query = cd['end_time_contains']
+
+                ### Query by dates
+                if cd['by_date'] and start_time_contains_query != '' and start_time_contains_query is not None and end_time_contains_query != '' and end_time_contains_query is not None:
+                    qs = JobInfo.objects.filter(job_start_time__lte = start_time_contains_query, job_end_time__gte = end_time_contains_query)
+            else:
+                qs = JobInfo.objects.all()
+
+
+            ### by location
+            ### TODO: maybe combine location and zip
+            if zip_contains_query != '' and zip_contains_query is not None:
+                qs = qs.filter(job_location_zipcode__icontains=zip_contains_query)
+
+            ### new queries
+            if type_contains_query != '' and type_contains_query is not None:
+                qs = qs.filter(job_type__icontains=type_contains_query)
+
+            if hospital_contains_query != '' and hospital_contains_query is not None:
+                qs = qs.filter(job_location_hospital__icontains=hospital_contains_query)
+
+            if hospital_type_contains_query != '' and hospital_type_contains_query is not None:
+                qs = qs.filter(hospital_type__icontains=hospital_type_contains_query)
+
+            if on_call_contains_query != '' and on_call_contains_query is not None:
+                qs = qs.filter(job_on_call__icontains=on_call_contains_query)
+
+            if experience_contains_query != '' and experience_contains_query is not None:
+                qs = qs.filter(job_experience__icontains=experience_contains_query)
+            
+            if supervision_contains_query != '' and supervision_contains_query is not None:
+                qs = qs.filter(job_supervision__icontains=supervision_contains_query)
+
+            if payment_contains_query != '' and payment_contains_query is not None:
+                qs = qs.filter(job_payment__icontains=payment_contains_query)
+
+            if vacation_contains_query != '' and vacation_contains_query is not None:
+                qs = qs.filter(job_vacation__icontains=vacation_contains_query)
+
+            if education_money_contains_query != '' and education_money_contains_query is not None:
+                qs = qs.filter(education_money__icontains=education_money_contains_query)
+
+            if shift_hour_contains_query != '' and shift_hour_contains_query is not None:
+                qs = qs.filter(locum_shift_hour__icontains=shift_hour_contains_query)
+            
+            if shift_day_contains_query != '' and shift_day_contains_query is not None:
+                qs = qs.filter(locum_shift_day__icontains=shift_day_contains_query)
+
     else:
         form = JobSearchForm()
 
     context['queryset']= qs
-    #context['form'] = form
 
     return render(request, "job_query.html", context)
+
 
 def hospital_delete_job(request, job_id):
     job = JobInfo.objects.filter(id=job_id)
     job.delete()
 
     return redirect("../../")
+
 
 def hospital_update_job(request, job_id):
     job = JobInfo.objects.get(id=job_id)
@@ -329,19 +396,21 @@ def hospital_update_job(request, job_id):
             job.education_money = cd['education_money']
 
         job.save(update_fields=new_fields)
-    
+
     else:
         form = JobUpdateForm()
-    
+
     return render(request, 'job_update.html', {'form': form, 'job': job})
+
 
 def gmap_to_zip(gmap_res):
     try:
         geometry = gmap_res[0]['geometry']
     except:
         return {'lat': -1, 'lng': -1}
-    
+
     return geometry['location']
+
 
 def distance_bt_locations(origin, destination):
     origins = origin
@@ -351,3 +420,36 @@ def distance_bt_locations(origin, destination):
     elements = rows['elements'][0]
     distance = elements['distance']['value']
     return distance / 1000
+    return render(request, 'job_update.html', {'form': form})
+
+
+def application(request, job_id):
+    job = JobInfo.objects.filter(id=job_id)[0]
+    user = get_user_model()
+    currUser = user.objects.filter(email=request.user.email)
+    currUserID = getattr(currUser[0], 'id')
+
+    # application_info = JobApplicants(
+    #    job_id = job,
+    #    user_id = currUserID,
+    #application_date = datetime.date()
+    # )
+
+    JobApplicants.objects.create(user_id=currUserID, job_id=job)
+
+    # application_info.save()
+    #job = JobInfo.objects.filter(id=job_id)
+
+    # if request.method == 'POST':
+    #form = ApplicationCreationForm(request.POST)
+
+    #form = ProfileUpdateForm(request.POST)
+    # ADD LATER TODO: see profile
+    # if form.is_valid():
+
+    # Connect worker to job
+    # job.update(job_applicant = user)
+
+    # when click applies url with job id again and user id and send email
+
+    return render(request, 'application.html')
