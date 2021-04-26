@@ -134,10 +134,8 @@ YES_NO= (
 
 
 class JobCreationForm(forms.Form):
-
     def __init__(self, *args, **kwargs):
         super(JobCreationForm, self).__init__(*args, **kwargs)
-
     job_name = forms.CharField(
         label="What is the name of the job?",
     )
@@ -217,7 +215,6 @@ class JobCreationForm(forms.Form):
 class ProfileUpdateHospitalForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(ProfileUpdateHospitalForm, self).__init__(*args, **kwargs)
-
     first_name = forms.CharField(
         label="First Name",
     )
@@ -230,12 +227,11 @@ class ProfileUpdateHospitalForm(forms.Form):
 
 
 class JobUpdateForm(forms.Form):
-
     def __init__(self, *args, **kwargs):
         super(JobUpdateForm, self).__init__(*args, **kwargs)
 
     job_name = forms.CharField(
-        label="What is the name of the job?",
+        label="What is the name of the job?", 
         required=False
     )
     job_type = forms.CharField(
@@ -244,11 +240,11 @@ class JobUpdateForm(forms.Form):
         required=False
     )
     job_location_zipcode = forms.IntegerField(
-        label='Where is the job? (Enter zipcode of hospital)',
+        label='Where is the job? (Enter zipcode of hospital)', 
         required=False
     )
     job_location_hospital = forms.CharField(
-        label='Which hospital is this job associated with?',
+        label='Which hospital is this job associated with?', 
         required=False
     )
     hospital_type = forms.CharField(
@@ -262,7 +258,63 @@ class JobUpdateForm(forms.Form):
         required=False
     )
     job_start_time = forms.DateTimeField(
-        label='What is the start date of this job?',
+        label='What is the start date of this job?', 
+        widget=DatePicker(
+            options={
+                'minDate': '2021-01-01',
+                'maxDate': '2030-01-01',
+            },
+            attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True,
+            },
+        ),
+        required=False
+    )
+    job_end_time = forms.DateTimeField(
+        label='What is the end date of this job?', 
+        widget=DatePicker(
+            options={
+                'minDate': '2021-01-01',
+                'maxDate': '2030-01-01',
+            },
+            attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True,
+            },
+        ),
+        required=False
+    )
+    locum_shift_day = forms.CharField(
+        label='For locum: How many days in a week?',
+        required=False
+    )
+    locum_shift_hour = forms.CharField(
+        label='For locum: How many hours in a day?',
+        required=False
+    )
+    job_experience = forms.CharField(
+        label='What is the experience level required for this job?',
+        widget=forms.Select(choices=EXPERIENCE),
+        required=False
+    )
+    job_supervision = forms.CharField(
+        label='Does this job require supervision from an anesthesiologist',
+        widget=forms.Select(choices=SUPERVISION),
+        required=False
+    )
+    job_payment = forms.CharField(
+        label='What is the payment type for this job?',
+        widget=forms.Select(choices=PAYMENT),
+        required=False
+    )
+    job_vacation = forms.CharField(
+        label='What are the vacation benefits of this job?', 
+        required=False
+    )
+    education_money = forms.CharField(
+        label='Are there any education credits with this job?', 
+        required=False
     )
 
 
@@ -373,28 +425,23 @@ PAYMENT = (
 
 
 class JobSearchForm(forms.Form):
-
     def __init__(self, * args, **kwargs):
         super(JobSearchForm, self).__init__(*args, **kwargs)
-
     ##### BASIC SEARCH QUERIES ########
     ### TODO: maybe add zip and city together in query
     zip_contains = forms.CharField(
         label="What zipcode do you want to search for a job?",
         required = False
     )
-
     type_contains = forms.CharField(
         label='What type of job?',
         widget=forms.Select(choices=DURATION),
         required = False
     )
-
     if(type_contains=='full-time'):
         locum_shift_day = forms.CharField(
             label='For locum: How many days in a week?'
         )
-
     hospital_contains = forms.CharField(
         label='Hospital name?', 
         required = False
@@ -409,7 +456,6 @@ class JobSearchForm(forms.Form):
         widget=forms.RadioSelect(choices=ONCALL),
         required = False
     )
-
     experience_contains = forms.CharField(
         label='Experience level?',
         widget=forms.Select(choices=EXPERIENCE),
@@ -433,14 +479,12 @@ class JobSearchForm(forms.Form):
         label='Are there any education credits with this job?', 
         required = False
     )
-
     ### Query by dates
     by_date = forms.CharField(
         label='Search within date range?',
         widget=forms.RadioSelect(choices=YES_NO),
         required = False
     )
-
     start_time_contains = forms.DateTimeField(
         label='Start date:', 
         widget=DatePicker(
@@ -455,7 +499,6 @@ class JobSearchForm(forms.Form):
         ),
         required = False
     )
-
     end_time_contains = forms.DateTimeField(
         label='End Date:', 
         widget=DatePicker(
@@ -470,7 +513,6 @@ class JobSearchForm(forms.Form):
         ),
         required = False
     )
-
     ### TODO: figure out weither it makes sense for them to be numbers
     ### TODO: also figure out weither it makes sense for >= type comparisons
     locum_shift_day_contains = forms.CharField(
@@ -481,16 +523,11 @@ class JobSearchForm(forms.Form):
         label='For locum: How many hours in a day?',
         required = False
     )
-
-
-class JobPreferenceForm(forms.Form):
-    #########
     type_contains = forms.CharField(
         label='What type of job?',
         widget=forms.Select(choices=DURATION),
         required=False
     )
-
     if(type_contains == 'full-time'):
         locum_shift_day = forms.CharField(
             label='For locum: How many days in a week?'
@@ -512,7 +549,6 @@ class JobPreferenceForm(forms.Form):
         widget=forms.RadioSelect(choices=ONCALL),
         required=False
     )
-
     experience_contains = forms.CharField(
         label='Experience level?',
         widget=forms.Select(choices=EXPERIENCE),
@@ -540,7 +576,7 @@ class JobPreferenceForm(forms.Form):
     ##########
 
 
-class JobUpdateForm(forms.Form):
+class JobPreferenceForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(JobPreferenceForm, self).__init__(*args, **kwargs)
