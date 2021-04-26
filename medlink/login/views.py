@@ -24,6 +24,8 @@ def login(request):
                 auth_login(request, user)
                 if user.is_hospital == 1:
                     return redirect("../home/hospital")
+                if user.is_worker == 1:
+                    return redirect("../home/user")
 
             else:
                 print("login error")
