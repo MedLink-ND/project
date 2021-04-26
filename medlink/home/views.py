@@ -3,8 +3,8 @@ from django.contrib.auth import logout
 from django.core.exceptions import MultipleObjectsReturned
 from django.shortcuts import redirect, render
 from django.http import HttpResponse, HttpResponseRedirect
-from .forms import JobCreationForm, JobSearchForm, ProfileUpdateHospitalForm, JobUpdateForm
-from .models import JobInfo
+from .forms import JobCreationForm, JobSearchForm, ProfileUpdateHospitalForm, JobUpdateForm, ProfileUpdateWorkerForm
+from .models import JobInfo, worker_info
 
 User = get_user_model()
 
@@ -95,6 +95,40 @@ def profile_update(request):
 
     return render(request, 'profile_update.html', {'form': form})
 
+def worker_profile_update(request):
+    curr_user = User.objects.filter(email=request.user.email)
+    if request.method == 'POST':
+        form = ProfileUpdateWorkerForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            first_name = forms.CharField(
+        name = cd['name']
+        address = cd['address']
+        email = cd['email']
+        education = cd['education']
+        certifications = cd['certifications']
+        provider_type = cd['provider_type']
+        peer_references = cd['peer_references']
+        cpr_certifications = cd['cpr_certifications']
+
+        worker_info = WorkerInfo(
+                    name=job_name,
+                    address=job_type,
+                    email=job_location_zipcode,
+                    education=job_location_hospital,
+                    certifications=hospital_type,
+                    provider_type=job_on_call,
+                    peer_references=job_start_time,
+                    cpr_certifications=job_end_time,
+                    base_profile=user,
+        )
+        
+        worker_info.save()
+    
+    else:
+        form = ProfileUpdateWorkerForm()
+
+    return render(request, 'profile_update.html', {'form': form})
 
 def log_out(request):
     logout(request)
