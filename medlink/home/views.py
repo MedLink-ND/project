@@ -101,7 +101,6 @@ def worker_profile_update(request):
         form = ProfileUpdateWorkerForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            first_name = forms.CharField(
         name = cd['name']
         address = cd['address']
         email = cd['email']
