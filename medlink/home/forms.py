@@ -267,14 +267,14 @@ DURATION_U = (
     ('Full Time', 'Full Time'),
     ('Part Time', 'Part Time'),
     ('Locum', 'Short Term Locum'),
-    ('All', 'I am open to all positions')
+    ('No preference', 'I am open to all positions')
 )
 RADIUS = (
     (None, ''),
     ('10', '< 10 miles'),
     ('20', '< 20 miles'),
     ('50', '< 50 miles'),
-    ("0", "I don't have a preference for job location")
+    ('No preference', "I don't have a preference for job location")
 )
 HOSPITAL_U = (
     (None, ''),
@@ -333,7 +333,6 @@ class JobPreferenceForm(forms.Form):
     )
     home_location_zipcode = forms.IntegerField(
         label='Where do you live? (Enter zipcode)', 
-        required=False
     )
     job_location_radius = forms.CharField(
         label='How far from your home would you like to search for job?',
@@ -342,6 +341,79 @@ class JobPreferenceForm(forms.Form):
     hospital_type = forms.CharField(
         label="What is the type of the hospital that you want to work at?",
         widget=forms.Select(choices=HOSPITAL_U),
+    )
+    job_on_call = forms.CharField(
+        label="Do you mind if your job requires on call?",
+        widget=forms.Select(choices=ONCALL_U),
+    )
+    job_start_time = forms.DateTimeField(
+        label='When do you want to start working?', 
+        widget=DatePicker(
+            options={
+                'minDate': '2021-01-01',
+                'maxDate': '2030-01-01',
+            },
+            attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True,
+            },
+        ),
+    )
+    job_end_time = forms.DateTimeField(
+        label='Do you have an end date in mind for your job?', 
+        widget=DatePicker(
+            options={
+                'minDate': '2021-01-01',
+                'maxDate': '2030-01-01',
+            },
+            attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True,
+            },
+        ),
+        required=False,
+    )
+    locum_shift_day = forms.CharField(
+        label='For locum jobs: How many days do you want to work in a week?',
+        required=False,
+    )
+    locum_shift_hour = forms.CharField(
+        label='For locum jobs: How many hours do you want to work in a day?',
+        required=False,
+    )
+    job_experience = forms.CharField(
+        label='What is your experience level?',
+        widget=forms.Select(choices=EXPERIENCE_U),
+    )
+    job_payment = forms.CharField(
+        label='What is your prefered payment type for the job?',
+        widget=forms.Select(choices=PAYMENT),
+    )
+
+
+class JobPreferenceUpdateForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        super(JobPreferenceUpdateForm, self).__init__(*args, **kwargs)
+
+    job_type = forms.CharField(
+        label='What type of jobs are you looking for?',
+        widget=forms.Select(choices=DURATION_U),
+        required=False,
+    )
+    home_location_zipcode = forms.IntegerField(
+        label='Where do you live? (Enter zipcode)', 
+        required=False,
+    )
+    job_location_radius = forms.CharField(
+        label='How far from your home would you like to search for job?',
+        widget=forms.Select(choices=RADIUS),
+        required=False,
+    )
+    hospital_type = forms.CharField(
+        label="What is the type of the hospital that you want to work at?",
+        widget=forms.Select(choices=HOSPITAL_U),
+        required=False,
     )
     job_on_call = forms.CharField(
         label="Do you mind if your job requires on call?",
@@ -374,23 +446,23 @@ class JobPreferenceForm(forms.Form):
                 'icon_toggle': True,
             },
         ),
-        required=False
+        required=False,
     )
     locum_shift_day = forms.CharField(
         label='For locum jobs: How many days do you want to work in a week?',
-        required=False
+        required=False,
     )
     locum_shift_hour = forms.CharField(
         label='For locum jobs: How many hours do you want to work in a day?',
-        required=False
+        required=False,
     )
     job_experience = forms.CharField(
         label='What is your experience level?',
         widget=forms.Select(choices=EXPERIENCE_U),
-        required=False
+        required=False,
     )
     job_payment = forms.CharField(
         label='What is your prefered payment type for the job?',
         widget=forms.Select(choices=PAYMENT),
-        required=False
+        required=False,
     )

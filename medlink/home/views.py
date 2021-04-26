@@ -4,7 +4,7 @@ from django.core.exceptions import MultipleObjectsReturned
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 
-from .forms import JobCreationForm, JobPreferenceForm, JobSearchForm, JobUpdateForm, ProfileUpdateHospitalForm
+from .forms import JobCreationForm, JobPreferenceForm, JobPreferenceUpdateForm, JobSearchForm, JobUpdateForm, ProfileUpdateHospitalForm
 from .models import JobInfo, JobPreference
 
 import googlemaps
@@ -31,14 +31,23 @@ def home_user(request):
     context = {}
     
     user_job_type = user_preference.job_type
+    if user_preference.job_location_radius == 'No preference':
+        user_job_radius = 10000000
+    else:
+        user_job_radius = int(user_preference.job_location_radius)
     user_location_lat = user_preference.home_location_lat
     user_location_lng = user_preference.home_location_lng
 
     job_rec = None
-    job_rec = all_jobs.filter(job_type=user_job_type)
+    
+    if user_job_type == 'No preference':
+        job_rec = all_jobs
+    else:
+        job_rec = all_jobs.filter(job_type=user_job_type)
+    
+    job_rec_distance_filtered = []
     
     if len(job_rec) > 0:
-        context['job_rec'] = job_rec
         for job in job_rec:
             job_zip = job.job_location_zipcode
             geo_res = gmap_to_zip(gmaps.geocode(job_zip))
@@ -49,7 +58,13 @@ def home_user(request):
                 origin = (user_location_lat, user_location_lng)
                 destination = (lat, lng)
                 distance = distance_bt_locations(origin, destination)
-                ### TODO
+                # ignore distances greater than user preferred distance
+                if distance <= user_job_radius:
+                    job_rec_distance_filtered.append(job)
+                else:
+                    print(distance)
+
+        context['job_rec'] = job_rec_distance_filtered
 
     return render(request, 'home_user.html', context)
 
@@ -59,16 +74,21 @@ def user_job_details(request, job_id):
 
 def user_job_preference(request):
     user = request.user
-    print(user.email)
     currUser = User.objects.filter(email=request.user.email)
     currUserID = getattr(currUser[0], 'id')
     preference_has_set = None
-    existing_preference = JobPreference.objects.filter(base_profile=currUserID)
-    preference_has_set = len(existing_preference) > 0
+    existing_preference = JobPreference.objects.filter(base_profile=currUserID)[0]
+    preference_has_set = (existing_preference != None)
+    print(preference_has_set)
 
     if request.method == 'POST':
-        print('Vaid post')
-        form = JobPreferenceForm(request.POST)
+        if preference_has_set:
+            print('Update form')
+            form = JobPreferenceUpdateForm(request.POST)
+        else:
+            print('New form')
+            form = JobPreferenceForm(request.POST)
+
         if not user.is_hospital:
             if form.is_valid():
                 cd = form.cleaned_data
@@ -89,39 +109,66 @@ def user_job_preference(request):
                 job_experience = cd['job_experience']
                 job_payment = cd['job_payment']
 
-                geo_res = gmap_to_zip(gmaps.geocode(home_location_zipcode))
-                lat, lng = geo_res['lat'], geo_res['lng']
-
-                job_preference = JobPreference(
-                    job_type=job_type,
-                    home_location_zipcode=home_location_zipcode,
-                    home_location_lat=lat,
-                    home_location_lng=lng,
-                    job_location_radius=job_location_radius,
-                    hospital_type=hospital_type,
-                    job_on_call=job_on_call,
-                    job_start_time=job_start_time,
-                    job_end_time=job_end_time,
-                    locum_shift_day=locum_shift_day,
-                    locum_shift_hour=locum_shift_hour,
-                    job_experience=job_experience,
-                    job_payment=job_payment,
-                    base_profile=user.id,
-                )
+                if home_location_zipcode:
+                    try:
+                        geo_res = gmap_to_zip(gmaps.geocode(home_location_zipcode))
+                        lat, lng = geo_res['lat'], geo_res['lng']
+                    except:
+                        lat, lng = 0, 0
+                        print('Zipcode invalid')
+                else:
+                    lat, lng = 0, 0
 
                 if preference_has_set:
-                    job_preference.save(update_fields=new_fields)
+                    existing_preference.job_type = job_type
+                    existing_preference.home_location_zipcode = home_location_zipcode
+                    existing_preference.job_location_radius = job_location_radius
+                    existing_preference.home_location_lat = lat
+                    existing_preference.home_location_lng = lng                
+                    existing_preference.hospital_type = hospital_type
+                    existing_preference.job_start_time = job_start_time
+                    existing_preference.job_end_time = job_end_time
+                    existing_preference.locum_shift_day = locum_shift_day
+                    existing_preference.job_experience = job_experience
+                    existing_preference.job_payment = job_payment
+
                     print('Update job preference')
+                    print(new_fields)
+                    existing_preference.save(update_fields=new_fields)
+                    print(existing_preference.home_location_zipcode)
+                    return render(request, 'job_preference.html', {'form': form, 'preference_has_set': preference_has_set, 'existing_preference': existing_preference})
+
                 else:
+                    job_preference = JobPreference(
+                        job_type=job_type,
+                        home_location_zipcode=home_location_zipcode,
+                        home_location_lat=lat,
+                        home_location_lng=lng,
+                        job_location_radius=job_location_radius,
+                        hospital_type=hospital_type,
+                        job_on_call=job_on_call,
+                        job_start_time=job_start_time,
+                        job_end_time=job_end_time,
+                        locum_shift_day=locum_shift_day,
+                        locum_shift_hour=locum_shift_hour,
+                        job_experience=job_experience,
+                        job_payment=job_payment,
+                        base_profile=user.id,
+                    )
                     print('Save job preference')
                     job_preference.save()
+                    return render(request, 'job_preference.html', {'form': form, 'preference_has_set': preference_has_set})
+
 
     else:
-        form = JobPreferenceForm()
+        if preference_has_set:
+            form = JobPreferenceUpdateForm()
+        else:
+            form = JobPreferenceForm()
         print('not post')
 
     if preference_has_set:
-        return render(request, 'job_preference.html', {'form': form, 'preference_has_set': preference_has_set, 'existing_preference': existing_preference[0]})
+        return render(request, 'job_preference.html', {'form': form, 'preference_has_set': preference_has_set, 'existing_preference': existing_preference})
     else:
         return render(request, 'job_preference.html', {'form': form, 'preference_has_set': preference_has_set})
 
@@ -300,6 +347,4 @@ def distance_bt_locations(origin, destination):
     rows = matrix['rows'][0]
     elements = rows['elements'][0]
     distance = elements['distance']['value']
-    return distance
-
-    #return responses.calls[0].request.url
+    return distance / 1000

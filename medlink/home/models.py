@@ -28,7 +28,7 @@ class JobPreference(models.Model):
     # base_profile = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return 'Job type: ' + self.job_type
+        return 'Job type: ' + self.job_type + '; job_location_radius: ' + self.job_location_radius
 
 class JobInfo(models.Model):
     """
