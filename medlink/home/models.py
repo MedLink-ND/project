@@ -54,6 +54,22 @@ class JobInfo(models.Model):
     education_money = models.CharField(max_length=255, null=True)
     base_profile = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
+
+class WorkerInfo(models.Model):
+
+    class Meta:
+        app_label = 'home'
+
+    name = models.CharField(max_length=255, null=True)
+    address = models.CharField(max_length=255, null=True)
+    email = models.CharField(max_length=5, null=True)
+    education = models.CharField(max_length=255, null=True)
+    certifications = models.CharField(max_length=255, null=True)
+    provider_type = models.CharField(max_length=255, null=True)
+    peer_references = models.CharField(max_length=255, null=True)
+    cpr_certifications = models.CharField(max_length=255, null=True)
+    base_profile = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
     # def __str__(self):
     #     return 'Name: ' + self.base_rofile.first_name + '\t' \
     #     + 'Hospital: ' + self.hospital_name + '\t' \

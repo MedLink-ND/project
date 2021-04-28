@@ -12,8 +12,8 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 
-from .forms import JobCreationForm, JobPreferenceForm, JobPreferenceUpdateForm, JobSearchForm, JobUpdateForm, ProfileUpdateHospitalForm
-from .models import JobInfo, JobPreference
+from .forms import JobCreationForm, JobPreferenceForm, JobPreferenceUpdateForm, JobSearchForm, JobUpdateForm, ProfileUpdateHospitalForm, ProfileUpdateWorkerForm
+from .models import JobInfo, JobPreference, WorkerInfo
 
 import googlemaps
 import requests
@@ -259,6 +259,10 @@ def hospital_post_job(request):
 
 def profile_update(request):
     curr_user = User.objects.filter(email=request.user.email)
+
+    if request.user.worker:
+        return worker_profile_update(request)
+        
     if request.method == 'POST':
         form = ProfileUpdateHospitalForm(request.POST)
         if form.is_valid():
@@ -275,6 +279,42 @@ def profile_update(request):
 
     return render(request, 'profile_update.html', {'form': form})
 
+def worker_profile_update(request):
+    if request.method == 'POST':
+        user = request.user
+        form = ProfileUpdateWorkerForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+        name = cd['name']
+        address = cd['address']
+        email = cd['email']
+        education = cd['education']
+        certifications = cd['certifications']
+        provider_type = cd['provider_type']
+        peer_references = cd['peer_references']
+        cpr_certifications = cd['cpr_certifications']
+
+        worker_info = WorkerInfo(
+                    name=name,
+                    address=address,
+                    email=email,
+                    education=education,
+                    certifications=certifications,
+                    provider_type=provider_type,
+                    peer_references=peer_references,
+                    cpr_certifications=cpr_certifications,
+                    base_profile=user,
+        )
+        
+        previous_info = WorkerInfo.objects.filter(base_profile_id=user.id)
+        previous_info.delete()
+
+        worker_info.save()
+    
+    else:
+        form = ProfileUpdateWorkerForm()
+
+    return render(request, 'worker_profile_update.html', {'form': form})
 
 def logout_request(request):
     logout(request)

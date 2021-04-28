@@ -212,6 +212,36 @@ class JobCreationForm(forms.Form):
     )
 
 
+class ProfileUpdateWorkerForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(ProfileUpdateWorkerForm, self).__init__(*args, **kwargs)
+
+    name = forms.CharField(
+        label="Name", 
+    )
+    address = forms.CharField(
+        label='Address', 
+    )
+    email = forms.CharField(
+        label='Email',
+    )
+    education = forms.CharField(
+        label='Education',
+    )
+    certifications = forms.CharField(
+        label='Certifications',
+    )
+    provider_type = forms.CharField(
+        label='Provider Type',
+    )
+    peer_references = forms.CharField(
+        label='Peer references: (name, phone number, email)',
+    )
+    cpr_certifications = forms.CharField(
+        label='CPR certifications',
+    )
+
+
 class ProfileUpdateHospitalForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(ProfileUpdateHospitalForm, self).__init__(*args, **kwargs)
@@ -224,7 +254,6 @@ class ProfileUpdateHospitalForm(forms.Form):
     hospital_name = forms.CharField(
         label='Hospital Name',
     )
-
 
 class JobUpdateForm(forms.Form):
     def __init__(self, *args, **kwargs):
