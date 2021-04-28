@@ -35,7 +35,7 @@ class WorkerInfo(models.Model):
 
     name = models.CharField(max_length=255, null=True)
     address = models.CharField(max_length=255, null=True)
-    email = models.IntegerField(max_length=5, null=True)
+    email = models.CharField(max_length=5, null=True)
     education = models.CharField(max_length=255, null=True)
     certifications = models.CharField(max_length=255, null=True)
     provider_type = models.CharField(max_length=255, null=True)
