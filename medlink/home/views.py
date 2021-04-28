@@ -81,7 +81,7 @@ def hospital_post_job(request):
 def profile_update(request):
     curr_user = User.objects.filter(email=request.user.email)
 
-    if curr_user.worker:
+    if request.user.worker:
         return worker_profile_update(request)
         
     if request.method == 'POST':
