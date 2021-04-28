@@ -1,30 +1,32 @@
 {% extends 'base.html' %}
 {% load static %}
-  {% block title %}MedLink{% endblock %}
+{% block title %}MedLink{% endblock %}
+{% block logout %}
+<li><a href="{% url 'login' %}" class="getstarted">Login / Register</a></li>
+{% endblock %}
+{% block content %}
 
-  {% block content %}
+<!-- ======= Hero Section ======= -->
+<section id="hero">
+  <div id="heroCarousel" data-bs-interval="5000" class="carousel slide carousel-fade" data-bs-ride="carousel">
 
-  <!-- ======= Hero Section ======= -->
-  <section id="hero">
-    <div id="heroCarousel" data-bs-interval="5000" class="carousel slide carousel-fade" data-bs-ride="carousel">
+    <ol class="carousel-indicators" id="hero-carousel-indicators"></ol>
 
-      <ol class="carousel-indicators" id="hero-carousel-indicators"></ol>
+    <div class="carousel-inner" role="listbox">
 
-      <div class="carousel-inner" role="listbox">
-
-        <!-- Slide 1 -->
-        <div class="carousel-item active" style="background-image: url({% static 'img/slide/slide-1.png' %})">
-          <div class="carousel-container">
-            <div class="container">
-              <h2 class="animate__animated animate__fadeInDown">Welcome to <span>MedLink</span></h2>
-              <p class="animate__animated animate__fadeInUp">Connect Medical Workers with Hospitals.</p>
-              <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto">Read More</a>
-            </div>
+      <!-- Slide 1 -->
+      <div class="carousel-item active" style="background-image: url({% static 'img/slide/slide-1.png' %})">
+        <div class="carousel-container">
+          <div class="container">
+            <h2 class="animate__animated animate__fadeInDown">Welcome to <span>MedLink</span></h2>
+            <p class="animate__animated animate__fadeInUp">Connect Medical Workers with Hospitals.</p>
+            <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto">Read More</a>
           </div>
         </div>
+      </div>
 
-        <!-- Slide 2 -->
-        <!-- <div class="carousel-item" style="background-image: url(assets/img/slide/slide-2.jpg)">
+      <!-- Slide 2 -->
+      <!-- <div class="carousel-item" style="background-image: url(assets/img/slide/slide-2.jpg)">
           <div class="carousel-container">
             <div class="container">
               <h2 class="animate__animated animate__fadeInDown">Lorem Ipsum Dolor</h2>
@@ -34,8 +36,8 @@
           </div>
         </div> -->
 
-        <!-- Slide 3 -->
-        <!-- <div class="carousel-item" style="background-image: url(assets/img/slide/slide-3.jpg)">
+      <!-- Slide 3 -->
+      <!-- <div class="carousel-item" style="background-image: url(assets/img/slide/slide-3.jpg)">
           <div class="carousel-container">
             <div class="container">
               <h2 class="animate__animated animate__fadeInDown">Sequi ea ut et est quaerat</h2>
@@ -45,62 +47,69 @@
           </div>
         </div> -->
 
+    </div>
+
+    <a class="carousel-control-prev" href="#heroCarousel" role="button" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon bi bi-chevron-left" aria-hidden="true"></span>
+    </a>
+
+    <a class="carousel-control-next" href="#heroCarousel" role="button" data-bs-slide="next">
+      <span class="carousel-control-next-icon bi bi-chevron-right" aria-hidden="true"></span>
+    </a>
+
+  </div>
+</section><!-- End Hero -->
+
+<main id="main">
+
+  <!-- ======= About Section ======= -->
+  <section id="about" class="about">
+    <div class="container">
+
+      <div class="row content">
+        <div class="col-lg-6">
+          <h2>What is MedLink?</h2>
+          <h3>MedLink is a startup trying to resolve the shortage of medical workers in hospitals and surgery centers
+            across the nation.</h3>
+        </div>
+        <div class="col-lg-6 pt-4 pt-lg-0">
+          <p>
+            In the past, recruitment of medical workers was a very ineffient process. For example, hospitals have to go
+            through third-party
+            recruiting agencies and they will receive multiple cold calls/emails everyday regarding interest in specific
+            medical workers.
+            There is no central platform that directly connects hospitals to medical workers seeking specific jobs.
+            That's why MedLink
+            was created. Here are some benefits MedLink can provide:
+          </p>
+          <ul>
+            <li><i class="ri-check-double-line"></i> Connect job needs with quality workers.</li>
+            <li><i class="ri-check-double-line"></i> Reduce excessive and unneeded communication from 3rd party
+              recruiting agencies.</li>
+            <li><i class="ri-check-double-line"></i> Provide platform for employer and employee to connect, view
+              opportunities, approve communication and then swap communication info.</li>
+          </ul>
+          <p class="font-italic">
+            Learn more about the design of MedLink through our
+            <b><a href="{% static 'img/medlinkER2.png' %}" target="_">ER diagram</a></b>.
+            Our data comes from our partnership with anesthetist Dr. Mat Strasser who works at South Bend Surgery
+            Center. **To protect user privacy,
+            attributes such as SSN are not considered keys in our ER diagram.
+          </p>
+        </div>
       </div>
-
-      <a class="carousel-control-prev" href="#heroCarousel" role="button" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon bi bi-chevron-left" aria-hidden="true"></span>
-      </a>
-
-      <a class="carousel-control-next" href="#heroCarousel" role="button" data-bs-slide="next">
-        <span class="carousel-control-next-icon bi bi-chevron-right" aria-hidden="true"></span>
-      </a>
 
     </div>
-  </section><!-- End Hero -->
+  </section><!-- End About Section -->
 
-  <main id="main">
+  <!-- ======= Clients Section ======= -->
+  <section id="clients" class="clients section-bg">
+    <div class="container">
 
-    <!-- ======= About Section ======= -->
-    <section id="about" class="about">
-      <div class="container">
+      <div class="row">
 
-        <div class="row content">
-          <div class="col-lg-6">
-            <h2>What is MedLink?</h2>
-            <h3>MedLink is a startup trying to resolve the shortage of medical workers in hospitals and surgery centers across the nation.</h3>
-          </div>
-          <div class="col-lg-6 pt-4 pt-lg-0">
-            <p>
-              In the past, recruitment of medical workers was a very ineffient process. For example, hospitals have to go through third-party
-              recruiting agencies and they will receive multiple cold calls/emails everyday regarding interest in specific medical workers.
-              There is no central platform that directly connects hospitals to medical workers seeking specific jobs. That's why MedLink
-              was created. Here are some benefits MedLink can provide:
-            </p>
-            <ul>
-              <li><i class="ri-check-double-line"></i> Connect job needs with quality workers.</li>
-              <li><i class="ri-check-double-line"></i> Reduce excessive and unneeded communication from 3rd party recruiting agencies.</li>
-              <li><i class="ri-check-double-line"></i> Provide platform for employer and employee to connect, view opportunities, approve communication and then swap communication info.</li>
-            </ul>
-            <p class="font-italic">
-              Learn more about the design of MedLink through our 
-              <b><a href="{% static 'img/medlinkER2.png' %}" target="_">ER diagram</a></b>.
-              Our data comes from our partnership with anesthetist Dr. Mat Strasser who works at South Bend Surgery Center. **To protect user privacy,
-              attributes such as SSN are not considered keys in our ER diagram.
-            </p>
-          </div>
-        </div>
-
-      </div>
-    </section><!-- End About Section -->
-
-    <!-- ======= Clients Section ======= -->
-    <section id="clients" class="clients section-bg">
-      <div class="container">
-
-        <div class="row">
-
-          <h5>Here is the brief summary of the services MedLink provides:</h5>
-          <!-- <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
+        <h5>Here is the brief summary of the services MedLink provides:</h5>
+        <!-- <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
             <img src="assets/img/clients/client-1.png" class="img-fluid" alt="">
           </div>
 
@@ -124,49 +133,53 @@
             <img src="assets/img/clients/client-6.png" class="img-fluid" alt="">
           </div> -->
 
-        </div>
-
       </div>
-    </section><!-- End Clients Section -->
 
-    <!-- ======= Services Section ======= -->
-    <section id="services" class="services">
-      <div class="container">
+    </div>
+  </section><!-- End Clients Section -->
 
-        <div class="row">
-          <div class="col-md-6">
-            <div class="icon-box">
-              <i class="bi bi-briefcase"></i>
-              <h4><a href="#">Profile Creation for Medical Workers and Hospitals</a></h4>
-              <p>Each medical worker and hospital / surgery center would have their own profile.</p>
-            </div>
+  <!-- ======= Services Section ======= -->
+  <section id="services" class="services">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="icon-box">
+            <i class="bi bi-briefcase"></i>
+            <h4><a href="#">Profile Creation for Medical Workers and Hospitals</a></h4>
+            <p>Each medical worker and hospital / surgery center would have their own profile.</p>
           </div>
-          <div class="col-md-6 mt-4 mt-md-0">
-            <div class="icon-box">
-              <i class="bi bi-card-checklist"></i>
-              <h4><a href="#">Privacy & Security of User Data</a></h4>
-              <p>MedLink protects users' privacy and no personal information would be exposed. Only when there is a successful job match through
-                our platform, hospitals would reach out to the medical worker for further communication regarding the position.
-              </p>
-            </div>
+        </div>
+        <div class="col-md-6 mt-4 mt-md-0">
+          <div class="icon-box">
+            <i class="bi bi-card-checklist"></i>
+            <h4><a href="#">Privacy & Security of User Data</a></h4>
+            <p>MedLink protects users' privacy and no personal information would be exposed. Only when there is a
+              successful job match through
+              our platform, hospitals would reach out to the medical worker for further communication regarding the
+              position.
+            </p>
           </div>
-          <div class="col-md-6 mt-4 mt-md-0">
-            <div class="icon-box">
-              <i class="bi bi-bar-chart"></i>
-              <h4><a href="#">Search specific jobs / opportunities</a></h4>
-              <p>Medical workers can search for jobs based on their preferences such as prefered location, specific hospital, length of job, etc.</p>
-            </div>
+        </div>
+        <div class="col-md-6 mt-4 mt-md-0">
+          <div class="icon-box">
+            <i class="bi bi-bar-chart"></i>
+            <h4><a href="#">Search specific jobs / opportunities</a></h4>
+            <p>Medical workers can search for jobs based on their preferences such as prefered location, specific
+              hospital, length of job, etc.</p>
           </div>
-          <div class="col-md-6 mt-4 mt-md-0">
-            <div class="icon-box">
-              <i class="bi bi-binoculars"></i>
-              <h4><a href="#">Advanced job recommendation system</a></h4>
-              <p>Once logged in, medical workers would be able to see their job recommendations based on their preferences, and they can swipe left
-                or right to rank their interest levels.
-              </p>
-            </div>
+        </div>
+        <div class="col-md-6 mt-4 mt-md-0">
+          <div class="icon-box">
+            <i class="bi bi-binoculars"></i>
+            <h4><a href="#">Advanced job recommendation system</a></h4>
+            <p>Once logged in, medical workers would be able to see their job recommendations based on their
+              preferences, and they can swipe left
+              or right to rank their interest levels.
+            </p>
           </div>
-          <!-- <div class="col-md-6 mt-4 mt-md-0">
+        </div>
+        <!-- <div class="col-md-6 mt-4 mt-md-0">
             <div class="icon-box">
               <i class="bi bi-brightness-high"></i>
               <h4><a href="#">Magni Dolore</a></h4>
@@ -180,13 +193,13 @@
               <p>Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi</p>
             </div>
           </div> -->
-        </div>
-
       </div>
-    </section><!-- End Services Section -->
 
-    <!-- ======= Portfolio Section ======= -->
-    <!--
+    </div>
+  </section><!-- End Services Section -->
+
+  <!-- ======= Portfolio Section ======= -->
+  <!--
     <section id="portfolio" class="portfolio">
       <div class="container">
 
@@ -333,8 +346,9 @@
 
       </div>
     </section>
-  --><!-- End Portfolio Section -->
+  -->
+  <!-- End Portfolio Section -->
 
-  </main><!-- End #main -->
+</main><!-- End #main -->
 
-  {% endblock %}
+{% endblock %}
