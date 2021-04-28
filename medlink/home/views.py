@@ -123,7 +123,7 @@ def worker_profile_update(request):
                     base_profile=user,
         )
         
-        previous_info = WorkerInfo.objects.filter(id=user.id)
+        previous_info = WorkerInfo.objects.filter(base_profile_id=user.id)
         previous_info.delete()
 
         worker_info.save()
