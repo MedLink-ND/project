@@ -134,7 +134,7 @@ def worker_profile_update(request):
     else:
         form = ProfileUpdateWorkerForm()
 
-    return render(request, 'profile_update.html', {'form': form})
+    return render(request, 'worker_profile_update.html', {'form': form})
 
 def log_out(request):
     logout(request)
