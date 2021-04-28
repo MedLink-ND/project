@@ -123,6 +123,9 @@ def worker_profile_update(request):
                     base_profile=user,
         )
         
+        worker_info = worker_info.objects.filter(id=base_profile)
+        worker_info.delete()
+
         worker_info.save()
     
     else:
