@@ -80,6 +80,10 @@ def hospital_post_job(request):
 
 def profile_update(request):
     curr_user = User.objects.filter(email=request.user.email)
+
+    if curr_user.worker:
+        return worker_profile_update(request)
+        
     if request.method == 'POST':
         form = ProfileUpdateHospitalForm(request.POST)
         if form.is_valid():
@@ -96,7 +100,6 @@ def profile_update(request):
     return render(request, 'profile_update.html', {'form': form})
 
 def worker_profile_update(request):
-    #curr_user = User.objects.filter(email=request.user.email)
     if request.method == 'POST':
         user = request.user
         form = ProfileUpdateWorkerForm(request.POST)
