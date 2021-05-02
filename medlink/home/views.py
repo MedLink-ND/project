@@ -7,8 +7,13 @@ from django.core.exceptions import MultipleObjectsReturned
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 
-from .forms import JobCreationForm, JobPreferenceForm, JobPreferenceUpdateForm, JobSearchForm, JobUpdateForm, ProfileUpdateHospitalForm
-from .models import JobInfo, JobPreference
+### For application email
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
+
+from .forms import JobCreationForm, JobPreferenceForm, JobPreferenceUpdateForm, JobSearchForm, JobUpdateForm, ProfileUpdateHospitalForm, ProfileUpdateWorkerForm
+from .models import JobInfo, JobPreference, WorkerInfo
 
 import googlemaps
 import requests
@@ -255,6 +260,10 @@ def hospital_post_job(request):
 
 def profile_update(request):
     curr_user = User.objects.filter(email=request.user.email)
+
+    if request.user.worker:
+        return worker_profile_update(request)
+        
     if request.method == 'POST':
         form = ProfileUpdateHospitalForm(request.POST)
         if form.is_valid():
@@ -271,6 +280,42 @@ def profile_update(request):
 
     return render(request, 'profile_update.html', {'form': form})
 
+def worker_profile_update(request):
+    if request.method == 'POST':
+        user = request.user
+        form = ProfileUpdateWorkerForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+        name = cd['name']
+        address = cd['address']
+        email = cd['email']
+        education = cd['education']
+        certifications = cd['certifications']
+        provider_type = cd['provider_type']
+        peer_references = cd['peer_references']
+        cpr_certifications = cd['cpr_certifications']
+
+        worker_info = WorkerInfo(
+                    name=name,
+                    address=address,
+                    email=email,
+                    education=education,
+                    certifications=certifications,
+                    provider_type=provider_type,
+                    peer_references=peer_references,
+                    cpr_certifications=cpr_certifications,
+                    base_profile=user,
+        )
+        
+        previous_info = WorkerInfo.objects.filter(base_profile_id=user.id)
+        previous_info.delete()
+
+        worker_info.save()
+    
+    else:
+        form = ProfileUpdateWorkerForm()
+
+    return render(request, 'worker_profile_update.html', {'form': form})
 
 def logout_request(request):
     logout(request)
@@ -286,7 +331,7 @@ def job_query(request):
         if form.is_valid():
             cd = form.cleaned_data
             zip_contains_query = cd['zip_contains']
-            ### new queries
+            # new queries
             type_contains_query = cd['type_contains']
             hospital_contains_query = cd['hospital_contains']
             hospital_type_contains_query = cd['hospital_type_contains']
@@ -298,46 +343,51 @@ def job_query(request):
             education_money_contains_query = cd['education_money_contains']
             shift_day_contains_query = cd['locum_shift_day_contains']
             shift_hour_contains_query = cd['locum_shift_hour_contains']
-            
-            ### TODO: maybe give more options for how to search by date
-            ### Example: instead of yes and no maybe an option is range, option with no end date, 
-            ###  option where you give an end date and it automatically puts start date as current date
-            ###  maybe it should always filter with the start date as the current date
+
+            # TODO: maybe give more options for how to search by date
+            # Example: instead of yes and no maybe an option is range, option with no end date,
+            # option where you give an end date and it automatically puts start date as current date
+            # maybe it should always filter with the start date as the current date
             # check if searching by range
-            if cd['by_date'] :
+            if cd['by_date']:
                 start_time_contains_query = cd['start_time_contains']
                 end_time_contains_query = cd['end_time_contains']
 
-                ### Query by dates
+                # Query by dates
                 if cd['by_date'] and start_time_contains_query != '' and start_time_contains_query is not None and end_time_contains_query != '' and end_time_contains_query is not None:
-                    qs = JobInfo.objects.filter(job_start_time__lte = start_time_contains_query, job_end_time__gte = end_time_contains_query)
+                    qs = JobInfo.objects.filter(
+                        job_start_time__lte=start_time_contains_query, job_end_time__gte=end_time_contains_query)
             else:
                 qs = JobInfo.objects.all()
 
-
-            ### by location
-            ### TODO: maybe combine location and zip
+            # by location
+            # TODO: maybe combine location and zip
             if zip_contains_query != '' and zip_contains_query is not None:
-                qs = qs.filter(job_location_zipcode__icontains=zip_contains_query)
+                qs = qs.filter(
+                    job_location_zipcode__icontains=zip_contains_query)
 
-            ### new queries
+            # new queries
             if type_contains_query != '' and type_contains_query is not None:
                 qs = qs.filter(job_type__icontains=type_contains_query)
 
             if hospital_contains_query != '' and hospital_contains_query is not None:
-                qs = qs.filter(job_location_hospital__icontains=hospital_contains_query)
+                qs = qs.filter(
+                    job_location_hospital__icontains=hospital_contains_query)
 
             if hospital_type_contains_query != '' and hospital_type_contains_query is not None:
-                qs = qs.filter(hospital_type__icontains=hospital_type_contains_query)
+                qs = qs.filter(
+                    hospital_type__icontains=hospital_type_contains_query)
 
             if on_call_contains_query != '' and on_call_contains_query is not None:
                 qs = qs.filter(job_on_call__icontains=on_call_contains_query)
 
             if experience_contains_query != '' and experience_contains_query is not None:
-                qs = qs.filter(job_experience__icontains=experience_contains_query)
-            
+                qs = qs.filter(
+                    job_experience__icontains=experience_contains_query)
+
             if supervision_contains_query != '' and supervision_contains_query is not None:
-                qs = qs.filter(job_supervision__icontains=supervision_contains_query)
+                qs = qs.filter(
+                    job_supervision__icontains=supervision_contains_query)
 
             if payment_contains_query != '' and payment_contains_query is not None:
                 qs = qs.filter(job_payment__icontains=payment_contains_query)
@@ -346,13 +396,16 @@ def job_query(request):
                 qs = qs.filter(job_vacation__icontains=vacation_contains_query)
 
             if education_money_contains_query != '' and education_money_contains_query is not None:
-                qs = qs.filter(education_money__icontains=education_money_contains_query)
+                qs = qs.filter(
+                    education_money__icontains=education_money_contains_query)
 
             if shift_hour_contains_query != '' and shift_hour_contains_query is not None:
-                qs = qs.filter(locum_shift_hour__icontains=shift_hour_contains_query)
-            
+                qs = qs.filter(
+                    locum_shift_hour__icontains=shift_hour_contains_query)
+
             if shift_day_contains_query != '' and shift_day_contains_query is not None:
-                qs = qs.filter(locum_shift_day__icontains=shift_day_contains_query)
+                qs = qs.filter(
+                    locum_shift_day__icontains=shift_day_contains_query)
 
             context['queryset'] = qs
             context['num_jobs'] = len(qs)
@@ -362,6 +415,7 @@ def job_query(request):
         form = JobSearchForm()
         print('GET')
         context['queryset'] = None
+    
     context['form'] = form
 
     return render(request, "job_query.html", context)
@@ -430,25 +484,17 @@ def distance_bt_locations(origin, destination):
 
 
 def application(request, job_id):
+
     job = JobInfo.objects.filter(id=job_id)[0]
     user = get_user_model()
     currUser = user.objects.filter(email=request.user.email)
     currUserID = getattr(currUser[0], 'id')
-
-    # application_info = JobApplicants(
-    #    job_id = job,
-    #    user_id = currUserID,
-    #application_date = datetime.date()
-    # )
+    #name = getattr(currUser)
+    applicant = request.user
 
     JobApplicants.objects.create(user_id=currUserID, job_id=job)
-
-    # application_info.save()
-    #job = JobInfo.objects.filter(id=job_id)
-
-    # if request.method == 'POST':
-    #form = ApplicationCreationForm(request.POST)
-
+    
+    employer = job.base_profile#.id#user.objects.filter(id=job.base_profile.id)
     #form = ProfileUpdateForm(request.POST)
     # ADD LATER TODO: see profile
     # if form.is_valid():
@@ -457,5 +503,25 @@ def application(request, job_id):
     # job.update(job_applicant = user)
 
     # when click applies url with job id again and user id and send email
+
+    # send email
+    current_site = get_current_site(request)
+
+    mail_subject = 'New Applicant'
+    message = render_to_string('applicant_notice.html', {
+        'applicant':     applicant,
+        'employer' : employer,
+        'job'      :      job,
+        'domain':   current_site.domain,
+        #'uid':      urlsafe_base64_encode(force_bytes(user.pk)),
+        #'token':    account_activation_token.make_token(user),
+    })
+    to_email = employer.email
+    email = EmailMessage(
+        mail_subject, message, to=[
+            to_email], from_email="MedLink <jz.project.testing@gmail.com>"
+    )
+    email.content_subtype = "html"
+    email.send()
 
     return render(request, 'application.html')

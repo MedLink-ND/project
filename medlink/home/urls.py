@@ -13,7 +13,9 @@ urlpatterns = [
     url(r'hospital/delete/(?P<job_id>\d+)/$', views.hospital_delete_job,),
     path('hospital/post_job/', views.hospital_post_job, name='home/hospital/post_job'),
     url(r'hospital/update/(?P<job_id>\d+)/$', views.hospital_update_job,),    
-    path(r'hospital/profile_update/', views.profile_update, name='profile_update'),    
+    path(r'hospital/profile_update/', views.profile_update, name='profile_update'), 
+    path(r'worker/profile_update/', views.worker_profile_update, name='worker_profile_update'),   
+    path(r'logout/', views.logout_request, name='logout'),    
     path(r'job_query/', views.job_query, name='job_query'),
     url(r'job_query/application/(?P<job_id>\d+)/$', views.application),
     path(r'logout', views.logout_request, name="logout")
