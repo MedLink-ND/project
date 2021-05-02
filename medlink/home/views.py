@@ -246,6 +246,7 @@ def hospital_post_job(request):
 
                 job_info.save()
 
+                return redirect("../")
     else:
         form = JobCreationForm()
 
@@ -279,7 +280,7 @@ def logout_request(request):
 def job_query(request):
     qs = JobInfo.objects.all()
     context = {}
-    if request.method == 'GET':
+    if request.method == 'POST':
         form = JobSearchForm(request.GET)
         context['form'] = form
         if form.is_valid():
@@ -353,10 +354,15 @@ def job_query(request):
             if shift_day_contains_query != '' and shift_day_contains_query is not None:
                 qs = qs.filter(locum_shift_day__icontains=shift_day_contains_query)
 
+            context['queryset'] = qs
+            context['num_jobs'] = len(qs)
+            print('POST')
+
     else:
         form = JobSearchForm()
-
-    context['queryset']= qs
+        print('GET')
+        context['queryset'] = None
+    context['form'] = form
 
     return render(request, "job_query.html", context)
 
