@@ -69,6 +69,7 @@ class JobApplicants(models.Model):
 
     job_id = models.ForeignKey(JobInfo, on_delete=models.SET_NULL, null=True)
     user_id = models.CharField(max_length=255, null=True)
+    job_status = models.CharField(max_length=255, null=True, default ='')
     #application_date = models.DateTimeField(null=True)
 
     
