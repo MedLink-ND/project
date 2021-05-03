@@ -1,0 +1,16 @@
+{% autoescape off %}
+<p>Hi {{ applicant.first_name }},</p></br>
+
+<p>
+  An employer wants to reach out to you for a job you applied to on <strong>MedLink</strong>!
+  {{ employer.first_name }} {{ employer.last_name }} is interested in your application for {{ job.job_name }} you applied for at {{ employer.hospital_name }}.
+  Reach out to them now!
+  Email: {{ employer.email }} 
+</p></br>
+
+{% comment %}<a href=http://{{ domain }}>Wan?</a>{% endcomment %}
+
+<p>Let us know if you have any questions by contacting xxx@gmail.com</p></br></br>
+
+<p>Thanks for using MedLink!</p>
+{% endautoescape %}

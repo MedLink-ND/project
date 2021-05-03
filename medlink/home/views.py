@@ -7,7 +7,7 @@ from django.core.exceptions import MultipleObjectsReturned
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 
-### For application email
+# For application email
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
@@ -91,8 +91,10 @@ def user_job_preference(request):
     currUser = User.objects.filter(email=request.user.email)
     currUserID = getattr(currUser[0], 'id')
     preference_has_set = None
-    existing_preference = JobPreference.objects.filter(
-        base_profile=currUserID)[0]
+    existing_preference = None
+    if(JobPreference.objects.filter(base_profile=currUserID).count()):
+        existing_preference = JobPreference.objects.get(
+            base_profile=currUserID)
     preference_has_set = (existing_preference != None)
     print(preference_has_set)
 
@@ -195,16 +197,19 @@ def home_hospital(request):
 
     allJobs = []
     existingJob = None
+    applicants = {}
     try:
         for existingJob in JobInfo.objects.filter(base_profile_id=currUserID):
+            existingJob.applicants = len(JobApplicants.objects.filter(job_id=getattr(existingJob,'id')))
             allJobs.append(existingJob)
+            
         print('Job found')
     except JobInfo.DoesNotExist:
         print("user is ok, no existing job")
     except MultipleObjectsReturned:
         return redirect('failure/')
 
-    return render(request, 'home_hospital.html', {'existingJob': allJobs})
+    return render(request, 'home_hospital.html', {'existingJob': allJobs}) #'applicants': applicants})
 
 
 def hospital_post_job(request):
@@ -255,6 +260,82 @@ def hospital_post_job(request):
         form = JobCreationForm()
 
     return render(request, 'create_job.html', {'form': form})
+
+
+def hospital_job_details(request, job_id):
+    # get job
+    job = JobInfo.objects.filter(id=job_id)[0]
+
+    user = get_user_model()
+    currUser = user.objects.filter(email=request.user.email)
+    currUserID = getattr(currUser[0], 'id')
+
+    allApplicants = []
+    applicant = None
+    try:
+        for applicant in JobApplicants.objects.filter(job_id=job_id):
+            app = User.objects.get(id=getattr(applicant, 'user_id'))
+            allApplicants.append(app)
+        print('Applicant found')
+    except JobApplicants.DoesNotExist:
+        print("user is ok, no existing applicant")
+    except MultipleObjectsReturned:
+        return redirect('failure/')
+
+    return render(request, 'hospital_job_details.html', {'existingApplicants': allApplicants, 'job': job})
+
+
+def find_workers(request, job_id):
+    user = get_user_model()
+
+    #preference_has_set = None
+    #existing_preference = None
+    job = JobInfo.objects.get(id=job_id)
+    all_workers = JobPreference.objects.all()
+    
+    context = {}
+    context['job_rec'] = None
+
+    user_job_type = job.job_type
+    worker_rec = all_workers.filter(job_type=user_job_type)
+    
+    if job.job_location_zipcode:
+        try:
+            geo_res = gmap_to_zip(gmaps.geocode(job.job_location_zipcode))
+            lat, lng = geo_res['lat'], geo_res['lng']
+        except:
+            lat, lng = 0, 0
+            print('Zipcode invalid')
+    else:
+        lat, lng = 0, 0
+
+    # if user_preference.job_location_radius == 'No preference':
+    #        user_job_radius = 10000000
+    #    else:
+    #user_job_radius = int(50)  # Default?
+    #user_location_lat = user_preference.home_location_lat
+    #user_location_lng = user_preference.home_location_lng
+    #rec_distance_filtered = []
+    #if len(worker_rec) > 0:
+    #    for worker in worker_rec:
+    #        job_zip = worker.job_location_zipcode
+    #        geo_res = gmap_to_zip(gmaps.geocode(job_zip))
+    #        lat, lng = geo_res['lat'], geo_res['lng']
+    #        if lat == -1 and lng == -1:
+    #           continue
+    #        else:
+    #            origin = (user_location_lat, user_location_lng)
+    #            destination = (lat, lng)
+    #            distance = distance_bt_locations(origin, destination)
+                # ignore distances greater than user preferred distance
+                #if distance <= user_job_radius:
+                #    job_rec_distance_filtered.append(job)
+                #else:
+                #        print(distance)
+
+            #context['job_rec'] = job_rec_distance_filtered
+
+    return render(request, 'find_workers.html', context)
 
 
 def profile_update(request):
@@ -380,6 +461,42 @@ def hospital_delete_job(request, job_id):
 
     return redirect("../../")
 
+def hospital_reject_applicant(request, job_id, worker_id):
+    application = JobApplicants.objects.filter(job_id=job_id, user_id=worker_id)
+    application.status = 'rejected'
+    return redirect("../../")
+
+def hospital_accept_applicant(request, job_id, worker_id):
+    application = JobApplicants.objects.filter(job_id=job_id, user_id=worker_id)
+    application.status = 'accepted'
+
+    ## Email to set up further correspondence
+    current_site = get_current_site(request)
+    user = get_user_model()
+    applicant = user.objects.filter(id=application.user_id)
+    job = JobInfo.objects.filter(id=job_id)[0]
+    employer = job.base_user
+
+    mail_subject = 'Jop Update!'
+    message = render_to_string('applicant_accept.html', {
+        'applicant':     applicant,
+        'employer': employer,
+        'job':      job,
+        'domain':   current_site.domain,
+        # 'uid':      urlsafe_base64_encode(force_bytes(user.pk)),
+        # 'token':    account_activation_token.make_token(user),
+    })
+    to_email = applicant.email
+    email = EmailMessage(
+        mail_subject, message, to=[
+            to_email], from_email="MedLink <jz.project.testing@gmail.com>"
+    )
+    email.content_subtype = "html"
+    email.send()
+
+
+    return redirect("../../")
+
 
 def hospital_update_job(request, job_id):
     job = JobInfo.objects.get(id=job_id)
@@ -442,32 +559,23 @@ def application(request, job_id):
     user = get_user_model()
     currUser = user.objects.filter(email=request.user.email)
     currUserID = getattr(currUser[0], 'id')
-    #name = getattr(currUser)
     applicant = request.user
 
-    JobApplicants.objects.create(user_id=currUserID, job_id=job)
+    JobApplicants.objects.create(user_id=currUserID, job_id=job, job_status='')
+
+    employer = job.base_profile
     
-    employer = job.base_profile#.id#user.objects.filter(id=job.base_profile.id)
-    #form = ProfileUpdateForm(request.POST)
-    # ADD LATER TODO: see profile
-    # if form.is_valid():
-
-    # Connect worker to job
-    # job.update(job_applicant = user)
-
-    # when click applies url with job id again and user id and send email
-
     # send email
     current_site = get_current_site(request)
 
     mail_subject = 'New Applicant'
     message = render_to_string('applicant_notice.html', {
         'applicant':     applicant,
-        'employer' : employer,
-        'job'      :      job,
+        'employer': employer,
+        'job':      job,
         'domain':   current_site.domain,
-        #'uid':      urlsafe_base64_encode(force_bytes(user.pk)),
-        #'token':    account_activation_token.make_token(user),
+        # 'uid':      urlsafe_base64_encode(force_bytes(user.pk)),
+        # 'token':    account_activation_token.make_token(user),
     })
     to_email = employer.email
     email = EmailMessage(

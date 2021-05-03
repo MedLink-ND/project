@@ -63,10 +63,10 @@
                         <td>{{ job.job_experience }}</td>
                         <td>{{ job.job_payment }}</td>
                         <td>Vacation: {{ job.job_vacation }}, Education: {{ job.education_money }}</td>
-                        <td>0</td>
+                        <td>{{ job.applicants }}</td>
                         <td><a href="delete/{{ job.id }}"><b>Delete</b></a>
                             <a href="update/{{ job.id }}"><b>Modify</b></a>
-                            <a href="delete/{{ job.id }}"><b>View Profile</b></a>
+                            <a href="hospital_job_details/{{ job.id }}"><b>View Job</b></a>
                         </td>
                         </tr>
                     </tbody>                    
