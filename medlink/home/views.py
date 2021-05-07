@@ -88,6 +88,19 @@ def user_job_details(request, job_id):
 
 def profile_page(request, profile_id):
     profile_user = WorkerInfo.objects.raw("SELECT name, address, email, education, certifications, provider_type, peer_references, cpr_certifications, base_profile_id AS id FROM home_workerinfo WHERE base_profile_id = " + str(profile_id))
+
+    if not profile_user:
+        return redirect("../..")
+
+    return render(request, 'profile_page.html', {'profile': profile_user[0]})
+
+def applications(request):
+    user = request.user
+    currUser = User.objects.filter(email=request.user.email)
+    currUserID = getattr(currUser[0], 'id')
+    applied_job_ids = JobApplicants.objects.raw("SELECT job_id_id AS id, job_status FROM home_jobapplicants WHERE user_id = " + str(currUserID))
+    
+
     return render(request, 'profile_page.html', {'profile': profile_user[0]})
 
 

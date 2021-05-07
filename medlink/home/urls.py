@@ -23,5 +23,6 @@ urlpatterns = [
     path(r'job_query/', views.job_query, name='job_query'),
     url(r'job_query/application/(?P<job_id>\d+)/$', views.application),
     path(r'logout', views.logout_request, name="logout"),
-    path(r'profile_page/<int:profile_id>', views.profile_page, name="profile_page")
+    path(r'profile_page/<int:profile_id>', views.profile_page, name="profile_page"),
+    path(r'applications', views.applications, name="applications")
 ]
