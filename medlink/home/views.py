@@ -197,7 +197,7 @@ def home_hospital(request):
 
     allJobs = []
     existingJob = None
-    applicants = {}
+    #applicants = {}
     try:
         for existingJob in JobInfo.objects.filter(base_profile_id=currUserID):
             existingJob.applicants = len(JobApplicants.objects.filter(job_id=getattr(existingJob,'id')))
@@ -273,17 +273,26 @@ def hospital_job_details(request, job_id):
 
     allApplicants = []
     applicant = None
+    applications = []
     try:
         for applicant in JobApplicants.objects.filter(job_id=job_id):
-            app = User.objects.get(id=getattr(applicant, 'user_id'))
-            allApplicants.append(app)
+            print('status')
+            print(applicant.job_status)
+            print(applicant.user_id)
+            print(applicant.job_id)
+            if applicant.job_status != 'rejected':
+                #applications.append(applicant)
+                app = User.objects.get(id=getattr(applicant, 'user_id'))
+                app.application_id = applicant.id
+                allApplicants.append(app)
+                
         print('Applicant found')
     except JobApplicants.DoesNotExist:
         print("user is ok, no existing applicant")
     except MultipleObjectsReturned:
         return redirect('failure/')
 
-    return render(request, 'hospital_job_details.html', {'existingApplicants': allApplicants, 'job': job})
+    return render(request, 'hospital_job_details.html', {'existingApplicants': allApplicants, 'job': job}) #'applications': applications})
 
 
 def find_workers(request, job_id):
@@ -508,21 +517,27 @@ def hospital_delete_job(request, job_id):
 
     return redirect("../../")
 
-def hospital_reject_applicant(request, job_id, worker_id):
-    application = JobApplicants.objects.filter(job_id=job_id, user_id=worker_id)
-    application.status = 'rejected'
+def hospital_reject_applicant(request, job_id, user_id):
+    print(job_id)
+    print(user_id)
+    application = JobApplicants.objects.filter(job_id=job_id)
+    application = application.get(user_id=user_id)
+    application.job_status = 'rejected'
+    print("new status")
+    print(application.job_status)
+    application.save()
     return redirect("../../")
 
-def hospital_accept_applicant(request, job_id, worker_id):
-    application = JobApplicants.objects.filter(job_id=job_id, user_id=worker_id)
+def hospital_accept_applicant(request, job_id, user_id):
+    application = JobApplicants.objects.filter(job_id=job_id, user_id=user_id)[0]
     application.status = 'accepted'
-
+    application.save()
     ## Email to set up further correspondence
     current_site = get_current_site(request)
     user = get_user_model()
-    applicant = user.objects.filter(id=application.user_id)
+    applicant = user.objects.get(id=application.user_id)
     job = JobInfo.objects.filter(id=job_id)[0]
-    employer = job.base_user
+    employer = job.base_profile
 
     mail_subject = 'Jop Update!'
     message = render_to_string('applicant_accept.html', {
