@@ -86,6 +86,11 @@ def user_job_details(request, job_id):
     return render(request, 'job_details.html', {'job': job})
 
 
+def profile_page(request, profile_id):
+    profile_user = WorkerInfo.objects.raw("SELECT name, address, email, education, certifications, provider_type, peer_references, cpr_certifications, base_profile_id AS id FROM home_workerinfo WHERE base_profile_id = " + str(profile_id))
+    return render(request, 'profile_page.html', {'profile': profile_user[0]})
+
+
 def user_job_preference(request):
     user = request.user
     currUser = User.objects.filter(email=request.user.email)

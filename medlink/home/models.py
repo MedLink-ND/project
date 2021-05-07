@@ -70,14 +70,6 @@ class WorkerInfo(models.Model):
     cpr_certifications = models.CharField(max_length=255, null=True)
     base_profile = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
-    # def __str__(self):
-    #     return 'Name: ' + self.base_rofile.first_name + '\t' \
-    #     + 'Hospital: ' + self.hospital_name + '\t' \
-    #     + 'Position: ' + self.hospital_position + '\t' \
-    #     + 'City: ' + self.hospital_location_city + '\t' \
-    #     + 'State: ' + self.hospital_location_state + '\t' \
-    #     + 'Area Code: ' + self.hospital_location_zipcode + '\t' \
-
 class JobApplicants(models.Model):
     
     class Meta:
