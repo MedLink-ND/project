@@ -45,6 +45,8 @@
         <div class="row no-gutters">
             {% if preference_has_set %}
             <p class="login-card-description">Here is your job preference.</p>
+            {% load crispy_forms_tags %}
+            
             <form method="POST">
                 {% csrf_token %}
                 <table class="table table-sm" style="max-height: 450px; overflow: auto; display:inline-block;">
@@ -59,17 +61,17 @@
                         <tr>
                             <th scope="row">Job type</th>
                             <td>{{ existing_preference.job_type }}</td>
-                            <td>{{ form.job_type }}</td>
+                            <td>{{ form.job_type|as_crispy_field }}</td>
                         </tr>
                         <tr>
                             <th scope="row">Home location (zipcode)</th>
                             <td>{{ existing_preference.home_location_zipcode }}</td>
-                            <td>{{ form.home_location_zipcode }}</td>
+                            <td>{{ form.home_location_zipcode|as_crispy_field }}</td>
                         </tr>
                         <tr>
                             <th scope="row">Job distance from home (miles)</th>
                             <td>{{ existing_preference.job_location_radius }}</td>
-                            <td>{{ form.job_location_radius }}</td>
+                            <td>{{ form.job_location_radius|as_crispy_field }}</td>
                         </tr>
                         <tr>
                             <th scope="row">Hospital Type</th>
@@ -79,38 +81,38 @@
                         <tr>
                             <th scope="row">Does the job require on call</th>
                             <td>{{ existing_preference.job_on_call }}</td>
-                            <td>{{ form.job_on_call }}</td>
+                            <td>{{ form.job_on_call|as_crispy_field }}</td>
                         </tr>
                         <tr>
                             <th scope="row">Job start date</th>
                             <td>{{ existing_preference.job_start_time }}</td>
-                            <td>{{ form.job_start_time }}</td>
+                            <td>{{ form.job_start_time|as_crispy_field }}</td>
                         </tr>
                         <tr>
                             <th scope="row">Job end date</th>
                             <td>{{ existing_preference.job_end_time }}</td>
-                            <td>{{ form.job_end_time }}</td>
+                            <td>{{ form.job_end_time|as_crispy_field }}</td>
                         </tr>
                         <tr>
                             <th scope="row">Locum shift: days / week</th>
                             <td>{{ existing_preference.locum_shift_day }}</td>
-                            <td>{{ form.locum_shift_day }}</td>
+                            <td>{{ form.locum_shift_day|as_crispy_field }}</td>
                         </tr>
                         <tr>
                             <th scope="row">Locum shift: hours / day</th>
                             <td>{{ existing_preference.locum_shift_hour }}</td>
-                            <td>{{ form.locum_shift_hour }}</td>
+                            <td>{{ form.locum_shift_hour|as_crispy_field }}</td>
                         </tr>
                         <tr>
                             <th scope="row">Experience Level</th>
                             <td>{{ existing_preference.job_experience }}</td>
-                            <td>{{ form.job_experience }}</td>
+                            <td>{{ form.job_experience|as_crispy_field }}</td>
                         </tr>
                         <tr>
                         <tr>
                             <th scope="row">Payment type</th>
                             <td>{{ existing_preference.job_payment }}</td>
-                            <td>{{ form.job_payment }}</td>
+                            <td>{{ form.job_payment|as_crispy_field }}</td>
                         </tr>
                     </tbody>
                 </table>
