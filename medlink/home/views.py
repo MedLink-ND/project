@@ -87,6 +87,36 @@ def user_job_details(request, job_id):
     return render(request, 'job_details.html', {'job': job})
 
 
+def profile_page(request, profile_id):
+    profile_user = WorkerInfo.objects.raw("SELECT name, address, email, education, certifications, provider_type, peer_references, cpr_certifications, base_profile_id AS id FROM home_workerinfo WHERE base_profile_id = " + str(profile_id))
+
+    if not profile_user:
+        return redirect("../..")
+
+    return render(request, 'profile_page.html', {'profile': profile_user[0]})
+
+def applications(request):
+    if not request.user.is_authenticated:
+        return redirect("../..")
+
+    user = request.user
+    applied_job_ids = JobApplicants.objects.raw("SELECT job_id_id AS id, job_status FROM home_jobapplicants WHERE user_id = " + str(user.id))
+
+    if not applied_job_ids:
+        # NO APPLICATIONS, might wanna redirect to applications page instead of home. Doing this for now to avoid error
+        return redirect("../..")
+
+    jobs_info = []
+
+    for application in applied_job_ids:
+        job_name = JobInfo.objects.raw("SELECT id, job_name FROM home_jobinfo WHERE id = " + str(application.id))
+        jobs_info.append({"job_name": job_name[0].job_name, "job_status": application.job_status})
+
+    print(jobs_info)
+    
+    return render(request, 'applications.html', {'jobs_info': jobs_info})
+
+
 def user_job_preference(request):
     user = request.user
     currUser = User.objects.filter(email=request.user.email)
