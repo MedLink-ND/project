@@ -25,7 +25,7 @@ def login(request):
                 if user.is_hospital == 1:
                     return redirect("../home/hospital")
                 if user.is_worker == 1:
-                    return redirect("../home/worker/profile_update/")
+                    return redirect("../home/profile_page/" + str(user.id))
 
             else:
                 print("login error")
