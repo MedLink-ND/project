@@ -297,18 +297,35 @@ def hospital_job_details(request, job_id):
 
 def find_workers(request, job_id):
     user = get_user_model()
-
-    #preference_has_set = None
-    #existing_preference = None
+    users = user.objects.all()
     job = JobInfo.objects.get(id=job_id)
     all_workers = JobPreference.objects.all()
     
     context = {}
-    context['job_rec'] = None
+    #context['job_rec'] = []
 
     user_job_type = job.job_type
-    worker_rec = all_workers.filter(job_type=user_job_type)
-    
+    context['type_pref'] = []
+    #context['type_pref'] = all_workers.filter(job_type=user_job_type)
+    type_preference = all_workers.filter(job_type=user_job_type)
+    for worker in type_preference:
+        context['type_pref'].append(users.get(id=worker.base_profile))
+
+    job_begin = job.job_start_time
+    job_end = job.job_end_time
+    context['date_contains'] = []
+    type_date = all_workers.exclude(
+        # exclude 
+        # when end before start
+        job_start_time__gte=job_end, 
+        job_end_time__lte=job_begin
+        )
+    for worker in type_date:
+        context['date_contains'].append(users.get(id=worker.base_profile))
+
+    # People Nearby
+    lat = -1
+    lng = -1
     if job.job_location_zipcode:
         try:
             geo_res = gmap_to_zip(gmaps.geocode(job.job_location_zipcode))
@@ -316,35 +333,36 @@ def find_workers(request, job_id):
         except:
             lat, lng = 0, 0
             print('Zipcode invalid')
-    else:
-        lat, lng = 0, 0
+    #else:
+    #    lat, lng = -1, 0
 
-    # if user_preference.job_location_radius == 'No preference':
-    #        user_job_radius = 10000000
-    #    else:
-    #user_job_radius = int(50)  # Default?
-    #user_location_lat = user_preference.home_location_lat
-    #user_location_lng = user_preference.home_location_lng
-    #rec_distance_filtered = []
-    #if len(worker_rec) > 0:
-    #    for worker in worker_rec:
-    #        job_zip = worker.job_location_zipcode
-    #        geo_res = gmap_to_zip(gmaps.geocode(job_zip))
-    #        lat, lng = geo_res['lat'], geo_res['lng']
-    #        if lat == -1 and lng == -1:
-    #           continue
-    #        else:
-    #            origin = (user_location_lat, user_location_lng)
-    #            destination = (lat, lng)
-    #            distance = distance_bt_locations(origin, destination)
-                # ignore distances greater than user preferred distance
-                #if distance <= user_job_radius:
-                #    job_rec_distance_filtered.append(job)
-                #else:
-                #        print(distance)
+    user_job_radius = 200
 
-            #context['job_rec'] = job_rec_distance_filtered
 
+    job_rec_distance_filtered = []
+    for worker in all_workers:
+        wlat = worker.home_location_lat
+        wlng = worker.home_location_lng
+        if wlat == -1 or wlng == -1 or lat == -1 or lng == -1:
+            continue
+        else:
+            origin = (lat,lng)
+            destination = (wlat, wlng)
+            distance = distance_bt_locations(origin, destination)
+            #ignore distances greater than user preferred distance
+            if distance <= user_job_radius:
+                print("found match")
+                job_rec_distance_filtered.append(worker)
+            else:
+                print("not close enough")
+                print(distance)
+    context['dist_rec'] = []
+    for worker in job_rec_distance_filtered:
+        context['dist_rec'].append(users.get(id=worker.base_profile))
+
+
+    #context['dist_rec'] = job_rec_distance_filtered
+    print(context)
     return render(request, 'find_workers.html', context)
 
 
@@ -612,7 +630,7 @@ def distance_bt_locations(origin, destination):
     elements = rows['elements'][0]
     distance = elements['distance']['value']
     return distance / 1000
-    return render(request, 'job_update.html', {'form': form})
+    #return render(request, 'job_update.html', {'form': form})
 
 
 def application(request, job_id):
