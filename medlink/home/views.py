@@ -12,7 +12,8 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 
-from .forms import JobCreationForm, JobPreferenceForm, JobPreferenceUpdateForm, JobSearchForm, JobUpdateForm, ProfileUpdateHospitalForm, ProfileUpdateWorkerForm
+from .forms import JobCreationForm, JobPreferenceForm, JobPreferenceUpdateForm, \
+    JobSearchForm, WorkerSearchForm, JobUpdateForm, ProfileUpdateHospitalForm, ProfileUpdateWorkerForm
 from .models import JobInfo, JobPreference, WorkerInfo
 
 import googlemaps
@@ -232,14 +233,14 @@ def home_hospital(request):
         for existingJob in JobInfo.objects.filter(base_profile_id=currUserID):
             existingJob.applicants = len(JobApplicants.objects.filter(job_id=getattr(existingJob,'id')))
             allJobs.append(existingJob)
-            
-        print('Job found')
     except JobInfo.DoesNotExist:
         print("user is ok, no existing job")
     except MultipleObjectsReturned:
         return redirect('failure/')
 
-    return render(request, 'home_hospital.html', {'existingJob': allJobs}) #'applicants': applicants})
+    existingJobFlag = (len(allJobs) != 0)
+    print(existingJobFlag)
+    return render(request, 'home_hospital.html', {'existingJob': allJobs, 'existingJobFlag': existingJobFlag}) #'applicants': applicants})
 
 
 def hospital_post_job(request):
@@ -459,11 +460,15 @@ def logout_request(request):
     logout(request)
     return redirect('/')
 
+def switch_request(request):
+    logout(request)
+    return redirect('/login')
+
 
 def job_query(request):
     qs = JobInfo.objects.all()
     context = {}
-    if request.method == 'POST':
+    if request.method == 'GET':
         form = JobSearchForm(request.GET)
         context['form'] = form
         if form.is_valid():
@@ -481,6 +486,7 @@ def job_query(request):
             education_money_contains_query = cd['education_money_contains']
             shift_day_contains_query = cd['locum_shift_day_contains']
             shift_hour_contains_query = cd['locum_shift_hour_contains']
+            zipcode_query = cd['radius_contains']
 
             # TODO: maybe give more options for how to search by date
             # Example: instead of yes and no maybe an option is range, option with no end date,
@@ -497,12 +503,6 @@ def job_query(request):
                         job_start_time__lte=start_time_contains_query, job_end_time__gte=end_time_contains_query)
             else:
                 qs = JobInfo.objects.all()
-
-            # by location
-            # TODO: maybe combine location and zip
-            if zip_contains_query != '' and zip_contains_query is not None:
-                qs = qs.filter(
-                    job_location_zipcode__icontains=zip_contains_query)
 
             # new queries
             if type_contains_query != '' and type_contains_query is not None:
@@ -545,9 +545,40 @@ def job_query(request):
                 qs = qs.filter(
                     locum_shift_day__icontains=shift_day_contains_query)
 
+             # by location
+            if zipcode_query:
+                if zipcode_query == 'No preference':
+                    radius = 100000
+                else:
+                    radius = int(zipcode_query)
+            else:
+                radius = 20
+            
+            allJobs = []
+
+            if zip_contains_query:
+                geo_res = gmap_to_zip(gmaps.geocode(zip_contains_query))
+                lat, lng = geo_res['lat'], geo_res['lng']
+                if lat == -1 and lng == -1:
+                    print('bad input')
+                else:
+                    for job in qs:
+                        job_zip = job.job_location_zipcode
+                        job_geo_res = gmap_to_zip(gmaps.geocode(job_zip))
+                        job_lat, job_lng = job_geo_res['lat'], job_geo_res['lng']
+
+                        origin = (lat, lng)
+                        destination = (job_lat, job_lng)
+                        distance = distance_bt_locations(origin, destination)
+                        # ignore distances greater than user preferred distance
+                        if distance <= radius:
+                            allJobs.append(job)
+                        else:
+                            print(distance)
+            
+            qs = allJobs
             context['queryset'] = qs
             context['num_jobs'] = len(qs)
-            print('POST')
 
     else:
         form = JobSearchForm()
@@ -658,9 +689,12 @@ def distance_bt_locations(origin, destination):
     matrix = gmaps.distance_matrix(origins, destinations)
     rows = matrix['rows'][0]
     elements = rows['elements'][0]
-    distance = elements['distance']['value']
+    try:
+        distance = elements['distance']['value']
+    except:
+        distance = 1000000000
+    print(distance)
     return distance / 1000
-    #return render(request, 'job_update.html', {'form': form})
 
 
 def application(request, job_id):
@@ -696,3 +730,104 @@ def application(request, job_id):
     email.send()
 
     return render(request, 'application.html')
+
+
+def worker_query(request):
+    qs = JobPreference.objects.all()
+    context = {}
+    if request.method == 'GET':
+        form = WorkerSearchForm(request.GET)
+        context['form'] = form
+        if form.is_valid():
+            print('here')
+            cd = form.cleaned_data
+            zip_contains_query = cd['zip_contains']
+            # new queries
+            type_contains_query = cd['type_contains']
+            hospital_contains_query = cd['hospital_contains']
+            hospital_type_contains_query = cd['hospital_type_contains']
+            on_call_contains_query = cd['on_call_contains']
+            experience_contains_query = cd['experience_contains']
+            supervision_contains_query = cd['supervision_contains']
+            payment_contains_query = cd['payment_contains']
+            vacation_contains_query = cd['vacation_contains']
+            education_money_contains_query = cd['education_money_contains']
+            shift_day_contains_query = cd['locum_shift_day_contains']
+            shift_hour_contains_query = cd['locum_shift_hour_contains']
+
+            # TODO: maybe give more options for how to search by date
+            # Example: instead of yes and no maybe an option is range, option with no end date,
+            # option where you give an end date and it automatically puts start date as current date
+            # maybe it should always filter with the start date as the current date
+            # check if searching by range
+            if cd['by_date']:
+                start_time_contains_query = cd['start_time_contains']
+                end_time_contains_query = cd['end_time_contains']
+
+                # Query by dates
+                if cd['by_date'] and start_time_contains_query != '' and start_time_contains_query is not None and end_time_contains_query != '' and end_time_contains_query is not None:
+                    qs = JobPreference.objects.filter(
+                        job_start_time__lte=start_time_contains_query, job_end_time__gte=end_time_contains_query)
+            else:
+                qs = JobPreference.objects.all()
+
+            print(qs)
+            # by location
+            # TODO: maybe combine location and zip
+            if zip_contains_query != '' and zip_contains_query is not None:
+                qs = qs.filter(
+                    job_location_zipcode__icontains=zip_contains_query)
+
+            # new queries
+            if type_contains_query != '' and type_contains_query is not None:
+                qs = qs.filter(job_type__icontains=type_contains_query)
+
+            if hospital_contains_query != '' and hospital_contains_query is not None:
+                qs = qs.filter(
+                    job_location_hospital__icontains=hospital_contains_query)
+
+            if hospital_type_contains_query != '' and hospital_type_contains_query is not None:
+                qs = qs.filter(
+                    hospital_type__icontains=hospital_type_contains_query)
+
+            if on_call_contains_query != '' and on_call_contains_query is not None:
+                qs = qs.filter(job_on_call__icontains=on_call_contains_query)
+
+            if experience_contains_query != '' and experience_contains_query is not None:
+                qs = qs.filter(
+                    job_experience__icontains=experience_contains_query)
+
+            if supervision_contains_query != '' and supervision_contains_query is not None:
+                qs = qs.filter(
+                    job_supervision__icontains=supervision_contains_query)
+
+            if payment_contains_query != '' and payment_contains_query is not None:
+                qs = qs.filter(job_payment__icontains=payment_contains_query)
+
+            if vacation_contains_query != '' and vacation_contains_query is not None:
+                qs = qs.filter(job_vacation__icontains=vacation_contains_query)
+
+            if education_money_contains_query != '' and education_money_contains_query is not None:
+                qs = qs.filter(
+                    education_money__icontains=education_money_contains_query)
+
+            if shift_hour_contains_query != '' and shift_hour_contains_query is not None:
+                qs = qs.filter(
+                    locum_shift_hour__icontains=shift_hour_contains_query)
+
+            if shift_day_contains_query != '' and shift_day_contains_query is not None:
+                qs = qs.filter(
+                    locum_shift_day__icontains=shift_day_contains_query)
+
+            context['queryset'] = qs
+            context['num_jobs'] = len(qs)
+            print('POST')
+
+    else:
+        form = WorkerSearchForm()
+        print('GET')
+        context['queryset'] = None
+    
+    context['form'] = form
+
+    return render(request, "worker_query.html", context)
