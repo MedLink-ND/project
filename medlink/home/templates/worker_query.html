@@ -1,6 +1,9 @@
 {% extends 'base.html' %} 
 {% load static %} 
-{% block title %}MedLink | Job Search{% endblock %} 
+{% block title %}MedLink | Worker Search{% endblock %} 
+{% block worker_query %}
+<li><a href="{% url 'worker_query' %}" >Medical Workers</a></li>
+{% endblock %}
 
 {% block head %}
 <!-- Bootstrap 4 -->
@@ -23,7 +26,7 @@
 {% block content %}
 <main class="align-items-center" style="margin-top:100px">
     <div class="container mb-4">
-        <h4>Find a Job</h4>
+        <h4>Find skillful medical workers who are open to work!</h4>
         {% load crispy_forms_tags %}
         <form method="GET">
             {% csrf_token %} {{ form.non_field_errors }}
@@ -46,17 +49,6 @@
             </div>
             <div class="container" style="display:none" id="advanced">
                 <div class="row">
-                    <div class="col-6">
-                        {{ form.radius_contains|as_crispy_field}}
-                    </div>
-                    <div class="col-3">
-                        {{ form.start_time_contains|as_crispy_field}}
-                    </div>
-                    <div class="col-3">
-                        {{ form.end_time_contains|as_crispy_field}}
-                    </div>
-                </div>
-                <div class="row">
                     <div class="col">
                         {{ form.hospital_contains|as_crispy_field}}
                     </div>
@@ -72,6 +64,12 @@
                 </div>
                 <div class="row">
                     <div class="col">
+                        {{ form.start_time_contains|as_crispy_field}}
+                    </div>
+                    <div class="col">
+                        {{ form.end_time_contains|as_crispy_field}}
+                    </div>
+                    <div class="col">
                         {{ form.supervision_contains|as_crispy_field}}
                     </div>
                     <div class="col">
@@ -82,10 +80,8 @@
             <input name="jobs" id="jobs" class="btn btn-dark" name="location_contains" type="submit" value="Search">
         </form>
     </div>
-    
-    <div class="container mb-4">
 
-    {% comment %} <article class="entry"> {% endcomment %}
+    <div class="container mb-4">
         {% for job in queryset %}
 
         <div class="row mt-5">
@@ -110,8 +106,7 @@
             <hr/>
             <!-- APPLY FOR JOB -->
             <button class="button"><a href="application/{{ job.id }}">Apply</a> </button> {% endfor %}
-    {% comment %} </article> {% endcomment %}
-    </div>
+        </div>
 </main>
 <script>
 $(function () {

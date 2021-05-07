@@ -2,27 +2,29 @@ from django import forms
 from django.contrib.auth import get_user_model
 import datetime
 from tempus_dominus.widgets import DatePicker, TimePicker, DateTimePicker
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Submit, Row, Column
 
 User = get_user_model()
 
 # For hospital recruiters
 
 DURATION = (
-    (None, ''),
+    (None, 'Choose...'),
     ('Full Time', 'Full Time'),
     ('Part Time', 'Part Time'),
     ('Locum', 'Short Term Locum'),
     ('NA', 'NA')
 )
 HOSPITAL = (
-    (None, ''),
+    (None, 'Choose...'),
     ('Outpatient', 'Outpatient'),
     ('Inpatient', 'Inpatient'),
     ('Both outpatient / inpatient', 'Both outpatient/inpatient'),
     ('NA', 'NA')
 )
 ONCALL = (
-    (None, ''),
+    (None, 'Choose...'),
     ('oncall', 'On Call'),
     ('nocall', 'No Call'),
     ('NA', 'NA')
@@ -81,18 +83,18 @@ TIME = (
 #     (24, '12 AM'),
 # )
 EXPERIENCE = (
-    (None, ''),
+    (None, 'Choose...'),
     ('Greater than 2 years', 'Greater than 2 years'),
     ('New Grad / Fewer than 2 years', 'New Grad (fewer than 2 years)'),
     ('NA', 'NA')
 )
 SUPERVISION = (
-    (None, ''),
+    (None, 'Choose...'),
     ('No supervision', 'No supervision'),
     ('Supervised by anesthesiologist', 'Supervised by anesthesiologist'),
 )
 PAYMENT = (
-    (None, ''),
+    (None, 'Choose...'),
     ('W2', 'W2'),
     ('1099 / No Benefits', '1099/No Benefits'),
     ('NA', 'NA'),
@@ -101,12 +103,12 @@ PAYMENT = (
     ('new grad', 'New Grad (fewer than 2 years)'),
 )
 SUPERVISION = (
-    ('', ''),
+    ('', 'Choose...'),
     ('no', 'No supervision'),
     ('yes', 'Supervised by anesthesiologist'),
 )
 PAYMENT = (
-    ('', ''),
+    ('', 'Choose...'),
     ('w2', 'W2'),
     ('1099', '1099/No Benefits'),
 )
@@ -120,13 +122,11 @@ YES_NO= (
 class JobCreationForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(JobCreationForm, self).__init__(*args, **kwargs)
+        
     job_name = forms.CharField(
         label="Job name",
     )
-    job_type = forms.CharField(
-        label='Job type',
-        widget=forms.Select(choices=DURATION),
-    )
+    job_type = forms.ChoiceField(choices=DURATION)
     job_on_call = forms.CharField(
         label="Does this job require on call?",
         widget=forms.Select(choices=ONCALL),
@@ -398,39 +398,38 @@ class SearchByDate(forms.Form):
 
 # For medical workers
 DURATION_U = (
-    (None, ''),
+    (None, 'Choose...'),
     ('Full Time', 'Full Time'),
     ('Part Time', 'Part Time'),
     ('Locum', 'Short Term Locum'),
     ('No preference', 'I am open to all positions')
 )
 RADIUS = (
-    (None, ''),
+    (None, 'Choose...'),
     ('10', '< 10 miles'),
     ('20', '< 20 miles'),
     ('50', '< 50 miles'),
     ('No preference', "I don't have a preference for job location")
 )
 HOSPITAL_U = (
-    (None, ''),
+    (None, 'Choose...'),
     ('Outpatient', 'Outpatient'),
     ('Inpatient', 'Inpatient'),
-    ('Both outpatient / inpatient', 'Both outpatient/inpatient'),
     ('All', 'I am open to all types of hospitals')
 )
 ONCALL_U = (
-    (None, ''),
+    (None, 'Choose...'),
     ('On call', 'On Call'),
     ('No call', 'No Call'),
     ('All', 'I am open to either type.')
 )
 EXPERIENCE_U = (
-    (None, ''),
+    (None, 'Choose...'),
     ('Greater than 2 years', 'Greater than 2 years'),
     ('New Grad / Fewer than 2 years', 'New Grad (fewer than 2 years)'),
 )
 PAYMENT = (
-    (None, ''),
+    (None, 'Choose...'),
     ('W2', 'W2'),
     ('1099 / No Benefits', '1099/No Benefits'),
     ('All', 'I am open to either type.')
@@ -440,10 +439,16 @@ PAYMENT = (
 class JobSearchForm(forms.Form):
     def __init__(self, * args, **kwargs):
         super(JobSearchForm, self).__init__(*args, **kwargs)
+        
     ##### BASIC SEARCH QUERIES ########
     ### TODO: maybe add zip and city together in query
     zip_contains = forms.CharField(
         label="Job location (enter zipcode)",
+        required = False
+    )
+    radius_contains = forms.CharField(
+        label="Search for jobs within the following radius (default is 20 miles)",
+        widget=forms.Select(choices=RADIUS),
         required = False
     )
     type_contains = forms.CharField(
@@ -732,4 +737,110 @@ class JobPreferenceUpdateForm(forms.Form):
         label='What is your prefered payment type for the job?',
         widget=forms.Select(choices=PAYMENT),
         required=False,
+    )
+
+class WorkerSearchForm(forms.Form):
+    def __init__(self, * args, **kwargs):
+        super(WorkerSearchForm, self).__init__(*args, **kwargs)
+        
+    ##### BASIC SEARCH QUERIES ########
+    ### TODO: maybe add zip and city together in query
+    zip_contains = forms.CharField(
+        label="Job location (enter zipcode)",
+        required = False
+    )
+    radius_contains = forms.CharField(
+        label="Search for jobs within the following radius (default is 20 miles)",
+        widget=forms.Select(choices=RADIUS),
+        required = False
+    )
+    type_contains = forms.CharField(
+        label='Job type',
+        widget=forms.Select(choices=DURATION),
+        required = False
+    )
+    # if(type_contains=='full-time'):
+    #     locum_shift_day = forms.CharField(
+    #         label='For locum: How many days in a week?'
+    #     )
+    hospital_contains = forms.CharField(
+        label='Name of Hospital', 
+        required = False
+    )
+    hospital_type_contains = forms.CharField(
+        label="Hospital type",
+        widget=forms.Select(choices=HOSPITAL),
+        required = False
+    )
+    on_call_contains = forms.CharField(
+        label="On call or no call?",
+        widget=forms.Select(choices=ONCALL),
+        required = False
+    )
+    experience_contains = forms.CharField(
+        label='Experience level',
+        widget=forms.Select(choices=EXPERIENCE),
+        required = False
+    )
+    supervision_contains = forms.CharField(
+        label='Supervision from an anesthesiologist',
+        widget=forms.Select(choices=SUPERVISION),
+        required = False
+    )
+    payment_contains = forms.CharField(
+        label='Payment type for the job',
+        widget=forms.Select(choices=PAYMENT),
+        required = False
+    )
+    vacation_contains = forms.CharField(
+        label='What are the vacation benefits of this job?', 
+        required = False
+    )
+    education_money_contains = forms.CharField(
+        label='Are there any education credits with this job?', 
+        required = False
+    )
+    ### Query by dates
+    by_date = forms.CharField(
+        label='Search within date range?',
+        widget=forms.RadioSelect(choices=YES_NO),
+        required = False
+    )
+    start_time_contains = forms.DateTimeField(
+        label='Start date:', 
+        widget=DatePicker(
+            options={
+                'minDate': '2021-01-01',
+                'maxDate': '2030-01-01',
+            },
+            attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True,
+            },
+        ),
+        required = False
+    )
+    end_time_contains = forms.DateTimeField(
+        label='End Date:', 
+        widget=DatePicker(
+            options={
+                'minDate': '2021-01-01',
+                'maxDate': '2030-01-01',
+            },
+            attrs={
+                'append': 'fa fa-calendar',
+                'icon_toggle': True,
+            },
+        ),
+        required = False
+    )
+    ### TODO: figure out weither it makes sense for them to be numbers
+    ### TODO: also figure out weither it makes sense for >= type comparisons
+    locum_shift_day_contains = forms.CharField(
+        label='For locum: How many days in a week?',
+        required = False
+    )
+    locum_shift_hour_contains = forms.CharField(
+        label='For locum: How many hours in a day?',
+        required = False
     )
