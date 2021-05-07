@@ -19,33 +19,54 @@
                     {% csrf_token %}
                     <div class="container">
                         <div class="row">
-                            {% if job_rec is None %}
-                            <p>There hasn't been any jobs available currently. Please check back later.</p>
+                            {% if date_contains and job_type and dist_rec is None %}
+                            <p>There are no workers with matching preferences. Please check back later.</p>
                             {% else %}
-
-                            {% for job in job_rec %}
-                            <!-- <div class="col-md-6 mt-4 mt-md-0">
-                                <div class="icon-box">
-                                  <i class="bi bi-card-checklist"></i>
-                                  <h4><a href="#">{{ job.job_name }}</a></h4>
-                                  <p>{{ job.job_type }}</p>
-                                  <p>{{ job.job_location_hospital }} | {{ job.job_location_zipcode }}</p>
-                                </div>
-                            </div> -->
+                            <h>Workers Looking for a job within the date range:</h>
+                            {% for job in date_contains %}
                             <div class="col" style="min-width: 300px;">
                                 <div class="card" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
                                                         transition: 0.3s;
                                                         border: none;">
                                     <div class="card-body">
-                                        <h5 class="card-title"><b>{{ job.job_name }}</b></h5>
-                                        <h6 class="card-subtitle mb-2 text-muted">{{ job.job_type }}</h6>
-                                        <p class="card-text">{{ job.job_location_hospital }} | {{ job.job_location_zipcode }}</p>
+                                        <h5 class="card-title"><b>{{ job.first_name }} {{ job.last_name }}</b></h5>
                                         <a href="job_details/{{ job.id }}" class="card-link">View Details</a>
-                                        <a href="#" class="card-link">Mark as interested</a>
+                                        <a href="#" class="card-link">Contact</a>
                                     </div>
                                 </div>
                             </div>
                             {% endfor %}
+                            
+                            <h>Workers Nearby:</h>
+                            {% for job in dist_rec %}
+                            <div class="col" style="min-width: 300px;">
+                                <div class="card" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+                                                        transition: 0.3s;
+                                                        border: none;">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><b>{{ job.first_name }} {{ job.last_name }}</b></h5>
+                                        <a href="job_details/{{ job.id }}" class="card-link">View Details</a>
+                                        <a href="#" class="card-link">Contact</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                            <h>Workers looking by job type:</h>
+                            {% for job in type_pref %}
+                            <div class="col" style="min-width: 300px;">
+                                <div class="card" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+                                                        transition: 0.3s;
+                                                        border: none;">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><b>{{ job.first_name }} {{ job.last_name }}</b></h5>
+                                        <a href="job_details/{{ job.id }}" class="card-link">View Details</a>
+                                        <a href="#" class="card-link">Contact</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+
                         </div>
                     </div>
                     {% endif %}

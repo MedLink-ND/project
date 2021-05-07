@@ -198,7 +198,7 @@ def home_hospital(request):
 
     allJobs = []
     existingJob = None
-    applicants = {}
+    #applicants = {}
     try:
         for existingJob in JobInfo.objects.filter(base_profile_id=currUserID):
             existingJob.applicants = len(JobApplicants.objects.filter(job_id=getattr(existingJob,'id')))
@@ -274,33 +274,59 @@ def hospital_job_details(request, job_id):
 
     allApplicants = []
     applicant = None
+    applications = []
     try:
         for applicant in JobApplicants.objects.filter(job_id=job_id):
-            app = User.objects.get(id=getattr(applicant, 'user_id'))
-            allApplicants.append(app)
+            print('status')
+            print(applicant.job_status)
+            print(applicant.user_id)
+            print(applicant.job_id)
+            if applicant.job_status != 'rejected':
+                #applications.append(applicant)
+                app = User.objects.get(id=getattr(applicant, 'user_id'))
+                app.application_id = applicant.id
+                allApplicants.append(app)
+                
         print('Applicant found')
     except JobApplicants.DoesNotExist:
         print("user is ok, no existing applicant")
     except MultipleObjectsReturned:
         return redirect('failure/')
 
-    return render(request, 'hospital_job_details.html', {'existingApplicants': allApplicants, 'job': job})
+    return render(request, 'hospital_job_details.html', {'existingApplicants': allApplicants, 'job': job}) #'applications': applications})
 
 
 def find_workers(request, job_id):
     user = get_user_model()
-
-    #preference_has_set = None
-    #existing_preference = None
+    users = user.objects.all()
     job = JobInfo.objects.get(id=job_id)
     all_workers = JobPreference.objects.all()
     
     context = {}
-    context['job_rec'] = None
+    #context['job_rec'] = []
 
     user_job_type = job.job_type
-    worker_rec = all_workers.filter(job_type=user_job_type)
-    
+    context['type_pref'] = []
+    #context['type_pref'] = all_workers.filter(job_type=user_job_type)
+    type_preference = all_workers.filter(job_type=user_job_type)
+    for worker in type_preference:
+        context['type_pref'].append(users.get(id=worker.base_profile))
+
+    job_begin = job.job_start_time
+    job_end = job.job_end_time
+    context['date_contains'] = []
+    type_date = all_workers.exclude(
+        # exclude 
+        # when end before start
+        job_start_time__gte=job_end, 
+        job_end_time__lte=job_begin
+        )
+    for worker in type_date:
+        context['date_contains'].append(users.get(id=worker.base_profile))
+
+    # People Nearby
+    lat = -1
+    lng = -1
     if job.job_location_zipcode:
         try:
             geo_res = gmap_to_zip(gmaps.geocode(job.job_location_zipcode))
@@ -308,35 +334,36 @@ def find_workers(request, job_id):
         except:
             lat, lng = 0, 0
             print('Zipcode invalid')
-    else:
-        lat, lng = 0, 0
+    #else:
+    #    lat, lng = -1, 0
 
-    # if user_preference.job_location_radius == 'No preference':
-    #        user_job_radius = 10000000
-    #    else:
-    #user_job_radius = int(50)  # Default?
-    #user_location_lat = user_preference.home_location_lat
-    #user_location_lng = user_preference.home_location_lng
-    #rec_distance_filtered = []
-    #if len(worker_rec) > 0:
-    #    for worker in worker_rec:
-    #        job_zip = worker.job_location_zipcode
-    #        geo_res = gmap_to_zip(gmaps.geocode(job_zip))
-    #        lat, lng = geo_res['lat'], geo_res['lng']
-    #        if lat == -1 and lng == -1:
-    #           continue
-    #        else:
-    #            origin = (user_location_lat, user_location_lng)
-    #            destination = (lat, lng)
-    #            distance = distance_bt_locations(origin, destination)
-                # ignore distances greater than user preferred distance
-                #if distance <= user_job_radius:
-                #    job_rec_distance_filtered.append(job)
-                #else:
-                #        print(distance)
+    user_job_radius = 200
 
-            #context['job_rec'] = job_rec_distance_filtered
 
+    job_rec_distance_filtered = []
+    for worker in all_workers:
+        wlat = worker.home_location_lat
+        wlng = worker.home_location_lng
+        if wlat == -1 or wlng == -1 or lat == -1 or lng == -1:
+            continue
+        else:
+            origin = (lat,lng)
+            destination = (wlat, wlng)
+            distance = distance_bt_locations(origin, destination)
+            #ignore distances greater than user preferred distance
+            if distance <= user_job_radius:
+                print("found match")
+                job_rec_distance_filtered.append(worker)
+            else:
+                print("not close enough")
+                print(distance)
+    context['dist_rec'] = []
+    for worker in job_rec_distance_filtered:
+        context['dist_rec'].append(users.get(id=worker.base_profile))
+
+
+    #context['dist_rec'] = job_rec_distance_filtered
+    print(context)
     return render(request, 'find_workers.html', context)
 
 
@@ -539,21 +566,27 @@ def hospital_delete_job(request, job_id):
 
     return redirect("../../")
 
-def hospital_reject_applicant(request, job_id, worker_id):
-    application = JobApplicants.objects.filter(job_id=job_id, user_id=worker_id)
-    application.status = 'rejected'
+def hospital_reject_applicant(request, job_id, user_id):
+    print(job_id)
+    print(user_id)
+    application = JobApplicants.objects.filter(job_id=job_id)
+    application = application.get(user_id=user_id)
+    application.job_status = 'rejected'
+    print("new status")
+    print(application.job_status)
+    application.save()
     return redirect("../../")
 
-def hospital_accept_applicant(request, job_id, worker_id):
-    application = JobApplicants.objects.filter(job_id=job_id, user_id=worker_id)
+def hospital_accept_applicant(request, job_id, user_id):
+    application = JobApplicants.objects.filter(job_id=job_id, user_id=user_id)[0]
     application.status = 'accepted'
-
+    application.save()
     ## Email to set up further correspondence
     current_site = get_current_site(request)
     user = get_user_model()
-    applicant = user.objects.filter(id=application.user_id)
+    applicant = user.objects.get(id=application.user_id)
     job = JobInfo.objects.filter(id=job_id)[0]
-    employer = job.base_user
+    employer = job.base_profile
 
     mail_subject = 'Jop Update!'
     message = render_to_string('applicant_accept.html', {

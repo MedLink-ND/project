@@ -76,8 +76,8 @@
                         <h4 class="entry-title">{{ forloop.counter }}. {{ applicant.first_name }} {{ applicant.last_name }}</h4>
                         <h6 class="card-title m-0">Contact: {{ applicant.email }}</h6>
                         <p>Check out applicant creddentials:</p>
-                        <button type="button"><a href="accept/{{ applicant.id }}">Accept</a> </button>
-                        <button type="button"><a href="reject/{{ applicant.id }}">Reject</a> </button>
+                        <a href="accept/{{ applicant.id }}/">Accept</a> 
+                        <a href="reject/{{ applicant.id }}/">Reject</a> 
                         {% comment %}
                         <td><a href="delete/{{ job.id }}"><b>Reject Applicant</b></a>
                             <a href="update/{{ job.id }}"><b>Contact Applicant</b></a>
