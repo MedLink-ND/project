@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}MedLink | Home{% endblock %}
+
+
+{% block head %}
+<link href="https://fonts.googleapis.com/css?family=Karla:400,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="d-flex align-items-center min-vh-100 py-3 py-md-0">
+    <div class="container blog">
+        <div class="row no-gutters">
+            <div class="card login-card">
+                <div class="card-body">
+                    <p class="login-card-description">Job Details</p>
+
+                    {% csrf_token %}
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Job Name</th>
+                                <th scope="col">Job Type</th>
+                                <th scope="col">On call</th>
+                                <th scope="col">Location</th>
+                                <th scope="col">Hospital Name</th>
+                                <th scope="col">Hospital Type</th>
+                                <th scope="col">Start Date</th>
+                                <th scope="col">End Date</th>
+                                <th scope="col">Supervision</th>
+                                <th scope="col">Locum Shifts</th>
+                                <th scope="col">Experience Level</th>
+                                <th scope="col">Payment Type</th>
+                                <th scope="col">Benefits</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row"></th>
+                                <td>{{ job.job_name }}</td>
+                                <td>{{ job.job_type }}</td>
+                                <td>{{ job.job_on_call }}</td>
+                                <td>{{ job.job_location_zipcode }}</td>
+                                <td>{{ job.job_location_hospital }}</td>
+                                <td>{{ job.hospital_type }}</td>
+                                <td>{{ job.job_start_time }}</td>
+                                <td>{{ job.job_end_time }}</td>
+                                <td>{{ job.job_supervision }}</td>
+                                {% if job.job_type == "Locum" %}
+                                <td>{{ job.locum_shift_day }} days / week, {{ job.locum_shift_hour }} hours / day</td>
+                                {% else %}
+                                <td>None</td>
+                                {% endif %}
+                                <td>{{ job.job_experience }}</td>
+                                <td>{{ job.job_payment }}</td>
+                                <td>Vacation: {{ job.job_vacation }}, Education: {{ job.education_money }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <a href="find_workers/"><b>Find more applicants here.</b></a>
+                </div>
+                </div>
+                <article class="entry">
+                    <h class="entry-title">Applicants:</h>
+                    {% if existingApplicants is None %}
+                    <p>There have been no applicants.</p>
+                    {% else %}
+                    {% csrf_token %}
+                    {% for applicant in existingApplicants %}
+                    <div class="row mt-5">
+                        <div class="col-lg-4">
+                        <h4 class="entry-title">{{ forloop.counter }}. {{ applicant.first_name }} {{ applicant.last_name }}</h4>
+                        <h6 class="card-title m-0">Contact: {{ applicant.email }}</h6>
+                        <p>Check out applicant creddentials:</p>
+                        <a href="accept/{{ applicant.id }}/">Accept</a> 
+                        <a href="reject/{{ applicant.id }}/">Reject</a> 
+                        {% comment %}
+                        <td><a href="delete/{{ job.id }}"><b>Reject Applicant</b></a>
+                            <a href="update/{{ job.id }}"><b>Contact Applicant</b></a>
+                            <a href="delete/{{ job.id }}"><b>View Profile</b></a>
+                        </td>
+                        {% endcomment %} 
+                    </div>
+                    </div>                
+                    {% endfor %}
+                    {% endif %}
+
+                    </article>
+            
+        </div>
+    </div>
+</main>
+{% endblock %}

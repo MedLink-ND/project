@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'signup',
     'home',
     'verify_email',
+    'tempus_dominus',
 ]
 
 AUTH_USER_MODEL = 'signup.User'

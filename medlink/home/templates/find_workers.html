@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}MedLink | Home{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="d-flex align-items-center min-vh-100 py-3 py-md-0">
+    <div class="container">
+        <div class="card login-card">
+            <div class="row no-gutters">
+                <div class="card-body">
+                    <p class="login-card-description">Find Workers for this Job!</p>
+                    <p>Here are your medical worker recommendation based on your job details. </p>
+                    {% csrf_token %}
+                    <div class="container">
+                        <div class="row">
+                            {% if date_contains and job_type and dist_rec is None %}
+                            <p>There are no workers with matching preferences. Please check back later.</p>
+                            {% else %}
+                            <h>Workers Looking for a job within the date range:</h>
+                            {% for job in date_contains %}
+                            <div class="col" style="min-width: 300px;">
+                                <div class="card" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+                                                        transition: 0.3s;
+                                                        border: none;">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><b>{{ job.first_name }} {{ job.last_name }}</b></h5>
+                                        <a href="job_details/{{ job.id }}" class="card-link">View Details</a>
+                                        <a href="#" class="card-link">Contact</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            
+                            <h>Workers Nearby:</h>
+                            {% for job in dist_rec %}
+                            <div class="col" style="min-width: 300px;">
+                                <div class="card" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+                                                        transition: 0.3s;
+                                                        border: none;">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><b>{{ job.first_name }} {{ job.last_name }}</b></h5>
+                                        <a href="job_details/{{ job.id }}" class="card-link">View Details</a>
+                                        <a href="#" class="card-link">Contact</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                            <h>Workers looking by job type:</h>
+                            {% for job in type_pref %}
+                            <div class="col" style="min-width: 300px;">
+                                <div class="card" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+                                                        transition: 0.3s;
+                                                        border: none;">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><b>{{ job.first_name }} {{ job.last_name }}</b></h5>
+                                        <a href="job_details/{{ job.id }}" class="card-link">View Details</a>
+                                        <a href="#" class="card-link">Contact</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+{% endblock %}

@@ -1,27 +1,11 @@
 {% extends 'base.html' %}
+
 {% load static %}
 
 {% block title %}MedLink | Home{% endblock %}
 
-
 {% block head %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Home</title>
-    <link href="https://fonts.googleapis.com/css?family=Karla:400,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
-{% endblock %}
-
-{% block logout %}
-<li class="dropdown"><a href="#"><span>Logged in as: {{ request.user.get_short_name }}</span> <i class="bi bi-chevron-down"></i></a>
-    <ul>
-        <li><a href="{% url 'profile_update' %}">Update profile</a></li>
-        <li><a href="{% url 'home' %}">Logout</a></li>
-    </ul>
-</li>
 {% endblock %}
 
 {% block content %}
@@ -31,28 +15,67 @@
         <div class="row no-gutters">
             <div class="card-body">
                 <p class="login-card-description">Welcome to MedLink Recruiting Portal!</p>
-                <p>Here are all of your posted jobs. Post a new job <a href="post_job/">here</a>.</p>
-                <form method="POST">
-                    {% csrf_token %}
-                    <h5>All jobs</h5>
-                    {% if existingJob is None %}
-                    <p>You haven't posted any jobs.</p>
-                    {% else %}
-                        {% for job in existingJob %}
-                            <h6 class="card-title m-0">Job Name: {{ job.job_name }}</h6>
-                            <h6 class="card-title m-0">Job Level: {{ job.job_level }}</h6>
-                            <h6 class="card-title m-0">Job Description: {{ job.job_description }}</h6>
-                            <h6 class="card-title m-0">Job Location: {{ job.job_location_hospital }}</h6>
-                            <h6 class="card-title m-0">Number of people applied: </h6>
-                            <br>
-                        {% endfor %}
-                    {% endif %}
-                </form>
+                <p>Here are all of your posted jobs. Post a new job <a href="post_job/"><b>here</b></a>.</p>
+                {% csrf_token %}
+                <h5>All jobs</h5>
+                {% if existingJob is None %}
+                <p>You haven't posted any jobs.</p>
+                {% else %}
+                <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Job Name</th>
+                        <th scope="col">Job Type</th>
+                        <th scope="col">On call</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Hospital Name</th>
+                        <th scope="col">Hospital Type</th>
+                        <th scope="col">Start Date</th>
+                        <th scope="col">End Date</th>
+                        <th scope="col">Supervision</th>
+                        <th scope="col">Locum Shifts</th>
+                        <th scope="col">Experience Level</th>
+                        <th scope="col">Payment Type</th>
+                        <th scope="col">Benefits</th>
+                        <th scope="col"># of people applied</th>                        
+                        <th scope="col">Actions</th>
+                      </tr>
+                    </thead>
+                    {% for job in existingJob %}
+                    <tbody>
+                        <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ job.job_name }}</td>
+                        <td>{{ job.job_type }}</td>
+                        <td>{{ job.job_on_call }}</td>
+                        <td>{{ job.job_location_zipcode }}</td>
+                        <td>{{ job.job_location_hospital }}</td>
+                        <td>{{ job.hospital_type }}</td>
+                        <td>{{ job.job_start_time }}</td>
+                        <td>{{ job.job_end_time }}</td>
+                        <td>{{ job.job_supervision }}</td>
+                        {% if job.job_type == "Locum" %}
+                            <td>{{ job.locum_shift_day }} days / week, {{ job.locum_shift_hour }} hours / day</td>
+                        {% else %}
+                            <td>None</td>
+                        {% endif %}
+                        <td>{{ job.job_experience }}</td>
+                        <td>{{ job.job_payment }}</td>
+                        <td>Vacation: {{ job.job_vacation }}, Education: {{ job.education_money }}</td>
+                        <td>{{ job.applicants }}</td>
+                        <td><a href="delete/{{ job.id }}"><b>Delete</b></a>
+                            <a href="update/{{ job.id }}"><b>Modify</b></a>
+                            <a href="hospital_job_details/{{ job.id }}"><b>View Job</b></a>
+                        </td>
+                        </tr>
+                    </tbody>                    
+                    {% endfor %}
+                </table>
+                {% endif %}
             </div>
-          </div>
+        </div>
       </div>
     </div>
 </main>
-
-
 {% endblock %}
