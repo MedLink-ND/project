@@ -832,12 +832,23 @@ def worker_query(request):
                 qs = qs.filter(job_payment__icontains=payment_contains_query)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+            if vacation_contains_query != '' and vacation_contains_query is not None:
+                qs = qs.filter(job_vacation__icontains=vacation_contains_query)
+
+            if education_money_contains_query != '' and education_money_contains_query is not None:
+                qs = qs.filter(
+                    education_money__icontains=education_money_contains_query)
+=======
+>>>>>>> ce1d098b1410f25fb016508f0b78bb532990ed68
                     for user_id in allJobs:
                         try:
                             profile_user = WorkerProfileInfo.objects.filter(base_profile_id=user_id)
                             allUsers.append(profile_user[0])
                         except:
                             print('No profile is found for user ' + str(user_id))
+<<<<<<< HEAD
 =======
             if vacation_contains_query != '' and vacation_contains_query is not None:
                 qs = qs.filter(job_vacation__icontains=vacation_contains_query)
@@ -846,6 +857,9 @@ def worker_query(request):
                 qs = qs.filter(
                     education_money__icontains=education_money_contains_query)
 >>>>>>> accept
+=======
+>>>>>>> 77ddc247f838b80f58f43c293007f1932663e910
+>>>>>>> ce1d098b1410f25fb016508f0b78bb532990ed68
 
             if shift_hour_contains_query != '' and shift_hour_contains_query is not None:
                 qs = qs.filter(
