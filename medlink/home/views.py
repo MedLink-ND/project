@@ -742,7 +742,7 @@ def application(request, job_id):
     currUserID = getattr(currUser[0], 'id')
     applicant = request.user
 
-    JobApplicants.objects.create(user_id=currUserID, job_id=job, job_status='')
+    JobApplicants.objects.create(user_id=currUserID, job_id=job, job_status='Under Review')
 
     employer = job.base_profile
     
