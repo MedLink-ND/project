@@ -303,24 +303,19 @@ def hospital_job_details(request, job_id):
     currUserID = getattr(currUser[0], 'id')
 
     allApplicants = []
-    allProfiles = []
     applicant = None
     applications = []
     try:
         for applicant in JobApplicants.objects.filter(job_id=job_id):
-            # print('status')
-            # print(applicant.job_status)
-            # print(applicant.user_id)
-            # print(applicant.job_id)
+            print('status')
+            print(applicant.job_status)
+            print(applicant.user_id)
+            print(applicant.job_id)
             if applicant.job_status != 'rejected':
                 #applications.append(applicant)
-                user = User.objects.get(id=getattr(applicant, 'user_id'))
-                print(user.id)
-                # print(applicant.user_id)
-                profile = WorkerProfileInfo.objects.filter(base_profile=user)[0]
-                # app.application_id = applicant.id
-                # allApplicants.append(app)
-                allProfiles.append(profile)
+                app = User.objects.get(id=getattr(applicant, 'user_id'))
+                app.application_id = applicant.id
+                allApplicants.append(app)
                 
         print('Applicant found')
     except JobApplicants.DoesNotExist:
@@ -328,7 +323,7 @@ def hospital_job_details(request, job_id):
     except MultipleObjectsReturned:
         return redirect('failure/')
 
-    return render(request, 'hospital_job_details.html', {'existingApplicants': allProfiles, 'job': job}) #'applications': applications})
+    return render(request, 'hospital_job_details.html', {'existingApplicants': allApplicants, 'job': job}) #'applications': applications})
 
 
 def find_workers(request, job_id):
@@ -725,38 +720,43 @@ def distance_bt_locations(origin, destination):
 
 
 def application(request, job_id):
-
+    print(job_id)
     job = JobInfo.objects.filter(id=job_id)[0]
     user = get_user_model()
     currUser = user.objects.filter(email=request.user.email)
     currUserID = getattr(currUser[0], 'id')
     applicant = request.user
+    try: 
+        j = JobApplicants.objects.get(user_id=currUserID, job_id=job)
+        print(j)
+        return render(request, 'application.html')
+    except:
+        print("does not exist yet")
+        JobApplicants.objects.create(user_id=currUserID, job_id=job, job_status='Under Review')
 
-    JobApplicants.objects.create(user_id=currUserID, job_id=job, job_status='Under Review')
+        employer = job.base_profile
+        
+        # send email
+        current_site = get_current_site(request)
 
-    employer = job.base_profile
-    
-    # send email
-    current_site = get_current_site(request)
+        mail_subject = 'New Applicant'
+        message = render_to_string('applicant_notice.html', {
+            'applicant':     applicant,
+            'employer': employer,
+            'job':      job,
+            'domain':   current_site.domain,
+            # 'uid':      urlsafe_base64_encode(force_bytes(user.pk)),
+            # 'token':    account_activation_token.make_token(user),
+        })
+        to_email = employer.email
+        email = EmailMessage(
+            mail_subject, message, to=[
+                to_email], from_email="MedLink <jz.project.testing@gmail.com>"
+        )
+        email.content_subtype = "html"
+        email.send()
 
-    mail_subject = 'New Applicant'
-    message = render_to_string('applicant_notice.html', {
-        'applicant':     applicant,
-        'employer': employer,
-        'job':      job,
-        'domain':   current_site.domain,
-        # 'uid':      urlsafe_base64_encode(force_bytes(user.pk)),
-        # 'token':    account_activation_token.make_token(user),
-    })
-    to_email = employer.email
-    email = EmailMessage(
-        mail_subject, message, to=[
-            to_email], from_email="MedLink <jz.project.testing@gmail.com>"
-    )
-    email.content_subtype = "html"
-    email.send()
-
-    return render(request, 'application.html')
+        return render(request, 'application.html')
 
 
 def worker_query(request):
@@ -831,21 +831,12 @@ def worker_query(request):
             if payment_contains_query != '' and payment_contains_query is not None:
                 qs = qs.filter(job_payment__icontains=payment_contains_query)
 
-<<<<<<< HEAD
             if vacation_contains_query != '' and vacation_contains_query is not None:
                 qs = qs.filter(job_vacation__icontains=vacation_contains_query)
 
             if education_money_contains_query != '' and education_money_contains_query is not None:
                 qs = qs.filter(
                     education_money__icontains=education_money_contains_query)
-=======
-                    for user_id in allJobs:
-                        try:
-                            profile_user = WorkerProfileInfo.objects.filter(base_profile_id=user_id)
-                            allUsers.append(profile_user[0])
-                        except:
-                            print('No profile is found for user ' + str(user_id))
->>>>>>> 77ddc247f838b80f58f43c293007f1932663e910
 
             if shift_hour_contains_query != '' and shift_hour_contains_query is not None:
                 qs = qs.filter(
@@ -855,6 +846,12 @@ def worker_query(request):
                 qs = qs.filter(
                     locum_shift_day__icontains=shift_day_contains_query)
 
+            #for user_id in allJobs:
+            #    try:
+            #        profile_user = WorkerProfileInfo.objects.filter(base_profile_id=user_id)
+            #        allUsers.append(profile_user[0])
+            #    except:
+            #        print('No profile is found for user ' + str(user_id))
             context['queryset'] = qs
             context['num_jobs'] = len(qs)
             print('POST')
