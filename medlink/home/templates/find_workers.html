@@ -19,25 +19,10 @@
                     {% csrf_token %}
                     <div class="container">
                         <div class="row">
-                            {% if date_contains and job_type and dist_rec is None %}
+                            {% if dist_rec is None %}
                             <p>There are no workers with matching preferences. Please check back later.</p>
                             {% else %}
-                            <h>Workers Looking for a job within the date range:</h>
-                            {% for job in date_contains %}
-                            <div class="col" style="min-width: 300px;">
-                                <div class="card" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-                                                        transition: 0.3s;
-                                                        border: none;">
-                                    <div class="card-body">
-                                        <h5 class="card-title"><b>{{ job.first_name }} {{ job.last_name }}</b></h5>
-                                        <a href="job_details/{{ job.id }}" class="card-link">View Details</a>
-                                        <a href="#" class="card-link">Contact</a>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                            
-                            <h>Workers Nearby:</h>
+        
                             {% for job in dist_rec %}
                             <div class="col" style="min-width: 300px;">
                                 <div class="card" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -45,27 +30,19 @@
                                                         border: none;">
                                     <div class="card-body">
                                         <h5 class="card-title"><b>{{ job.first_name }} {{ job.last_name }}</b></h5>
-                                        <a href="job_details/{{ job.id }}" class="card-link">View Details</a>
-                                        <a href="#" class="card-link">Contact</a>
+                                        {% if job.date_range > 0 %}
+                                            <p>Currently searching within {{ job.job_start_time }} - {{ job.job_end_time }} </p>
+                                        {% endif %}
+                                        {% if job.distance <= 200 %}
+                                            <p>Within {{ job.distance }}</p>
+                                        {% endif %}
+                                        <a href="{% url 'profile_page' job.id %}" class="card-link">View Details</a>
+                                        <a href= "" class="card-link">Contact</a>
                                     </div>
                                 </div>
                             </div>
                             {% endfor %}
-
-                            <h>Workers looking by job type:</h>
-                            {% for job in type_pref %}
-                            <div class="col" style="min-width: 300px;">
-                                <div class="card" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-                                                        transition: 0.3s;
-                                                        border: none;">
-                                    <div class="card-body">
-                                        <h5 class="card-title"><b>{{ job.first_name }} {{ job.last_name }}</b></h5>
-                                        <a href="job_details/{{ job.id }}" class="card-link">View Details</a>
-                                        <a href="#" class="card-link">Contact</a>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
+                            
 
                         </div>
                     </div>

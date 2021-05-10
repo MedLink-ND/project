@@ -336,16 +336,17 @@ def find_workers(request, job_id):
     context = {}
     #context['job_rec'] = []
 
-    user_job_type = job.job_type
-    context['type_pref'] = []
+    #user_job_type = job.job_type
+    #context['type_pref'] = []
     #context['type_pref'] = all_workers.filter(job_type=user_job_type)
-    type_preference = all_workers.filter(job_type=user_job_type)
-    for worker in type_preference:
-        context['type_pref'].append(users.get(id=worker.base_profile))
+    #type_preference = all_workers.filter(job_type=user_job_type)
+    #for worker in type_preference:
+    #    context['type_pref'].append(users.get(id=worker.base_profile))
 
     job_begin = job.job_start_time
     job_end = job.job_end_time
     context['date_contains'] = []
+    context['rec_list'] = []
     type_date = all_workers.exclude(
         # exclude 
         # when end before start
@@ -353,7 +354,12 @@ def find_workers(request, job_id):
         job_end_time__lte=job_begin
         )
     for worker in type_date:
-        context['date_contains'].append(users.get(id=worker.base_profile))
+        w = users.get(id=worker.base_profile)
+        w.date_range = 1
+        w.job_start_time = worker.job_start_time
+        w.job_end_time = worker.job_end_time
+        context['date_contains'].append(w)
+        
 
     # People Nearby
     lat = -1
@@ -371,7 +377,7 @@ def find_workers(request, job_id):
     user_job_radius = 200
 
 
-    job_rec_distance_filtered = []
+    context['dist_rec'] = []
     for worker in all_workers:
         wlat = worker.home_location_lat
         wlng = worker.home_location_lng
@@ -384,17 +390,32 @@ def find_workers(request, job_id):
             #ignore distances greater than user preferred distance
             if distance <= user_job_radius:
                 print("found match")
-                job_rec_distance_filtered.append(worker)
+                w = users.get(id=worker.base_profile)
+                w.distance = user_job_radius
+                context['dist_rec'].append(w)
+                #job_rec_distance_filtered.append(worker)
             else:
                 print("not close enough")
                 print(distance)
-    context['dist_rec'] = []
-    for worker in job_rec_distance_filtered:
-        context['dist_rec'].append(users.get(id=worker.base_profile))
+    #context['dist_rec'] = []
+    #for worker in job_rec_distance_filtered:
+    #    context['dist_rec'].append(users.get(id=worker.base_profile))
+
+    #context['rec_list'] = {}
+    for worker in context['dist_rec']:
+        if worker in context['date_contains']:
+            worker.date_range = 1
+        else:
+            worker.date_range = 0
+
+    for worker in context['date_contains']:
+        if(worker not in context['dist_rec']):
+            worker.distance = 201
+            context['dist_rec'].append(worker)
 
 
     #context['dist_rec'] = job_rec_distance_filtered
-    print(context)
+    #print(full_list)
     return render(request, 'find_workers.html', context)
 
 
@@ -573,7 +594,7 @@ def job_query(request):
             
             allJobs = []
 
-            if zip_contains_query:
+            if zip_contains_query != '' and zipcode_query is not None:
                 geo_res = gmap_to_zip(gmaps.geocode(zip_contains_query))
                 lat, lng = geo_res['lat'], geo_res['lng']
                 if lat == -1 and lng == -1:
@@ -593,7 +614,8 @@ def job_query(request):
                         else:
                             print(distance)
             
-            qs = allJobs
+            if len(allJobs) > 0:
+                qs = allJobs
             context['queryset'] = qs
             context['num_jobs'] = len(qs)
 
