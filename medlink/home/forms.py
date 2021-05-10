@@ -541,55 +541,6 @@ class JobSearchForm(forms.Form):
         label='For locum: How many hours in a day?',
         required = False
     )
-    # type_contains = forms.CharField(
-    #     label='What type of job?',
-    #     widget=forms.Select(choices=DURATION),
-    #     required=False
-    # )
-    # if(type_contains == 'full-time'):
-    #     locum_shift_day = forms.CharField(
-    #         label='For locum: How many days in a week?'
-    #     )
-    # # job_location_zipcode = forms.IntegerField(
-    # ##    label='Job loca? (Enter zipcode of hospital)',
-    # # )
-    # hospital_contains = forms.CharField(
-    #     label='Hospital name?',
-    #     required=False
-    # )
-    # hospital_type_contains = forms.CharField(
-    #     label="Type of hospital?",
-    #     widget=forms.Select(choices=HOSPITAL),
-    #     required=False
-    # )
-    # on_call_contains = forms.CharField(
-    #     label="On call?",
-    #     widget=forms.Select(choices=ONCALL),
-    #     required=False
-    # )
-    # experience_contains = forms.CharField(
-    #     label='Experience level?',
-    #     widget=forms.Select(choices=EXPERIENCE),
-    #     required=False
-    # )
-    # supervision_contains = forms.CharField(
-    #     label='Does this job require supervision from an anesthesiologist',
-    #     widget=forms.Select(choices=SUPERVISION),
-    #     required=False
-    # )
-    # payment_contains = forms.CharField(
-    #     label='What is the payment type for this job?',
-    #     widget=forms.Select(choices=PAYMENT),
-    #     required=False
-    # )
-    # vacation_contains = forms.CharField(
-    #     label='What are the vacation benefits of this job?',
-    #     required=False
-    # )
-    # education_money_contains = forms.CharField(
-    #     label='Are there any education credits with this job?',
-    #     required=False
-    # )
 
     ##########
 

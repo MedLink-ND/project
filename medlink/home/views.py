@@ -567,7 +567,7 @@ def job_query(request):
                     locum_shift_day__icontains=shift_day_contains_query)
 
              # by location
-            if zipcode_query:
+            if zipcode_query != '' and zipcode_query is not None:
                 if zipcode_query == 'No preference':
                     radius = 100000
                 else:
@@ -577,7 +577,7 @@ def job_query(request):
             
             allJobs = []
 
-            if zip_contains_query:
+            if zip_contains_query != '' and zipcode_query is not None:
                 geo_res = gmap_to_zip(gmaps.geocode(zip_contains_query))
                 lat, lng = geo_res['lat'], geo_res['lng']
                 if lat == -1 and lng == -1:
@@ -597,14 +597,15 @@ def job_query(request):
                         else:
                             print(distance)
             
-            qs = allJobs
+            if len(allJobs) > 0:
+                qs = allJobs
             context['queryset'] = qs
             context['num_jobs'] = len(qs)
 
     else:
         form = JobSearchForm()
         print('GET')
-        context['queryset'] = None
+        context['queryset'] = None #JobInfo.objects.all()
     
     context['form'] = form
 
