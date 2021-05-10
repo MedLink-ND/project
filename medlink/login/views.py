@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponse, HttpResponseRedirect
 from .forms import LoginForm, HospitalProfileForm
 from .models import HospitalProfile
-from home.models import WorkerInfo
+from home.models import WorkerInfo, WorkerProfileInfo
 
 # Create your views here.
 def login(request):
@@ -26,8 +26,9 @@ def login(request):
                 if user.is_hospital == 1:
                     return redirect("../home/hospital")
                 if user.is_worker == 1:
-                    profile_user = WorkerInfo.objects.raw("SELECT base_profile_id AS id FROM home_workerinfo WHERE base_profile_id = " + str(user.id))
-                    if not profile_user:
+                    profile_user = WorkerProfileInfo.objects.filter(base_profile=user)
+                    #profile_user = WorkerInfo.objects.raw("SELECT base_profile_id AS id FROM home_workerinfo WHERE base_profile_id = " + str(user.id))
+                    if len(profile_user) == 0:
                         return redirect("../home/user/update_profile/")
                     else:
                         return redirect("../home/user/")
