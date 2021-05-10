@@ -76,7 +76,7 @@
                         <tr>
                             <th scope="row">Hospital Type</th>
                             <td>{{ existing_preference.hospital_type }}</td>
-                            <td>{{ form.hospital_type }}</td>
+                            <td>{{ form.hospital_type|as_crispy_field }}</td>
                         </tr>
                         <tr>
                             <th scope="row">Does the job require on call</th>

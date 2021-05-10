@@ -304,19 +304,24 @@ def hospital_job_details(request, job_id):
     currUserID = getattr(currUser[0], 'id')
 
     allApplicants = []
+    allProfiles = []
     applicant = None
     applications = []
     try:
         for applicant in JobApplicants.objects.filter(job_id=job_id):
-            print('status')
-            print(applicant.job_status)
-            print(applicant.user_id)
-            print(applicant.job_id)
+            # print('status')
+            # print(applicant.job_status)
+            # print(applicant.user_id)
+            # print(applicant.job_id)
             if applicant.job_status != 'rejected':
                 #applications.append(applicant)
-                app = User.objects.get(id=getattr(applicant, 'user_id'))
-                app.application_id = applicant.id
-                allApplicants.append(app)
+                user = User.objects.get(id=getattr(applicant, 'user_id'))
+                print(user.id)
+                # print(applicant.user_id)
+                profile = WorkerProfileInfo.objects.filter(base_profile=user)[0]
+                # app.application_id = applicant.id
+                # allApplicants.append(app)
+                allProfiles.append(profile)
                 
         print('Applicant found')
     except JobApplicants.DoesNotExist:
@@ -324,7 +329,7 @@ def hospital_job_details(request, job_id):
     except MultipleObjectsReturned:
         return redirect('failure/')
 
-    return render(request, 'hospital_job_details.html', {'existingApplicants': allApplicants, 'job': job}) #'applications': applications})
+    return render(request, 'hospital_job_details.html', {'existingApplicants': allProfiles, 'job': job}) #'applications': applications})
 
 
 def find_workers(request, job_id):
@@ -847,10 +852,10 @@ def worker_query(request):
 
                     for user_id in allJobs:
                         try:
-                            profile_user = WorkerInfo.objects.filter(base_profile_id=request.user.id)
+                            profile_user = WorkerProfileInfo.objects.filter(base_profile_id=user_id)
                             allUsers.append(profile_user[0])
                         except:
-                            print('No profile is found for user ' + user_id)
+                            print('No profile is found for user ' + str(user_id))
 
             context['queryset'] = allUsers
             context['num_workers'] = len(allUsers)
