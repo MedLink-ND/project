@@ -622,7 +622,6 @@ def job_query(request):
     else:
         form = JobSearchForm()
         context['queryset'] = None
-    
     context['form'] = form
 
     return render(request, "job_query.html", context)
