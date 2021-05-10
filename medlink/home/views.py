@@ -313,17 +313,17 @@ def hospital_job_details(request, job_id):
             print(applicant.user_id)
             print(applicant.job_id)
             if applicant.job_status != 'rejected':
-                #applications.append(applicant)
-                # app = User.objects.get(id=getattr(applicant, 'user_id'))
-                # app.application_id = applicant.id
-                # allApplicants.append(app)
+                applications.append(applicant)
+                app = User.objects.get(id=getattr(applicant, 'user_id'))
+                app.application_id = applicant.id
+                allApplicants.append(app)
 
                 user = User.objects.get(id=getattr(applicant, 'user_id'))
                 print(user.id)
                 # print(applicant.user_id)
                 profile = WorkerProfileInfo.objects.filter(base_profile=user)[0]
-                # app.application_id = applicant.id
-                # allApplicants.append(app)
+                app.application_id = applicant.id
+                allApplicants.append(app)
                 allProfiles.append(profile)
                 
         print('Applicant found')
@@ -355,12 +355,21 @@ def find_workers(request, job_id):
     job_end = job.job_end_time
     context['date_contains'] = []
     context['rec_list'] = []
-    type_date = all_workers.exclude(
-        # exclude 
-        # when end before start
-        job_start_time__gte=job_end, 
-        job_end_time__lte=job_begin
-        )
+    type_date = all_workers
+    if job_end : 
+        type_date = type_date.exclude(
+            # exclude 
+            # when end before start
+            job_start_time__gte=job_end, 
+            #job_end_time__lte=job_begin
+            )
+    if job_begin:
+        type_date = type_date.exclude(
+            # exclude 
+            # when end before start
+            job_start_time__gte=job_begin, 
+            #job_end_time__lte=job_begin
+            )
     for worker in type_date:
         w = users.get(id=worker.base_profile)
         w.date_range = 1
@@ -705,8 +714,8 @@ def hospital_reject_applicant(request, job_id, user_id):
     return redirect("../../")
 
 def hospital_accept_applicant(request, job_id, user_id):
-    application = JobApplicants.objects.filter(job_id=job_id, user_id=user_id)[0]
-    application.status = 'accepted'
+    application = JobApplicants.objects.get(job_id=job_id, user_id=user_id)
+    application.job_status = 'accepted'
     application.save()
     ## Email to set up further correspondence
     current_site = get_current_site(request)
