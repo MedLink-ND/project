@@ -88,7 +88,7 @@ def user_job_details(request, job_id):
 
 
 def profile_page(request, profile_id):
-    profile_user = WorkerInfo.objects.raw("SELECT name, address, email, education, certifications, provider_type, peer_references, cpr_certifications, base_profile_id AS id FROM home_workerinfo WHERE base_profile_id = " + str(profile_id))
+    profile_user = WorkerInfo.objects.raw("SELECT CONCAT(first_name, ' ', last_name) as name, address, email, education, provider_type, peer_references, cpr_certifications, base_profile_id AS id FROM home_workerprofileinfo WHERE base_profile_id = " + str(profile_id))
 
     if not profile_user:
         return redirect("../..")
