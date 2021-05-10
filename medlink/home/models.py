@@ -60,15 +60,37 @@ class WorkerInfo(models.Model):
     class Meta:
         app_label = 'home'
 
-    name = models.CharField(max_length=255, null=True)
+    first_name = models.CharField(max_length=255, null=True)
+    last_name = models.CharField(max_length=255, null=True)
     address = models.CharField(max_length=255, null=True)
     email = models.CharField(max_length=5, null=True)
     education = models.CharField(max_length=255, null=True)
-    certifications = models.CharField(max_length=255, null=True)
+    # certifications = models.CharField(max_length=255, null=True)
     provider_type = models.CharField(max_length=255, null=True)
     peer_references = models.CharField(max_length=255, null=True)
     cpr_certifications = models.CharField(max_length=255, null=True)
     base_profile = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return self.first_name
+
+class WorkerProfileInfo(models.Model):
+    class Meta:
+        app_label = 'home'
+
+    first_name = models.CharField(max_length=255, null=True)
+    last_name = models.CharField(max_length=255, null=True)
+    address = models.CharField(max_length=255, null=True)
+    email = models.CharField(max_length=255, null=True)
+    education = models.CharField(max_length=255, null=True)
+    # certifications = models.CharField(max_length=255, null=True)
+    provider_type = models.CharField(max_length=255, null=True)
+    peer_references = models.CharField(max_length=255, null=True)
+    cpr_certifications = models.CharField(max_length=255, null=True)
+    base_profile = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return self.last_name
 
 class JobApplicants(models.Model):
     
@@ -78,8 +100,3 @@ class JobApplicants(models.Model):
     job_id = models.ForeignKey(JobInfo, on_delete=models.SET_NULL, null=True)
     user_id = models.CharField(max_length=255, null=True)
     job_status = models.CharField(max_length=255, null=True, default ='')
-    #application_date = models.DateTimeField(null=True)
-
-    
-    # def __str__(self):
-    #     return self.job_type

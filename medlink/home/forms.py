@@ -25,8 +25,8 @@ HOSPITAL = (
 )
 ONCALL = (
     (None, 'Choose...'),
-    ('oncall', 'On Call'),
-    ('nocall', 'No Call'),
+    ('On call', 'On Call'),
+    ('No call', 'No Call'),
     ('NA', 'NA')
 )
 TIME = (
@@ -56,32 +56,7 @@ TIME = (
     (23, '11 PM'),
     (24, '12 AM'),
 )
-# TIME = (
-#     (1, '1 AM'),
-#     (2, '2 AM'),
-#     (3, '3 AM'),
-#     (4, '4 AM'),
-#     (5, '5 AM'),
-#     (6, '6 AM'),
-#     (7, '7 AM'),
-#     (8, '8 AM'),
-#     (9, '9 AM'),
-#     (10, '10 AM'),
-#     (11, '11 AM'),
-#     (12, '12 PM'),
-#     (13, '1 PM'),
-#     (14, '2 PM'),
-#     (15, '3 PM'),
-#     (16, '4 PM'),
-#     (17, '5 PM'),
-#     (18, '6 PM'),
-#     (19, '7 PM'),
-#     (20, '8 PM'),
-#     (21, '9 PM'),
-#     (22, '10 PM'),
-#     (23, '11 PM'),
-#     (24, '12 AM'),
-# )
+
 EXPERIENCE = (
     (None, 'Choose...'),
     ('Greater than 2 years', 'Greater than 2 years'),
@@ -89,35 +64,19 @@ EXPERIENCE = (
     ('NA', 'NA')
 )
 SUPERVISION = (
-    (None, 'Choose...'),
-    ('No supervision', 'No supervision'),
-    ('Supervised by anesthesiologist', 'Supervised by anesthesiologist'),
-)
-PAYMENT = (
-    (None, 'Choose...'),
-    ('W2', 'W2'),
-    ('1099 / No Benefits', '1099/No Benefits'),
-    ('NA', 'NA'),
-    ('', 'NA'),
-    ('gt2', 'Greater than 2 years'),
-    ('new grad', 'New Grad (fewer than 2 years)'),
-)
-SUPERVISION = (
     ('', 'Choose...'),
-    ('no', 'No supervision'),
-    ('yes', 'Supervised by anesthesiologist'),
+    ('No', 'No supervision'),
+    ('Yes', 'Supervised by anesthesiologist'),
 )
 PAYMENT = (
     ('', 'Choose...'),
     ('w2', 'W2'),
     ('1099', '1099/No Benefits'),
 )
-
 YES_NO= (
     ('true','Yes'),
     ('','No')
 )
-
 
 class JobCreationForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -194,37 +153,6 @@ class JobCreationForm(forms.Form):
     education_money = forms.CharField(
         label='Education credits',
     )
-
-
-class ProfileUpdateWorkerForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super(ProfileUpdateWorkerForm, self).__init__(*args, **kwargs)
-
-    name = forms.CharField(
-        label="Name", 
-    )
-    address = forms.CharField(
-        label='Address', 
-    )
-    email = forms.CharField(
-        label='Email',
-    )
-    education = forms.CharField(
-        label='Education',
-    )
-    certifications = forms.CharField(
-        label='Certifications',
-    )
-    provider_type = forms.CharField(
-        label='Provider Type',
-    )
-    peer_references = forms.CharField(
-        label='Peer references: (name, phone number, email)',
-    )
-    cpr_certifications = forms.CharField(
-        label='CPR certifications',
-    )
-
 
 class ProfileUpdateHospitalForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -746,25 +674,17 @@ class WorkerSearchForm(forms.Form):
     ##### BASIC SEARCH QUERIES ########
     ### TODO: maybe add zip and city together in query
     zip_contains = forms.CharField(
-        label="Job location (enter zipcode)",
+        label="Worker location (enter zipcode)",
         required = False
     )
     radius_contains = forms.CharField(
-        label="Search for jobs within the following radius (default is 20 miles)",
+        label="Search for workers within the following radius (default is 20 miles)",
         widget=forms.Select(choices=RADIUS),
         required = False
     )
     type_contains = forms.CharField(
         label='Job type',
         widget=forms.Select(choices=DURATION),
-        required = False
-    )
-    # if(type_contains=='full-time'):
-    #     locum_shift_day = forms.CharField(
-    #         label='For locum: How many days in a week?'
-    #     )
-    hospital_contains = forms.CharField(
-        label='Name of Hospital', 
         required = False
     )
     hospital_type_contains = forms.CharField(
@@ -780,24 +700,6 @@ class WorkerSearchForm(forms.Form):
     experience_contains = forms.CharField(
         label='Experience level',
         widget=forms.Select(choices=EXPERIENCE),
-        required = False
-    )
-    supervision_contains = forms.CharField(
-        label='Supervision from an anesthesiologist',
-        widget=forms.Select(choices=SUPERVISION),
-        required = False
-    )
-    payment_contains = forms.CharField(
-        label='Payment type for the job',
-        widget=forms.Select(choices=PAYMENT),
-        required = False
-    )
-    vacation_contains = forms.CharField(
-        label='What are the vacation benefits of this job?', 
-        required = False
-    )
-    education_money_contains = forms.CharField(
-        label='Are there any education credits with this job?', 
         required = False
     )
     ### Query by dates
@@ -843,4 +745,68 @@ class WorkerSearchForm(forms.Form):
     locum_shift_hour_contains = forms.CharField(
         label='For locum: How many hours in a day?',
         required = False
+    )
+
+EDU = (
+    ('', 'Choose...'),
+    ('Bachelors', 'Bachelors'),
+    ('Masters', 'Masters'),
+    ('Doctorate', 'Doctorate')
+)
+PROVIDER = (
+    ('', 'Choose...'),
+    ('CRNA', 'CRNA'),
+    ('MD', 'M.D. Anesthesiologist'),
+    ('NA', 'NA')
+)
+CPR = (
+    ('', 'Choose...'),
+    ('BLS', 'BLS'),
+    ('ACLS', 'ACLS'),
+    ('PALS', 'PALS')
+)
+# class WorkerPublicProfileForm(forms.Form):
+#     def __init__(self, * args, **kwargs):
+#         super(WorkerProfileForm, self).__init__(*args, **kwargs)
+
+
+#     email = forms.CharField(label='Email')
+#     education = forms.CharField(
+#         label='Education level',
+#         widget=forms.Select(choices=EDU),
+#     )
+#     school = forms.CharField(label='Name of your school')
+#     provider_type = forms.CharField(
+#         label='Provider Type',
+#         widget=forms.Select(choices=PROVIDER)
+#     )
+#     peer_references = forms.CharField(label='Peer Reference')
+#     cpr_certifications = forms.CharField(
+#         label='Provider Type',
+#         widget=forms.Select(choices=CPR)
+#     )
+
+class ProfileUpdateWorkerForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(ProfileUpdateWorkerForm, self).__init__(*args, **kwargs)
+
+    first_name = forms.CharField(label='First Name')
+    last_name = forms.CharField(label='Last Name')
+    address = forms.CharField(label='Address (Zipcode)')
+    email = forms.CharField(label='Email')
+    education = forms.CharField(
+        label='Education Level',
+        widget=forms.Select(choices=EDU)
+    )
+    provider_type = forms.CharField(
+        label='Provider Type',
+        widget=forms.Select(choices=PROVIDER)
+    )
+    peer_references = forms.CharField(
+        label='Peer References: (Name, Phone number, Email)',
+    )
+    cpr_certifications = forms.MultipleChoiceField(
+        label='CPR Certifications You Have',
+        widget=forms.CheckboxSelectMultiple,
+        choices=CPR
     )

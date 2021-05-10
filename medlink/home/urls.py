@@ -19,7 +19,7 @@ urlpatterns = [
     path(r'worker_query/', views.worker_query, name='worker_query'),
     url(r'hospital/update/(?P<job_id>\d+)/$', views.hospital_update_job,),    
     path(r'hospital/profile_update/', views.profile_update, name='profile_update'), 
-    path(r'user/profile_update/', views.worker_profile_update, name='worker_profile_update'),   
+    path(r'user/update_profile/', views.worker_profile_update, name='update_profile'),   
     path(r'logout/', views.logout_request, name='logout'),    
     path(r'switch/', views.switch_request, name='switch'),    
     path(r'job_query/', views.job_query, name='job_query'),

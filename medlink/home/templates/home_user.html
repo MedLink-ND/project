@@ -25,15 +25,7 @@
                             {% else %}
 
                             {% for job in job_rec %}
-                            <!-- <div class="col-md-6 mt-4 mt-md-0">
-                                <div class="icon-box">
-                                  <i class="bi bi-card-checklist"></i>
-                                  <h4><a href="#">{{ job.job_name }}</a></h4>
-                                  <p>{{ job.job_type }}</p>
-                                  <p>{{ job.job_location_hospital }} | {{ job.job_location_zipcode }}</p>
-                                </div>
-                            </div> -->
-                            <div class="col" style="min-width: 300px;">
+                            <div class="col-4" style="min-width: 300px;">
                                 <div class="card" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
                                                         transition: 0.3s;
                                                         border: none;">
@@ -42,7 +34,7 @@
                                         <h6 class="card-subtitle mb-2 text-muted">{{ job.job_type }}</h6>
                                         <p class="card-text">{{ job.job_location_hospital }} | {{ job.job_location_zipcode }}</p>
                                         <a href="job_details/{{ job.id }}" class="card-link">View Details</a>
-                                        <a href="#" class="card-link">Mark as interested</a>
+                                        <a href="../job_query/application/{{ job.id }}">Quick Apply</a>
                                     </div>
                                 </div>
                             </div>
