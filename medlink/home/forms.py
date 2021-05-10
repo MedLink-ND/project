@@ -707,7 +707,7 @@ EDU = (
 PROVIDER = (
     ('', 'Choose...'),
     ('CRNA', 'CRNA'),
-    ('MD', 'M.D. Anesthesiologist'),
+    ('M.D. Anesthesiologist', 'M.D. Anesthesiologist'),
     ('NA', 'NA')
 )
 CPR = (
