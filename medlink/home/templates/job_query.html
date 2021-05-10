@@ -84,33 +84,36 @@
     </div>
     
     <div class="container mb-4">
+        {% if num_jobs > 0 %}
+            <i><p>Total of <b>{{num_jobs}}</b> jobs found.</p></i>
+        {% endif %}
 
-    {% comment %} <article class="entry"> {% endcomment %}
         {% for job in queryset %}
 
-        <div class="row mt-5">
-            <div class="col-lg-4">
-                <h2 class="entry-title">{{ job.job_name }}</h2>
-
-                <h6 class="card-title m-0">Job Name: {{ job.job_name }}</h6>
-                <h6 class="card-title m-0">Job Type: {{ job.job_type }}, {{ job_on_call }}</h6>
-                <h6 class="card-title m-0">Job Location: {{ job.job_location_hospital }}, {{ job.job_location_zipcode }}
-                </h6>
-                <h6 class="card-title m-0">Hospital Type Type: {{ job.hospital_type }}</h6>
-                <h6 class="card-title m-0">Job Start Date: {{ job.job_start_time }}</h6>
-                <h6 class="card-title m-0">Job End Date: {{ job.job_end_time }}</h6>
-                <h6 class="card-title m-0">Locum Shift: {{ job.locum_shift_day }} day, {{ locum_shift_hour }} hours</h6>
-                <h6 class="card-title m-0">Job Experience Requirement: {{ job.job_experience }}</h6>
-                <h6 class="card-title m-0">Job Supervision: {{ job.job_supervision }}</h6>
-                <h6 class="card-title m-0">Job Payment: {{ job.job_payment }}</h6>
-                <h6 class="card-title m-0">Job Benefits: {{ job.job_payment }}, {{ job_vacation }}, {{ education_money }}
-                </h6>
-                </div>
+            <div class="row mt-5">
+                <div class="container">
+                    <h4 class="entry-title">{{ job.job_name }}</h4>
+                    <h6 class="card-title m-0">Job Type: {{ job.job_type }}, {{ job.job_on_call }}
+                    <h6 class="card-title m-0">Job Location: {{ job.job_location_hospital }}, {{ job.job_location_zipcode }}
+                    </h6>
+                    <h6 class="card-title m-0">Hospital Type: {{ job.hospital_type }}</h6>
+                    <h6 class="card-title m-0">Job Start Date: {{ job.job_start_time }}</h6>
+                    <h6 class="card-title m-0">Job End Date: {{ job.job_end_time }}</h6>
+                    {% if job.job_type == 'Locum' %}
+                        <h6 class="card-title m-0">Locum Shift: {{ job.locum_shift_day }} days / week, {{ locum_shift_hour }} hours / day</h6>
+                    {% endif %}
+                    <h6 class="card-title m-0">Job Experience Requirement: {{ job.job_experience }}</h6>
+                    <h6 class="card-title m-0">Job Supervision: {{ job.job_supervision }}</h6>
+                    <h6 class="card-title m-0">Job Payment Type: {{ job.job_payment }}</h6>
+                    <h6 class="card-title m-0">Job Benefits: Vacation: {{ job.job_vacation }}, Education money: {{ job.education_money }}
+                </div
+                <!-- APPLY FOR JOB -->
+                <br>
+                <a href="application/{{ job.id }}"><b>Apply</b></a>
             </div>
             <hr/>
-            <!-- APPLY FOR JOB -->
-            <button class="button"><a href="application/{{ job.id }}">Apply</a> </button> {% endfor %}
-    {% comment %} </article> {% endcomment %}
+
+        {% endfor %}
     </div>
 </main>
 <script>
