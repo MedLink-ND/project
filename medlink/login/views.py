@@ -28,9 +28,9 @@ def login(request):
                 if user.is_worker == 1:
                     profile_user = WorkerInfo.objects.raw("SELECT base_profile_id AS id FROM home_workerinfo WHERE base_profile_id = " + str(user.id))
                     if not profile_user:
-                        return redirect("../home/user/profile_update/")
+                        return redirect("../home/user/update_profile/")
                     else:
-                        return redirect("../home/profile_page/" + str(user.id))
+                        return redirect("../home/user/")
 
             else:
                 print("login error")
