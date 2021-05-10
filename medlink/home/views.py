@@ -846,6 +846,12 @@ def worker_query(request):
                 qs = qs.filter(
                     locum_shift_day__icontains=shift_day_contains_query)
 
+            #for user_id in allJobs:
+            #    try:
+            #        profile_user = WorkerProfileInfo.objects.filter(base_profile_id=user_id)
+            #        allUsers.append(profile_user[0])
+            #    except:
+            #        print('No profile is found for user ' + str(user_id))
             context['queryset'] = qs
             context['num_jobs'] = len(qs)
             print('POST')
