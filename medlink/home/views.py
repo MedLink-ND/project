@@ -100,7 +100,11 @@ def applications(request):
         return redirect("../..")
 
     user = request.user
-    applied_job_ids = JobApplicants.objects.raw("SELECT job_id_id AS id, job_status FROM home_jobapplicants WHERE user_id = " + str(user.id))
+    applied_job_ids = JobApplicants.objects.raw(''' SELECT home_jobapplicants.job_id_id AS id, home_jobapplicants.job_status AS job_status, home_jobinfo.job_name AS job_name
+                                                    FROM home_jobinfo
+                                                    INNER JOIN home_jobapplicants ON home_jobapplicants.job_id_id = home_jobinfo.id
+                                                    WHERE home_jobapplicants.user_id = ''' + str(user.id)
+                                                    )
 
     if not applied_job_ids:
         # NO APPLICATIONS, might wanna redirect to applications page instead of home. Doing this for now to avoid error
@@ -109,11 +113,8 @@ def applications(request):
     jobs_info = []
 
     for application in applied_job_ids:
-        job_name = JobInfo.objects.raw("SELECT id, job_name FROM home_jobinfo WHERE id = " + str(application.id))
-        jobs_info.append({"job_name": job_name[0].job_name, "job_status": application.job_status})
+        jobs_info.append({"job_name": application.job_name, "job_status": application.job_status})
 
-    print(jobs_info)
-    
     return render(request, 'applications.html', {'jobs_info': jobs_info})
 
 
