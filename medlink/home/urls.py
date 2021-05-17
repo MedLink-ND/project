@@ -6,8 +6,8 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    path('hospital/', views.home_hospital, name='home/hospital'),
-    path('user/', views.home_user,),
+    path('hospital/', views.home_hospital, name='home_hospital'),
+    path('user/', views.home_user, name="home_user"),
     url(r'user/job_details/(?P<job_id>\d+)/$', views.user_job_details,),
     path('user/preference/', views.user_job_preference,),
     url(r'hospital/hospital_job_details/(?P<job_id>\d+)/find_workers/', views.find_workers, name="find_workers"),

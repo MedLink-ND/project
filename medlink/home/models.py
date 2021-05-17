@@ -83,7 +83,6 @@ class WorkerProfileInfo(models.Model):
     address = models.CharField(max_length=255, null=True)
     email = models.CharField(max_length=255, null=True)
     education = models.CharField(max_length=255, null=True)
-    # certifications = models.CharField(max_length=255, null=True)
     provider_type = models.CharField(max_length=255, null=True)
     peer_references = models.CharField(max_length=255, null=True)
     cpr_certifications = models.CharField(max_length=255, null=True)
