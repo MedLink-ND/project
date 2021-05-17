@@ -617,7 +617,7 @@ def job_query(request):
     else:
         form = JobSearchForm()
         print('GET')
-        context['queryset'] = None #JobInfo.objects.all()
+        context['queryset'] = None
     
     context['form'] = form
     context['logged_in'] = logged_in
