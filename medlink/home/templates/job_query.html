@@ -108,31 +108,12 @@
                     <h6 class="card-title m-0">Job Benefits: Vacation: {{ job.job_vacation }}, Education money: {{ job.education_money }}
                 </div>
                 <br>
-                {% comment %} <button type="btn btn-primary" data-toggle="modal" data-target="#exampleModal"> {% endcomment %}
-                {% comment %} <a href="application/{{ job.id }}" data-toggle="modal" data-target="#exampleModal{{job.id}}"><b>Apply</b></a> {% endcomment %}
-                <a href="application/{{ job.id }}"><b>Apply</b></a>
+                {% if logged_in %}
+                    <a href="application/{{ job.id }}"><b>Apply</b></a>
+                {% else %}
+                    <a href="{% url 'login' %}"><b>Log in to apply</b></a>
+                {% endif %}
                 </div>
-
-                <!-- Modal -->
-                {% comment %} <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            Congratulations! Your application is on its way! Meanwhile, you can still edit your public profile.
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-secondary"><a href="{% url 'update_profile' %}">Edit Profile</button>
-                        </div>
-                    </div>
-                </div>
-            </div> {% endcomment %}
             <hr/>
 
         {% endfor %}
