@@ -61,14 +61,27 @@
 
             <nav id="navbar" class="navbar"> <!-- removed navbar-mobile-->
                 <ul>
-                    <li><a href="{% url 'home' %}" class="active">Home</a></li>
+                    {% if request.user.is_hospital %}
+                        <li><a href="{% url 'home_hospital' %}">Home</a></li>
+                    {% else %}
+                        <li><a href="{% url 'home_user' %}">Home</a></li>
+                    {% endif %}
                     <li><a href="{% url 'job_query' %}" >Jobs</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Contact</a></li>
+                    {% if request.user.is_hospital %}
+                        <li><a href="{% url 'worker_query' %}" >Medical Workers</a></li>
+                    {% endif %}
+
+                    <li><a href="/#about">About</a></li>
                     {% block logout %}
                     <li class="dropdown"><a href="#"><span>Logged in as: {{ request.user.get_short_name }}</span> <i class="bi bi-chevron-down"></i></a>
                         <ul>
-                            <li><a href="{% url 'profile_update' %}">Update profile</a></li>
+                            {% if request.user.is_hospital %}
+                                <li><a href="{% url 'profile_update' %}">View/Update Profile</a></li>
+                            {% else %}
+                                <li><a href="{% url 'update_profile' %}">View/Update Profile</a></li>
+                                <li><a href="{% url 'applications' %}">Jobs Applied</a></li>
+                            {% endif %}
+                            <li><a href="{% url 'switch' %}">Switch Accounts</a></li>
                             <li><a href="{% url 'logout' %}">Logout</a></li>
                         </ul>
                     </li>

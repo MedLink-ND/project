@@ -44,7 +44,11 @@ INSTALLED_APPS = [
     'home',
     'verify_email',
     'tempus_dominus',
+    'crispy_forms',
+    'widget_tweaks',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 AUTH_USER_MODEL = 'signup.User'
 
@@ -152,4 +156,3 @@ EMAIL_HOST_USER = 'jz.project.testing@gmail.com'
 EMAIL_HOST_PASSWORD = 'projecttesting'
 
 EMAIL_PORT = 587
-

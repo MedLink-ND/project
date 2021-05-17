@@ -2,7 +2,9 @@
 {% load static %}
 
 {% block title %}MedLink | Signup{% endblock %}
-
+{% block logout %}
+<li><a href="{% url 'login' %}" class="getstarted">Login / Register</a></li>
+{% endblock %}
 
 {% block head %}
 
@@ -29,10 +31,13 @@
           <div class="col-md-7">
             <div class="card-body">
               <p class="login-card-description">Let's get you started!</p>
+              {% load crispy_forms_tags %}
+
               <form method="POST">
                 {% csrf_token %}
                 {{ signup_form.non_field_errors }}
-                {% for field in signup_form %}
+                {{ signup_form|crispy }}
+                {% comment %} {% for field in signup_form %}
                     <div class="form-group">
                         {{ field.errors }}
                         {{ field.label_tag }} {{ field }}
@@ -40,7 +45,7 @@
                         <p class="help">{{ field.help_text|safe }}</p>
                         {% endif %}
                     </div>
-                {% endfor %}
+                {% endfor %} {% endcomment %}
                 <input name="signup" id="signup" class="btn btn-block login-btn mb-4" type="submit" value="Sign up">
               </form>
 

@@ -1,140 +1,130 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block title %}Update Job{% endblock %}
-
-{% block head %}
+{% extends 'base.html' %} {% load static %} {% block title %}Update Job{% endblock %} {% block head %}
 <link href="https://fonts.googleapis.com/css?family=Karla:400,700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 <link rel="stylesheet" href="{% static 'css/login.css' %}">
 
 <!-- Bootstrap 4 -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-  integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-  integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
-  integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
-  integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 
 <!-- Font Awesome -->
-<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
-  integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 
 <!-- Moment.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js"
-  integrity="sha256-VBLiveTKyUZMEzJd6z2mhfxIqz3ZATCuVMawPZGzIfA=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js" integrity="sha256-VBLiveTKyUZMEzJd6z2mhfxIqz3ZATCuVMawPZGzIfA=" crossorigin="anonymous"></script>
 
 <!-- Tempus Dominus Bootstrap 4 -->
-<link rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css"
-  integrity="sha256-XPTBwC3SBoWHSmKasAk01c08M6sIA5gF5+sRxqak2Qs=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js"
-  integrity="sha256-z0oKYg6xiLq3yJGsp/LsY9XykbweQlHl42jHv2XTBz4=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/css/tempusdominus-bootstrap-4.min.css" integrity="sha256-XPTBwC3SBoWHSmKasAk01c08M6sIA5gF5+sRxqak2Qs=" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.1.2/js/tempusdominus-bootstrap-4.min.js" integrity="sha256-z0oKYg6xiLq3yJGsp/LsY9XykbweQlHl42jHv2XTBz4=" crossorigin="anonymous"></script>
 
-{% endblock %}
+{% endblock %} {% block content %}
+<div class="container">
+    <main class="d-flex align-items-center min-vh-100 py-3 py-md-0" style="margin-top:60px">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <p class="login-card-description">Update the job information.</p>
+                    {% load crispy_forms_tags %}
 
-{% block content %}
-<main class="d-flex align-items-center min-vh-100 py-3 py-md-0">
-  <div class="container">
-    <div class="row no-gutters">
-      <p class="login-card-description">Update the job information</p>
-      <form method="POST">
-        {% csrf_token %}
+                    <form method="POST">
+                        {% csrf_token %}
 
-        <table class="table table-sm" style="max-height: 450px; overflow: auto; display:inline-block;">
-          <thead>
-            <tr>
-              <th scope="col">Question</th>
-              <th scope="col">Value</th>
-              <th scope="col">New Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">Job name</th>
-              <td>{{ job.job_name }}</td>
-              <td>{{ form.job_name }}</td>
-            </tr>
-            <tr>
-              <th scope="row">Job type</th>
-              <td>{{ job.job_type }}</td>
-              <td>{{ form.job_type }}</td>
-            </tr>
-            <tr>
-              <th scope="row">Job location (zipcode)</th>
-              <td>{{ job.job_location_zipcode }}</td>
-              <td>{{ form.job_location_zipcode }}</td>
-            </tr>
-            <tr>
-              <th scope="row">Hospital Name</th>
-              <td>{{ job.job_location_hospital }}</td>
-              <td>{{ form.job_location_hospital }}</td>
-            </tr>
-            <tr>
-              <th scope="row">Hospital Type</th>
-              <td>{{ job.hospital_type }}</td>
-              <td>{{ form.hospital_type }}</td>
-            </tr>
-            <tr>
-              <th scope="row">Does the job require on call</th>
-              <td>{{ job.job_on_call }}</td>
-              <td>{{ form.job_on_call }}</td>
-            </tr>
-            <tr>
-              <th scope="row">Job start date</th>
-              <td>{{ job.job_start_time }}</td>
-              <td>{{ form.job_start_time }}</td>
-            </tr>
-            <tr>
-              <th scope="row">Job end date</th>
-              <td>{{ job.job_end_time }}</td>
-              <td>{{ form.job_end_time }}</td>
-            </tr>
-            <tr>
-              <th scope="row">Locum shift: days / week</th>
-              <td>{{ job.locum_shift_day }}</td>
-              <td>{{ form.locum_shift_day }}</td>
-            </tr>
-            <tr>
-              <th scope="row">Locum shift: hours / day</th>
-              <td>{{ job.locum_shift_hour }}</td>
-              <td>{{ form.locum_shift_hour }}</td>
-            </tr>
-            <tr>
-              <th scope="row">Experience Level</th>
-              <td>{{ job.job_experience }}</td>
-              <td>{{ form.job_experience }}</td>
-            </tr>
-            <tr>
-              <th scope="row">Supervision</th>
-              <td>{{ job.job_supervision }}</td>
-              <td>{{ form.job_supervision }}</td>
-            </tr>
-            <tr>
-              <th scope="row">Payment type</th>
-              <td>{{ job.job_payment }}</td>
-              <td>{{ form.job_payment }}</td>
-            </tr>
-            <tr>
-              <th scope="row">Vacation benefits</th>
-              <td>{{ job.job_vacation }}</td>
-              <td>{{ form.job_vacation }}</td>
-            </tr>
-            <tr>
-              <th scope="row">Education credits</th>
-              <td>{{ job.education_money }}</td>
-              <td>{{ form.education_money }}</td>
-            </tr>
-          </tbody>
-        </table>
+                        <table class="table table-sm" style="max-height: 500px; overflow: auto; display:inline-block;">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Question</th>
+                                    <th scope="col">Value</th>
+                                    <th scope="col">New Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">Job name</th>
+                                    <td>{{ job.job_name }}</td>
+                                    <td>{{ form.job_name|as_crispy_field }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Job type</th>
+                                    <td>{{ job.job_type }}</td>
+                                    <td>{{ form.job_type|as_crispy_field }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Job location (zipcode)</th>
+                                    <td>{{ job.job_location_zipcode }}</td>
+                                    <td>{{ form.job_location_zipcode|as_crispy_field }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Hospital Name</th>
+                                    <td>{{ job.job_location_hospital }}</td>
+                                    <td>{{ form.job_location_hospital|as_crispy_field }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Hospital Type</th>
+                                    <td>{{ job.hospital_type }}</td>
+                                    <td>{{ form.hospital_type|as_crispy_field }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Does the job require on call</th>
+                                    <td>{{ job.job_on_call }}</td>
+                                    <td>{{ form.job_on_call|as_crispy_field }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Job start date</th>
+                                    <td>{{ job.job_start_time }}</td>
+                                    <td>{{ form.job_start_time|as_crispy_field }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Job end date</th>
+                                    <td>{{ job.job_end_time }}</td>
+                                    <td>{{ form.job_end_time|as_crispy_field }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Locum shift: days / week</th>
+                                    <td>{{ job.locum_shift_day }}</td>
+                                    <td>{{ form.locum_shift_day|as_crispy_field }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Locum shift: hours / day</th>
+                                    <td>{{ job.locum_shift_hour }}</td>
+                                    <td>{{ form.locum_shift_hour|as_crispy_field }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Experience Level</th>
+                                    <td>{{ job.job_experience }}</td>
+                                    <td>{{ form.job_experience|as_crispy_field }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Supervision</th>
+                                    <td>{{ job.job_supervision }}</td>
+                                    <td>{{ form.job_supervision|as_crispy_field }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Payment type</th>
+                                    <td>{{ job.job_payment }}</td>
+                                    <td>{{ form.job_payment|as_crispy_field }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Vacation benefits</th>
+                                    <td>{{ job.job_vacation }}</td>
+                                    <td>{{ form.job_vacation|as_crispy_field }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Education credits</th>
+                                    <td>{{ job.education_money }}</td>
+                                    <td>{{ form.education_money|as_crispy_field }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-        <input name="postjob" id="postjob" class="btn btn-dark btn-sm" type="submit" value="Update">
-        <button class="btn btn-dark btn-sm"><a href="../../" style="color: white">Return to home</a></button>
-      </form>
-    </div>
-  </div>
-</main>
+                        <input name="postjob" id="postjob" class="btn btn-dark btn-sm" type="submit" value="Update">
+                        <button class="btn btn-dark btn-sm"><a href="../../" style="color: white">Return to home</a></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
 {% endblock %}

@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block title %}MedLink | Home{% endblock %}
-
 
 {% block head %}
 <link href="https://fonts.googleapis.com/css?family=Karla:400,700&display=swap" rel="stylesheet">
@@ -18,50 +16,51 @@
             <div class="card login-card">
                 <div class="card-body">
                     <p class="login-card-description">Job Details</p>
-
                     {% csrf_token %}
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Job Name</th>
-                                <th scope="col">Job Type</th>
-                                <th scope="col">On call</th>
-                                <th scope="col">Location</th>
-                                <th scope="col">Hospital Name</th>
-                                <th scope="col">Hospital Type</th>
-                                <th scope="col">Start Date</th>
-                                <th scope="col">End Date</th>
-                                <th scope="col">Supervision</th>
-                                <th scope="col">Locum Shifts</th>
-                                <th scope="col">Experience Level</th>
-                                <th scope="col">Payment Type</th>
-                                <th scope="col">Benefits</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th scope="row"></th>
-                                <td>{{ job.job_name }}</td>
-                                <td>{{ job.job_type }}</td>
-                                <td>{{ job.job_on_call }}</td>
-                                <td>{{ job.job_location_zipcode }}</td>
-                                <td>{{ job.job_location_hospital }}</td>
-                                <td>{{ job.hospital_type }}</td>
-                                <td>{{ job.job_start_time }}</td>
-                                <td>{{ job.job_end_time }}</td>
-                                <td>{{ job.job_supervision }}</td>
-                                {% if job.job_type == "Locum" %}
-                                <td>{{ job.locum_shift_day }} days / week, {{ job.locum_shift_hour }} hours / day</td>
-                                {% else %}
-                                <td>None</td>
-                                {% endif %}
-                                <td>{{ job.job_experience }}</td>
-                                <td>{{ job.job_payment }}</td>
-                                <td>Vacation: {{ job.job_vacation }}, Education: {{ job.education_money }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="align-middle">#</th>
+                                    <th class="align-middle">Job Name</th>
+                                    <th class="align-middle">Job Type</th>
+                                    <th class="align-middle">On call</th>
+                                    <th class="align-middle">Location</th>
+                                    <th class="align-middle">Hospital Name</th>
+                                    <th class="align-middle">Hospital Type</th>
+                                    <th class="align-middle">Start Date</th>
+                                    <th class="align-middle">End Date</th>
+                                    <th class="align-middle">Supervision</th>
+                                    <th class="align-middle">Locum Shifts</th>
+                                    <th class="align-middle">Experience Level</th>
+                                    <th class="align-middle">Payment Type</th>
+                                    <th class="align-middle">Benefits</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row"></th>
+                                    <td>{{ job.job_name }}</td>
+                                    <td>{{ job.job_type }}</td>
+                                    <td>{{ job.job_on_call }}</td>
+                                    <td>{{ job.job_location_zipcode }}</td>
+                                    <td>{{ job.job_location_hospital }}</td>
+                                    <td>{{ job.hospital_type }}</td>
+                                    <td>{{ job.job_start_time }}</td>
+                                    <td>{{ job.job_end_time }}</td>
+                                    <td>{{ job.job_supervision }}</td>
+                                    {% if job.job_type == "Locum" %}
+                                    <td>{{ job.locum_shift_day }} days / week, {{ job.locum_shift_hour }} hours / day</td>
+                                    {% else %}
+                                    <td>None</td>
+                                    {% endif %}
+                                    <td>{{ job.job_experience }}</td>
+                                    <td>{{ job.job_payment }}</td>
+                                    <td>Vacation: {{ job.job_vacation }}, Education: {{ job.education_money }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                     <a href="find_workers/"><b>Find more applicants here.</b></a>
                 </div>
                 </div>
@@ -75,10 +74,21 @@
                     <div class="row mt-5">
                         <div class="col-lg-4">
                         <h4 class="entry-title">{{ forloop.counter }}. {{ applicant.first_name }} {{ applicant.last_name }}</h4>
-                        <h6 class="card-title m-0">Contact: {{ applicant.email }}</h6>
-                        <p>Check out applicant creddentials:</p>
-                        <a href="accept/{{ applicant.id }}/">Accept</a> 
-                        <a href="reject/{{ applicant.id }}/">Reject</a> 
+                        <div class="card" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+                              transition: 0.3s;
+                              border: none;">
+                            <div class="card-body">
+                                {% comment %} <h5 class="card-title"><b>{{ profile.first_name }} {{ profile.last_name }}</b></h5> {% endcomment %}
+                                <h6 class="card-subtitle mb-2 text-muted">Education: {{ applicant.education }} | Area: {{ applicant.address }}</h6>
+                                {% comment %} <p class="card-text">Certifications: {{ profile.certifications }}</p> {% endcomment %}
+                                <p class="card-text">Provider Type: {{ applicant.provider_type }}</p>
+                                <p class="card-text">Peer Reference: {{ applicant.peer_references }}</p>
+                                <p class="card-text">CPR Certifications: {{applicant.cpr_certifications}}</p>
+                                <a href="accept/{{ applicant.id }}/"><b>Accept</b></a> 
+                                <a href="reject/{{ applicant.id }}/"><b>Reject</b></a> 
+                            </div>
+                        </div>
+
                         {% comment %}
                         <td><a href="delete/{{ job.id }}"><b>Reject Applicant</b></a>
                             <a href="update/{{ job.id }}"><b>Contact Applicant</b></a>
