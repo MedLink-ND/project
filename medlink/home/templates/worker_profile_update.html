@@ -22,12 +22,10 @@
               <div class="card-body">
                   <h5 class="card-title"><b>{{ profile.first_name }} {{ profile.last_name }}</b></h5>
                   <h6 class="card-subtitle mb-2 text-muted">Education: {{ profile.education }} | Area: {{ profile.address }}</h6>
-                  {% comment %} <p class="card-text">Certifications: {{ profile.certifications }}</p> {% endcomment %}
                   <p class="card-text">Provider Type: {{ profile.provider_type }}</p>
                   <p class="card-text">Peer Reference: {{ profile.peer_references }}</p>
                   <p class="card-text">CPR Certifications: {{profile.cpr_certifications}}</p>
-                  {% comment %} <a href=""><b>Edit</b></a>
-                  <a href=""><b>Return to Home</b></a> {% endcomment %}
+                  <p class="card-text">Contact: {{profile.email}}</p>
               </div>
             </div>
           </div>
