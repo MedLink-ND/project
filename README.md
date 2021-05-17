@@ -1,6 +1,6 @@
 ## Installation & Running locally
 
-1. Clone the repo and cd into medlink
+1. Clone the repo
 2. Create a new virtual environment
 
 ```bash
@@ -11,7 +11,7 @@ python3 -m venv venv
 ```bash
 source venv/bin/activate
 ```
-4. You should be in (venv) now. Install dependencies.
+4. You should be in (venv) now. Cd into project and install dependencies.
 ```bash
 pip install -r requirements.txt
 ```
