@@ -1,6 +1,25 @@
-## MedLink
-This is the current stable version of MedLink. Check out our /dev branch to see new features under development.
+## Installation & Running locally
 
-### To run the website on localhost
-1. Navigate to the outer medlink folder
-2. In the terminal, run `python3 manage.py runserver`
+1. Clone the repo
+2. Create a new virtual environment
+
+```bash
+python3 -m venv venv
+```
+3. Activate the virtual environment
+
+```bash
+source venv/bin/activate
+```
+4. You should be in (venv) now. Install dependencies.
+```bash
+pip install -r requirements.txt
+```
+5. Run the server locally
+```bash
+python3 medlink/manage.py runserver db.cse.nd.edu:5001
+```
+6. View the website in the browser
+```bash
+db.cse.nd.edu:5001
+```
