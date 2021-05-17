@@ -17,18 +17,10 @@
       <div class="row no-gutters">
         <div class="card-body">
           <p class="login-card-description">Update your profile settings</p>
+          {% load crispy_forms_tags %}
           <form method="POST">
             {% csrf_token %}
-            {{ form.non_field_errors }}
-            {% for field in form %}
-              <div class="form-group">
-                  {{ field.errors }}
-                  {{ field.label_tag }} {{ field }}
-                  {% if field.help_text %}
-                  <p class="help">{{ field.help_text|safe }}</p>
-                  {% endif %}
-              </div>
-            {% endfor %}
+            {{ form|crispy }}
             <input name="postjob" id="postjob" class="btn btn-dark btn-sm" type="submit" value="Update">
             <button class="btn btn-dark btn-sm"><a href="../" style="color: white">Return to home</a></button>
           </form>
