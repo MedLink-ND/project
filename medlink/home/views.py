@@ -346,22 +346,6 @@ def find_workers(request, job_id):
     job_end = job.job_end_time
     context['date_contains'] = []
     context['rec_list'] = []
-    # type_date = all_workers
-    # if job_end : 
-    #     type_date = type_date.exclude(
-    #         job_start_time__gte=job_end, 
-    #         )
-    # if job_begin:
-    #     type_date = type_date.exclude(
-    #         job_start_time__gte=job_begin, 
-    #         )
-    # for worker in type_date:
-    #     w = users.get(id=worker.base_profile)
-    #     w.date_range = 1
-    #     w.job_start_time = worker.job_start_time
-    #     w.job_end_time = worker.job_end_time
-    #     context['date_contains'].append(w)
-        
     # People Nearby
     lat = -1
     lng = -1
@@ -414,6 +398,7 @@ def find_workers(request, job_id):
             context['dist_rec'].append(worker)
 
     context['profiles'] = profiles
+    print(profiles)
     return render(request, 'find_workers.html', context)
 
 
