@@ -1,6 +1,6 @@
 ## Installation & Running locally
 
-1. Clone the repo and cd medlink
+1. Clone the repo and cd into medlink
 2. Create a new virtual environment
 
 ```bash
