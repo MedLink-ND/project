@@ -1,17 +1,19 @@
 ## Installation & Running locally
 
 1. Clone the repo
-2. Create a new virtual environment
-
+2. Go to the project directory
+```bash
+cd project
+```
+3. Create a new virtual environment
 ```bash
 python3 -m venv venv
 ```
-3. Activate the virtual environment
-
+4. Activate the virtual environment
 ```bash
 source venv/bin/activate
 ```
-4. You should be in (venv) now. Cd into project and install dependencies.
+5. You should be in (venv) now. Install dependencies.
 ```bash
 pip install -r requirements.txt
 ```
